@@ -1,0 +1,12 @@
+trainfile01 ... testfile00 ... log01.pickle ! 
+removedwords 0.002 levdist = 1/(1+ld)
+train01.txt ... test00.txt ... log02.pickle !
+removedwords 0.002 levdist = levsimscore*min(of both strings)
+train00.txt ... test00.txt ... log03.pickle !
+completewords levdist = levsimscore*min(of both strings)
+train00.txt ... test00.txt ... log04 !
+completewords levdist = 1/(1+ld)
+train00.txt ... test00.txt ... log05 !
+completewords levdist = 1/(1+ld)**2
+train00.txt ... test00.txt ... log06 !
+completewords levdist = 1/(1+ld)*scored

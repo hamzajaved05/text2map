@@ -1,0 +1,19 @@
+1. effect of non local text
+	taxi,
+	banners,
+	same outlets name,
+
+2. String Metrics:
+	b/w bag of words,	Monge Elkan(only takes two best scores into account)
+	w -w ,			Levenshteins (most relevant) can use weighing schemes based on frequency/ can use hierarchal by placing frequent words closer to root and scoring based on leaf edges.
+				Better would be a combination of w-w and bag-bag metrics. (overlap coefficient/jaccard distance/cosine distance)
+				Issues with images with high number of words (Cummulative cost increases)
+				Smaller words tend to have lower levenshteins loss and tend to contribute more to votes.
+				scaling by Number of words in query image for a scaled measurement to avoid cummulative cost
+				Takes care of pair of words maching as it then has a higher weightage.
+
+http://anhaidgroup.github.io/py_stringmatching/v0.1.x/SimilarityMeasure.html
+
+
+3. Word associations
+	dependencies because of frequent data (65000 images in 3km diag)
