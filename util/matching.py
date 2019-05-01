@@ -7,10 +7,9 @@ Created on Sat Mar 23 15:22:29 2019
 """
 
 import numpy as np
-from Levenshtein import levenshteinDistance
 from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 from py_stringmatching.similarity_measure.monge_elkan import MongeElkan
-from utilities import scoring_words
+from util.utilities import scoring_words
 
 def matching(jpg_dict, stringarray , scoring_dict ):
 
