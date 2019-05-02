@@ -5,34 +5,23 @@ Project: texttomap
 
 """
 import os
-import cv2
-import h5py
-from sys import getsizeof
+import argparse
 
-# path = "Dataset_processing/jpeg_patch/"
-# for filename in os.listdir(path):
-# 	if filename[-6] == "_":
-# 		edited = path+filename[:-6]+".jpg"
-# 		if not os.path.isfile(edited):
-# 			os.rename(path+filename, edited)
-# 	if filename[-5] == "_":
-# 		edited = path+filename[:-5]+".jpg"
-# 		if not os.path.isfile(edited):
-# 			os.rename(path + filename, edited)
-#
 
-dict = {}
-
-path = "Dataset_processing/jpeg_patch/"
+parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
+parser.add_argument("patch_path",type = str, help = "Path for Image patches")
+args= parser.parse_args()
+path = args.patch_path
 count = 0
-for itera, filename in enumerate(os.listdir(path)):
-	dict[filename] = cv2.imread(path+filename)
-	if itera+1%100 ==0:
-		print(itera)
-	if itera+1 % 2500== 0:
-		with h5py.File('Dataset_processing/patches/data'+str(count)+'.h5', 'w') as f:
-			dset = f.create_dataset("dataset", data=dict)
-		print("saved "+str(count))
-		count+=1
-		del dict
-		dict=  {}
+for filename in os.listdir(path):
+	if filename[-6] == "_":
+		edited = path+filename[:-6]+".jpg"
+		if not os.path.isfile(edited):
+			os.rename(path+filename, edited)
+			count+=1
+	if filename[-5] == "_":
+		edited = path+filename[:-5]+".jpg"
+		if not os.path.isfile(edited):
+			os.rename(path + filename, edited)
+			count+=1
+print("Files renamed : "+ str(count) + " ! ")
