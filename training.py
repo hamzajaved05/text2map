@@ -24,15 +24,12 @@ parser.add_argument("patch_path",type = str, help = "Path for Image patches")
 parser.add_argument("output_path",type = str, help = "path of outout dicts")
 parser.add_argument("pickle_path", type = str, help = "Path of pickle file")
 parser.add_argument("epochs", type = int, help = "no of epochs")
-
+parser.add_argument("batch_size", type = int, help = "batch_size")
 args= parser.parse_args()
-
 
 with open(args.pickle_path, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
-# jpegsdir = "Dataset_processing/jpeg_patch/"
 imageshape = [128,256]
-# ///////////////////////////////////////
 
 print("\n\nData Loaded\n\n")
 
@@ -103,10 +100,15 @@ class Model(nn.Module):
 training_set = image_word_dataset(jpgs, words, words_sparse, klass, args.patch_path)
 no_classes = len(modes)
 criterion = nn.CrossEntropyLoss()
-train_loader = DataLoader(training_set,batch_size=2048,shuffle = True)
+train_loader = DataLoader(training_set,batch_size=args.batch_size,shuffle = True)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-print(device)
-Network = Model(no_classes).to(device)
+Network = Model(no_classes)
+
+if torch.cuda.device_count() > 1:
+  print("Let's use", torch.cuda.device_count(), "GPUs!")
+  Network = nn.DataParallel(Network)
+
+Network.to(device)
 optimizer = optim.Adam(Network.parameters(), lr=0.01, weight_decay=1e-5)
 epochs = args.epochs
 
