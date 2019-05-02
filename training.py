@@ -56,21 +56,21 @@ class image_word_dataset(data.Dataset):
 class Model(nn.Module):
     def __init__(self, classes):
         super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=7, padding=3)
-        self.i_pool1 = nn.MaxPool2d(2)
-        self.i_conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(2)
-        self.i_conv3 = nn.Conv2d(in_channels=64, out_channels= 128, kernel_size=7, padding=3)
-        self.i_pool3 = nn.MaxPool2d(4)
-        self.i_linear = nn.Linear(128*16*8, 128)
+        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
+        self.i_pool1 = nn.MaxPool2d(4)
+        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
+        self.i_pool2 = nn.MaxPool2d(4)
+        # self.i_conv3 = nn.Conv2d(in_channels=64, out_channels= 128, kernel_size=7, padding=3)
+        # self.i_pool3 = nn.MaxPool2d(4)
+        self.i_linear = nn.Linear(32*16*8, 128)
 
-        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=7, padding=3)
+        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=16, kernel_size=7, padding=3)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
-        self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(64*6,16)
+        self.t_conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, padding=2)
+        self.t_linear = nn.Linear(32*6,16)
 
-        self.c_linear1 = nn.Linear(128+16, 256)
-        self.c_linear2 = nn.Linear(256,classes)
+        self.c_linear1 = nn.Linear(128+16, classes)
+        # self.c_linear2 = nn.Linear(256,classes)
 
 
     def forward(self, im, tx):
@@ -80,23 +80,23 @@ class Model(nn.Module):
         im = self.i_conv2(im)
         im = self.i_pool2(im)
         im = F.relu(im)
-        im = self.i_conv3(im)
-        im = self.i_pool3(im)
-        im = F.relu(im)
-        im = im.view(-1, 128*16*8)
+        # im = self.i_conv3(im)
+        # im = self.i_pool3(im)
+        # im = F.relu(im)
+        im = im.view(-1, 32*16*8)
         im = self.i_linear(im)
 
         tx = self.t_conv1(tx)
         tx = self.t_pool1(tx)
         tx = F.relu(tx)
         tx = self.t_conv2(tx)
-        tx = tx.view(-1, 64*6)
+        tx = tx.view(-1, 32*6)
         tx = self.t_linear(tx)
 
         c = torch.cat((im,tx), 1)
         c = self.c_linear1(c)
-        c = F.relu(c)
-        c = self.c_linear2(c)
+        # c = F.relu(c)
+        # c = self.c_linear2(c)
 
         return F.log_softmax(c, dim=1)
 
@@ -127,10 +127,10 @@ for epoch in range(1, epochs + 1):
     batch_loss = []
     for batch_idx, data in enumerate(train_loader):
         im, inputs, labels = data
-        print(batch_idx)
+        # print(batch_idx)
         optimizer.zero_grad()
         outputs = Network(im.to(device), inputs.to(device))
-        loss = criterion(outputs, labels.to(device))
+        loss = criterion(outputs, labels.long().to(device))
         loss.backward()
         optimizer.step()
 
