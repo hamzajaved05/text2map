@@ -18,7 +18,6 @@ import time
 import cv2
 import argparse
 
-
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
 parser.add_argument("patch_path",type = str, help = "Path for Image patches")
 parser.add_argument("output_path",type = str, help = "path of outout dicts")
@@ -53,21 +52,23 @@ class image_word_dataset(data.Dataset):
 class Model(nn.Module):
     def __init__(self, classes):
         super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
+        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=7, padding=3)
         self.i_pool1 = nn.MaxPool2d(4)
-        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(4)
-        # self.i_conv3 = nn.Conv2d(in_channels=64, out_channels= 128, kernel_size=7, padding=3)
-        # self.i_pool3 = nn.MaxPool2d(4)
-        self.i_linear = nn.Linear(32*16*8, 128)
+        self.i_conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=7, padding=3)
+        self.i_pool2 = nn.MaxPool2d(2)
+        self.i_conv3 = nn.Conv2d(in_channels=16, out_channels= 32, kernel_size=7, padding=3)
+        self.i_pool3 = nn.MaxPool2d(2)
+        self.i_linear = nn.Linear(32*16*8, 256)
 
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=16, kernel_size=7, padding=3)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
         self.t_conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(32*6,16)
+        self.t_linear = nn.Linear(32*6,8)
 
-        self.c_linear1 = nn.Linear(128+16, classes)
-        # self.c_linear2 = nn.Linear(256,classes)
+        self.c_linear1 = nn.Linear(256+8, 512)
+        self.c_dropout = nn.Dropout(p = 0.5)
+        self.c_linear2 = nn.Linear(512, 64)
+        self.c_linear3 = nn.Linear(64,classes)
 
 
     def forward(self, im, tx):
@@ -77,9 +78,9 @@ class Model(nn.Module):
         im = self.i_conv2(im)
         im = self.i_pool2(im)
         im = F.relu(im)
-        # im = self.i_conv3(im)
-        # im = self.i_pool3(im)
-        # im = F.relu(im)
+        im = self.i_conv3(im)
+        im = self.i_pool3(im)
+        im = F.relu(im)
         im = im.view(-1, 32*16*8)
         im = self.i_linear(im)
 
@@ -92,9 +93,12 @@ class Model(nn.Module):
 
         c = torch.cat((im,tx), 1)
         c = self.c_linear1(c)
-        # c = F.relu(c)
-        # c = self.c_linear2(c)
-
+        c = F.relu(c)
+        c = self.c_dropout(c)
+        c = self.c_linear2(c)
+        c = self.relu(c)
+        c = self.c_dropout(c)
+        c = self.c_linear3(c)
         return F.log_softmax(c, dim=1)
 
 training_set = image_word_dataset(jpgs, words, words_sparse, klass, args.patch_path)
@@ -109,7 +113,7 @@ if torch.cuda.device_count() > 1:
   Network = nn.DataParallel(Network)
 
 Network.to(device)
-optimizer = optim.Adam(Network.parameters(), lr=0.01, weight_decay=1e-5)
+optimizer = optim.Adam(Network.parameters(), lr=0.001, weight_decay=1e-5)
 epochs = args.epochs
 
 train_accuracy = []
@@ -122,25 +126,24 @@ train_loss = []
 #     return hook
 # Network.fc2.register_forward_hook(get_activation('fc2'))
 
-start = time.time()
+los = []
 for epoch in range(1, epochs + 1):
     running_loss = 0.0
     batch_acc = []
     batch_loss = []
     for batch_idx, data in enumerate(train_loader):
         im, inputs, labels = data
-        # print(batch_idx)
         optimizer.zero_grad()
         outputs = Network(im.to(device), inputs.to(device))
         loss = criterion(outputs, labels.long().to(device))
         loss.backward()
         optimizer.step()
-
         pred = outputs.argmax(dim=1, keepdim=True)
         correct = pred.eq(labels.to(device).long().view_as(pred)).sum().item()
         batch_acc.append(correct)
         batch_loss.append(loss.item())
-
+        los.append(loss.item())
+        print("batch done" + str(batch_idx))
     print("Dataset accuracy >> " +str(sum(batch_acc)) + ", Epoch "+ str(epoch)+ ", loss > " +str(sum(batch_loss)))
     train_accuracy.append(sum(batch_acc))
     train_loss.append(sum(batch_loss))
@@ -150,5 +153,3 @@ with open(args.output_path + "00trains","wb") as F:
   pickle.dump([train_loss,train_accuracy],F)
 torch.save(Network.state_dict(), "00testingdict.pt")
 torch.save(Network, "00testingcomplete.pt")
-end = time.time()
-

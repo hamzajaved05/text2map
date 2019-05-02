@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="15eabca7-34cf-4d42-92d6-2af9ec3b1e76" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/training_data_pytorch03.pickle" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +16,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="110" column="18" lean-forward="true" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
+            <state relative-caret-position="512">
+              <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
+              <folding>
+                <element signature="e#61#92#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -24,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rename_files.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
+            <state relative-caret-position="312">
               <caret line="27" selection-start-line="27" selection-end-line="27" />
               <folding>
                 <element signature="e#60#69#0" expanded="true" />
@@ -101,13 +105,13 @@
             <path>
               <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
               <item name="text2map" type="462c0819:PsiDirectoryNode" />
-              <item name="Dataset_processing" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
               <item name="text2map" type="462c0819:PsiDirectoryNode" />
-              <item name="Dataset_processing" type="462c0819:PsiDirectoryNode" />
-              <item name="split" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+              <item name="dl_logs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -146,8 +150,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1920" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27908218" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.28228387" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -160,7 +165,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32937366" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50053364" side_tool="true" weight="0.32937366" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4994664" visible="true" weight="0.3099352" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.4994664" visible="true" weight="0.3099352" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -257,10 +262,10 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/training(pytorch).py" />
-    <entry file="file://$PROJECT_DIR$/Modelchecking_torch.py">
+    <entry file="file://$PROJECT_DIR$/training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="32" column="38" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
+        <state relative-caret-position="512">
+          <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
           <folding>
             <element signature="e#61#92#0" expanded="true" />
           </folding>
@@ -269,7 +274,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rename_files.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
+        <state relative-caret-position="312">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
           <folding>
             <element signature="e#60#69#0" expanded="true" />
@@ -277,10 +282,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training.py">
+    <entry file="file://$PROJECT_DIR$/Modelchecking_torch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="110" column="18" lean-forward="true" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
+        <state relative-caret-position="276">
+          <caret line="32" column="38" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
+          <folding>
+            <element signature="e#61#92#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
