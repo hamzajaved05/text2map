@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="15eabca7-34cf-4d42-92d6-2af9ec3b1e76" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rename_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/rename_files.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/training(pytorch).py" beforeDir="false" afterPath="$PROJECT_DIR$/training(pytorch).py" afterDir="false" />
-    </list>
+    <list default="true" id="15eabca7-34cf-4d42-92d6-2af9ec3b1e76" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training(pytorch).py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+            <state relative-caret-position="540">
+              <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
               <folding>
                 <element signature="e#61#92#0" expanded="true" />
               </folding>
@@ -30,7 +26,7 @@
         <entry file="file://$PROJECT_DIR$/rename_files.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="324">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+              <caret line="27" selection-start-line="27" selection-end-line="27" />
               <folding>
                 <element signature="e#60#69#0" expanded="true" />
               </folding>
@@ -261,7 +257,7 @@
     <entry file="file://$PROJECT_DIR$/rename_files.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
           <folding>
             <element signature="e#60#69#0" expanded="true" />
           </folding>
@@ -270,8 +266,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training(pytorch).py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+        <state relative-caret-position="540">
+          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
           <folding>
             <element signature="e#61#92#0" expanded="true" />
           </folding>
