@@ -24,6 +24,7 @@ parser.add_argument("output_path",type = str, help = "path of outout dicts")
 parser.add_argument("pickle_path", type = str, help = "Path of pickle file")
 parser.add_argument("epochs", type = int, help = "no of epochs")
 parser.add_argument("batch_size", type = int, help = "batch_size")
+parser.add_argument("lr", type = float, help = "learning rate")
 args= parser.parse_args()
 
 with open(args.pickle_path, "rb") as a:
@@ -96,7 +97,7 @@ class Model(nn.Module):
         c = F.relu(c)
         c = self.c_dropout(c)
         c = self.c_linear2(c)
-        c = self.relu(c)
+        c = F.relu(c)
         c = self.c_dropout(c)
         c = self.c_linear3(c)
         return F.log_softmax(c, dim=1)
@@ -113,7 +114,7 @@ if torch.cuda.device_count() > 1:
   Network = nn.DataParallel(Network)
 
 Network.to(device)
-optimizer = optim.Adam(Network.parameters(), lr=0.001, weight_decay=1e-5)
+optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epochs
 
 train_accuracy = []
@@ -127,6 +128,7 @@ train_loss = []
 # Network.fc2.register_forward_hook(get_activation('fc2'))
 
 los = []
+acc= []
 for epoch in range(1, epochs + 1):
     running_loss = 0.0
     batch_acc = []
@@ -143,13 +145,14 @@ for epoch in range(1, epochs + 1):
         batch_acc.append(correct)
         batch_loss.append(loss.item())
         los.append(loss.item())
+        acc.append(correct)
         print("batch done" + str(batch_idx))
     print("Dataset accuracy >> " +str(sum(batch_acc)) + ", Epoch "+ str(epoch)+ ", loss > " +str(sum(batch_loss)))
     train_accuracy.append(sum(batch_acc))
     train_loss.append(sum(batch_loss))
 print('Finished Training')
 
-with open(args.output_path + "00trains","wb") as F:
-  pickle.dump([train_loss,train_accuracy],F)
-torch.save(Network.state_dict(), "00testingdict.pt")
-torch.save(Network, "00testingcomplete.pt")
+with open(args.output_path + "01_training_val","wb") as F:
+  pickle.dump([train_loss,train_accuracy,los,acc,args.batch_size, args.lr,args.epochs],F)
+torch.save(Network.state_dict(), "01_testingdict.pt")
+torch.save(Network, "01_testingcomplete.pt")
