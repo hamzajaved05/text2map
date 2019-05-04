@@ -2,8 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15eabca7-34cf-4d42-92d6-2af9ec3b1e76" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.00trains" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.01_training_val" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/00testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/02_testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/02_testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pickle02_training_val" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pickle03_training_val" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/training_data_pytorch03.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/00log.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/00testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/00testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/01log.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/01testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/01testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/02log.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/02testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/02testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/03log.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/03testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/04log.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/04testingcomplete.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/04testingdict.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/pytorch_data_01" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/training_data_pytorch03.pickle" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,10 +44,22 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
+            <state relative-caret-position="185">
+              <caret line="33" column="7" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="7" />
               <folding>
                 <element signature="e#61#92#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/openlogs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="132">
+              <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+              <folding>
+                <element signature="e#60#73#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -62,6 +102,9 @@
     <findStrings>
       <find>index</find>
       <find>out</find>
+      <find>batch</find>
+      <find>pickle</find>
+      <find>args</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -79,6 +122,7 @@
         <option value="$PROJECT_DIR$/util/matching.py" />
         <option value="$PROJECT_DIR$/rename_files.py" />
         <option value="$PROJECT_DIR$/training(pytorch).py" />
+        <option value="$PROJECT_DIR$/openlogs.py" />
         <option value="$PROJECT_DIR$/training.py" />
       </list>
     </option>
@@ -94,7 +138,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -107,21 +150,16 @@
               <item name="text2map" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
-              <item name="text2map" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-              <item name="dl_logs" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Machine Perception/project4" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -152,7 +190,7 @@
     <frame x="0" y="25" width="1920" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.28228387" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2950907" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -262,16 +300,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/training(pytorch).py" />
-    <entry file="file://$PROJECT_DIR$/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
-          <folding>
-            <element signature="e#61#92#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rename_files.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
@@ -286,6 +314,26 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
           <caret line="32" column="38" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
+          <folding>
+            <element signature="e#61#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/openlogs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding>
+            <element signature="e#60#73#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="33" column="7" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="7" />
           <folding>
             <element signature="e#61#92#0" expanded="true" />
           </folding>

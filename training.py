@@ -17,17 +17,25 @@ from torch.utils import data
 import time
 import cv2
 import argparse
+from math import ceil
+from tensorboardX import SummaryWriter
 
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
-parser.add_argument("patch_path",type = str, help = "Path for Image patches")
-parser.add_argument("output_path",type = str, help = "path of outout dicts")
-parser.add_argument("pickle_path", type = str, help = "Path of pickle file")
-parser.add_argument("epochs", type = int, help = "no of epochs")
-parser.add_argument("batch_size", type = int, help = "batch_size")
-parser.add_argument("lr", type = float, help = "learning rate")
+parser.add_argument("--impath",type = str, help = "Path for Image patches")
+parser.add_argument("--inpickle", type = str, help = "Path of pickle file")
+parser.add_argument("--epoch", type = int, help = "no of epochs")
+parser.add_argument("--batch", type = int, help = "batch_size")
+parser.add_argument("--lr", type = float, help = "learning rate")
+parser.add_argument("--logid",type = str, help = "logid")
+parser.add_argument("--write", default=True,type = bool, help = "Write on tensorboard")
+
 args= parser.parse_args()
 
-with open(args.pickle_path, "rb") as a:
+if args.write:
+    Writer = SummaryWriter("util/dl_logs/TBX/"+args.logid)
+    Writer.add_scalars("Metadata", {"Batch_size": args.batch, "learning_rate": args.lr, "logid": int(args.logid)})
+
+with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
 imageshape = [128,256]
 
@@ -54,12 +62,12 @@ class Model(nn.Module):
     def __init__(self, classes):
         super(Model, self).__init__()
         self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=7, padding=3)
-        self.i_pool1 = nn.MaxPool2d(4)
+        self.i_pool1 = nn.MaxPool2d(2)
         self.i_conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=7, padding=3)
         self.i_pool2 = nn.MaxPool2d(2)
         self.i_conv3 = nn.Conv2d(in_channels=16, out_channels= 32, kernel_size=7, padding=3)
         self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(32*16*8, 256)
+        self.i_linear = nn.Linear(32*32*16, 256)
 
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=16, kernel_size=7, padding=3)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
@@ -82,7 +90,7 @@ class Model(nn.Module):
         im = self.i_conv3(im)
         im = self.i_pool3(im)
         im = F.relu(im)
-        im = im.view(-1, 32*16*8)
+        im = im.view(-1, 32*16*32)
         im = self.i_linear(im)
 
         tx = self.t_conv1(tx)
@@ -100,22 +108,24 @@ class Model(nn.Module):
         c = F.relu(c)
         c = self.c_dropout(c)
         c = self.c_linear3(c)
-        return F.log_softmax(c, dim=1)
+        # return F.log_softmax(c, dim=1)
+        return c
 
-training_set = image_word_dataset(jpgs, words, words_sparse, klass, args.patch_path)
+
+training_set = image_word_dataset(jpgs, words, words_sparse, klass, args.impath)
 no_classes = len(modes)
 criterion = nn.CrossEntropyLoss()
-train_loader = DataLoader(training_set,batch_size=args.batch_size,shuffle = True)
+train_loader = DataLoader(training_set,batch_size=args.batch,shuffle = True)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 Network = Model(no_classes)
 
-if torch.cuda.device_count() > 1:
-  print("Let's use", torch.cuda.device_count(), "GPUs!")
-  Network = nn.DataParallel(Network)
+# if torch.cuda.device_count() > 1:
+#   print("Let's use", torch.cuda.device_count(), "GPUs!")
+#   Network = nn.DataParallel(Network)
 
 Network.to(device)
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
-epochs = args.epochs
+epochs = args.epoch
 
 train_accuracy = []
 train_loss = []
@@ -126,7 +136,7 @@ train_loss = []
 #         activation[name] = output.detach()
 #     return hook
 # Network.fc2.register_forward_hook(get_activation('fc2'))
-
+batches = ceil(len(klass)/args.batch)
 los = []
 acc= []
 for epoch in range(1, epochs + 1):
@@ -146,13 +156,16 @@ for epoch in range(1, epochs + 1):
         batch_loss.append(loss.item())
         los.append(loss.item())
         acc.append(correct)
-        print("batch done" + str(batch_idx))
-    print("Dataset accuracy >> " +str(sum(batch_acc)) + ", Epoch "+ str(epoch)+ ", loss > " +str(sum(batch_loss)))
+        # print("batch done" + str(batch_idx))
+    print("Dataset accuracy >> " +str(sum(batch_acc)) + ", Epoch "+ str(epoch)+ ", loss > " +str(sum(batch_loss)/len(klass)))
     train_accuracy.append(sum(batch_acc))
     train_loss.append(sum(batch_loss))
-print('Finished Training')
-
-with open(args.output_path + "04_training_val","wb") as F:
-  pickle.dump([train_loss,train_accuracy,los,acc,args.batch_size, args.lr,args.epochs],F)
-torch.save(Network.state_dict(), "04_testingdict.pt")
-torch.save(Network, "04_testingcomplete.pt")
+    if args.write:
+        for name, param in Network.named_parameters():
+            Writer.add_histogram(name, param.clone().cpu().data.numpy(), epochs * batches + batch_idx)
+        Writer.add_scalars("Training_log", {"Epoch_acc":sum(batch_acc)/len(klass), "Epoch_loss":sum(batch_loss)/len(klass)}, epoch)
+Writer.close()
+with open("util/dl_logs/"+args.logid+"_data.pickle","wb") as F:
+  pickle.dump([train_loss,train_accuracy,los,acc,args.batch, args.lr,args.epoch],F)
+torch.save(Network.state_dict(), "util/dl_logs/"+args.logid+"04_dict.pt")
+torch.save(Network, "util/dl_logs/"+args.logid+"04_dict_c.pt")
