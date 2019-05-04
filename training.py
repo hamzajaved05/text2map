@@ -28,7 +28,7 @@ parser.add_argument("--batch", type = int, help = "batch_size")
 parser.add_argument("--lr", type = float, help = "learning rate")
 parser.add_argument("--logid",type = str, help = "logid")
 parser.add_argument("--write", default=True,type = bool, help = "Write on tensorboard")
-
+parser.add_argument("--limit", default=-1, type = int, help = "Limit dataset")
 args= parser.parse_args()
 
 if args.write:
@@ -38,6 +38,12 @@ if args.write:
 with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
 imageshape = [128,256]
+
+klass = klass[:args.limit]
+words_sparse = words_sparse[:args.limit]
+words = words[:args.limit]
+jpgs = jpgs[:args.limit]
+modes = modes[:args.limit]
 
 print("\n\nData Loaded\n\n")
 
@@ -67,17 +73,17 @@ class Model(nn.Module):
         self.i_pool2 = nn.MaxPool2d(2)
         self.i_conv3 = nn.Conv2d(in_channels=16, out_channels= 32, kernel_size=7, padding=3)
         self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(32*32*16, 256)
+        self.i_linear = nn.Linear(32*32*16, 512)
 
-        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=16, kernel_size=7, padding=3)
+        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
-        self.t_conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(32*6,8)
+        self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
+        self.t_linear = nn.Linear(64*6,16)
 
-        self.c_linear1 = nn.Linear(256+8, 512)
-        self.c_dropout = nn.Dropout(p = 0.5)
-        self.c_linear2 = nn.Linear(512, 64)
-        self.c_linear3 = nn.Linear(64,classes)
+        self.c_linear1 = nn.Linear(512+16, 512)
+        self.c_dropout = nn.Dropout(p = 0.2)
+        self.c_linear2 = nn.Linear(512, 128)
+        self.c_linear3 = nn.Linear(128,classes)
 
 
     def forward(self, im, tx):
@@ -97,7 +103,7 @@ class Model(nn.Module):
         tx = self.t_pool1(tx)
         tx = F.relu(tx)
         tx = self.t_conv2(tx)
-        tx = tx.view(-1, 32*6)
+        tx = tx.view(-1, 64*6)
         tx = self.t_linear(tx)
 
         c = torch.cat((im,tx), 1)
@@ -113,7 +119,7 @@ class Model(nn.Module):
 
 
 training_set = image_word_dataset(jpgs, words, words_sparse, klass, args.impath)
-no_classes = len(modes)
+no_classes = klass[-1]+1
 criterion = nn.CrossEntropyLoss()
 train_loader = DataLoader(training_set,batch_size=args.batch,shuffle = True)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -156,6 +162,7 @@ for epoch in range(1, epochs + 1):
         batch_loss.append(loss.item())
         los.append(loss.item())
         acc.append(correct)
+        Writer.add_scalars("Batch_Training_log", {"Epoch_acc":(correct)/args.batch, "Epoch_loss":loss.item()/args.batch}, (epoch-1)*batches+batch_idx)
         # print("batch done" + str(batch_idx))
     print("Dataset accuracy >> " +str(sum(batch_acc)) + ", Epoch "+ str(epoch)+ ", loss > " +str(sum(batch_loss)/len(klass)))
     train_accuracy.append(sum(batch_acc))
@@ -167,5 +174,5 @@ for epoch in range(1, epochs + 1):
 Writer.close()
 with open("util/dl_logs/"+args.logid+"_data.pickle","wb") as F:
   pickle.dump([train_loss,train_accuracy,los,acc,args.batch, args.lr,args.epoch],F)
-torch.save(Network.state_dict(), "util/dl_logs/"+args.logid+"04_dict.pt")
-torch.save(Network, "util/dl_logs/"+args.logid+"04_dict_c.pt")
+torch.save(Network.state_dict(), "util/dl_logs/"+args.logid+"_dict.pt")
+torch.save(Network, "util/dl_logs/"+args.logid+"_dict_c.pt")

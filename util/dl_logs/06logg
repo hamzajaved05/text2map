@@ -1,0 +1,39 @@
+Sender: LSF System <lsfadmin@lo-s4-029>
+Subject: Job 1890575: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.02 --logid 06 --write True --limit 50000> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.02 --logid 06 --write True --limit 50000> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sat May  4 16:42:59 2019
+Job was executed on host(s) <2*lo-s4-029>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 16:43:19 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 16:43:19 2019
+Terminated at Sat May  4 16:43:26 2019
+Results reported at Sat May  4 16:43:26 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.02 --logid 06 --write True --limit 50000
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   3.66 sec.
+    Max Memory :                                 456 MB
+    Average Memory :                             244.00 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               7736.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                6
+    Run time :                                   33 sec.
+    Turnaround time :                            27 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 46, in <module>
+    modes = modes[:args.modes]
+AttributeError: 'Namespace' object has no attribute 'modes'

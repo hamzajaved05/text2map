@@ -1,0 +1,104 @@
+Sender: LSF System <lsfadmin@lo-s4-027>
+Subject: Job 1890672: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000> was submitted from host <lo-s4-006> by user <javedh> in cluster <leonhard> at Sat May  4 19:56:02 2019
+Job was executed on host(s) <2*lo-s4-027>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 19:56:12 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 19:56:12 2019
+Terminated at Sat May  4 19:57:14 2019
+Results reported at Sat May  4 19:57:14 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   15.80 sec.
+    Max Memory :                                 4153 MB
+    Average Memory :                             2260.25 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4039.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                13
+    Run time :                                   75 sec.
+    Turnaround time :                            72 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Traceback (most recent call last):
+  File "training.py", line 155, in <module>
+    outputs = Network(im.to(device), inputs.to(device))
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "training.py", line 105, in forward
+    tx = self.t_conv2(tx)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/conv.py", line 187, in forward
+    self.padding, self.dilation, self.groups)
+RuntimeError: Given groups=1, weight of size [64, 16, 5], expected input[2048, 32, 6] to have 16 channels, but got 32 channels instead
+Sender: LSF System <lsfadmin@lo-s4-040>
+Subject: Job 1890673: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 1024 --lr 0.0001 --logid 08 --write True --limit 40000> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 1024 --lr 0.0001 --logid 08 --write True --limit 40000> was submitted from host <lo-s4-006> by user <javedh> in cluster <leonhard> at Sat May  4 19:56:29 2019
+Job was executed on host(s) <2*lo-s4-040>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 19:56:41 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 19:56:41 2019
+Terminated at Sat May  4 19:57:17 2019
+Results reported at Sat May  4 19:57:17 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 1024 --lr 0.0001 --logid 08 --write True --limit 40000
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   11.20 sec.
+    Max Memory :                                 3335 MB
+    Average Memory :                             2619.00 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4857.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                13
+    Run time :                                   41 sec.
+    Turnaround time :                            48 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Traceback (most recent call last):
+  File "training.py", line 155, in <module>
+    outputs = Network(im.to(device), inputs.to(device))
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "training.py", line 105, in forward
+    tx = self.t_conv2(tx)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/conv.py", line 187, in forward
+    self.padding, self.dilation, self.groups)
+RuntimeError: Given groups=1, weight of size [64, 16, 5], expected input[1024, 32, 6] to have 16 channels, but got 32 channels instead

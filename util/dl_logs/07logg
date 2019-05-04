@@ -1,0 +1,88 @@
+Sender: LSF System <lsfadmin@lo-s4-006>
+Subject: Job 1890612: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sat May  4 18:04:42 2019
+Job was executed on host(s) <2*lo-s4-006>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 18:05:11 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 18:05:11 2019
+Terminated at Sat May  4 18:06:14 2019
+Results reported at Sat May  4 18:06:14 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 1000 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   16.25 sec.
+    Max Memory :                                 4173 MB
+    Average Memory :                             2286.25 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4019.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                13
+    Run time :                                   65 sec.
+    Turnaround time :                            92 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Traceback (most recent call last):
+  File "training.py", line 165, in <module>
+    Writer.add_scalars("Batch_Training_log", {"Epoch_acc":sum(correct)/args.batch, "Epoch_loss":sum(loss.item())/args.batch}, (epoch-1)*batches+batch_idx)
+TypeError: 'int' object is not iterable
+Sender: LSF System <lsfadmin@lo-s4-006>
+Subject: Job 1890620: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sat May  4 18:14:42 2019
+Job was executed on host(s) <2*lo-s4-006>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 18:15:11 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 18:15:11 2019
+Terminated at Sat May  4 18:16:13 2019
+Results reported at Sat May  4 18:16:13 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 07 --write True --limit 50000
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   15.85 sec.
+    Max Memory :                                 3638 MB
+    Average Memory :                             1852.50 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4554.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                13
+    Run time :                                   72 sec.
+    Turnaround time :                            91 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Traceback (most recent call last):
+  File "training.py", line 165, in <module>
+    Writer.add_scalars("Batch_Training_log", {"Epoch_acc":sum(correct)/args.batch, "Epoch_loss":loss.item()/args.batch}, (epoch-1)*batches+batch_idx)
+TypeError: 'int' object is not iterable

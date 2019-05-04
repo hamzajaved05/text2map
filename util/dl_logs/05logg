@@ -1,0 +1,131 @@
+Sender: LSF System <lsfadmin@lo-s4-037>
+Subject: Job 1890363: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 4096 --lr 0.02 --logid 05 --write True> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 4096 --lr 0.02 --logid 05 --write True> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sat May  4 14:19:18 2019
+Job was executed on host(s) <2*lo-s4-037>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 14:19:40 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 14:19:40 2019
+Terminated at Sat May  4 14:21:14 2019
+Results reported at Sat May  4 14:21:14 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 4096 --lr 0.02 --logid 05 --write True
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   23.32 sec.
+    Max Memory :                                 5510 MB
+    Average Memory :                             2680.80 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               2682.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                13
+    Run time :                                   94 sec.
+    Turnaround time :                            116 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Traceback (most recent call last):
+  File "training.py", line 149, in <module>
+    outputs = Network(im.to(device), inputs.to(device))
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "training.py", line 87, in forward
+    im = self.i_conv2(im)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/conv.py", line 320, in forward
+    self.padding, self.dilation, self.groups)
+RuntimeError: CUDA out of memory. Tried to allocate 2.00 GiB (GPU 0; 10.92 GiB total capacity; 9.53 GiB already allocated; 825.50 MiB free; 101.50 KiB cached)
+Sender: LSF System <lsfadmin@lo-s4-023>
+Subject: Job 1890399: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 2048 --lr 0.02 --logid 05 --write True> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 2048 --lr 0.02 --logid 05 --write True> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sat May  4 14:30:51 2019
+Job was executed on host(s) <2*lo-s4-023>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 14:31:10 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 14:31:10 2019
+Terminated at Sat May  4 19:54:16 2019
+Results reported at Sat May  4 19:54:16 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 100 --batch 2048 --lr 0.02 --logid 05 --write True
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   15059.44 sec.
+    Max Memory :                                 4793 MB
+    Average Memory :                             3970.71 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3399.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                17
+    Run time :                                   19412 sec.
+    Turnaround time :                            19405 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Dataset accuracy >> 462, Epoch 1, loss > 0.07500588720276744
+Dataset accuracy >> 692, Epoch 2, loss > 0.004509387950611276
+Dataset accuracy >> 716, Epoch 3, loss > 0.004462814675964024
+Dataset accuracy >> 698, Epoch 4, loss > 0.004455150637515109
+Dataset accuracy >> 710, Epoch 5, loss > 0.004453246385648923
+Dataset accuracy >> 695, Epoch 6, loss > 0.004452612855808116
+Dataset accuracy >> 718, Epoch 7, loss > 0.004452482814789189
+Dataset accuracy >> 722, Epoch 8, loss > 0.004452133009964972
+Dataset accuracy >> 700, Epoch 9, loss > 0.004452201894478901
+Dataset accuracy >> 701, Epoch 10, loss > 0.00445218762988173
+Dataset accuracy >> 708, Epoch 11, loss > 0.004451975246394508
+Dataset accuracy >> 700, Epoch 12, loss > 0.004452203034904934
+Dataset accuracy >> 717, Epoch 13, loss > 0.00445213969953719
+Dataset accuracy >> 713, Epoch 14, loss > 0.00445202531387889
+Dataset accuracy >> 709, Epoch 15, loss > 0.004452241114008334
+Dataset accuracy >> 720, Epoch 16, loss > 0.004451938817663741
+Dataset accuracy >> 708, Epoch 17, loss > 0.004452176819013806
+Dataset accuracy >> 692, Epoch 18, loss > 0.00445216948505452
+Dataset accuracy >> 705, Epoch 19, loss > 0.004451961199683612
+Dataset accuracy >> 675, Epoch 20, loss > 0.004452186735157241
+Dataset accuracy >> 716, Epoch 21, loss > 0.004452033116061873
+Dataset accuracy >> 729, Epoch 22, loss > 0.004451888680641186
+Dataset accuracy >> 692, Epoch 23, loss > 0.00445208740683128
+Dataset accuracy >> 699, Epoch 24, loss > 0.004451880053271886
+Dataset accuracy >> 714, Epoch 25, loss > 0.004452042429541143
+Dataset accuracy >> 711, Epoch 26, loss > 0.004451987392395348
+Dataset accuracy >> 703, Epoch 27, loss > 0.004452000887436741
+Dataset accuracy >> 697, Epoch 28, loss > 0.004452004058377418
+Traceback (most recent call last):
+  File "training.py", line 146, in <module>
+    los = []
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/utils/data/dataloader.py", line 615, in __next__
+    batch = self.collate_fn([self.dataset[i] for i in indices])
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/utils/data/dataloader.py", line 615, in <listcomp>
+    batch = self.collate_fn([self.dataset[i] for i in indices])
+  File "training.py", line 58, in __getitem__
+    def __len__(self):
+KeyboardInterrupt
