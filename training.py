@@ -152,7 +152,7 @@ for epoch in range(1, epochs + 1):
     train_loss.append(sum(batch_loss))
 print('Finished Training')
 
-with open(args.output_path + "01_training_val","wb") as F:
+with open(args.output_path + "04_training_val","wb") as F:
   pickle.dump([train_loss,train_accuracy,los,acc,args.batch_size, args.lr,args.epochs],F)
-torch.save(Network.state_dict(), "01_testingdict.pt")
-torch.save(Network, "01_testingcomplete.pt")
+torch.save(Network.state_dict(), "04_testingdict.pt")
+torch.save(Network, "04_testingcomplete.pt")
