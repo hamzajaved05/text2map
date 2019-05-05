@@ -2,36 +2,97 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15eabca7-34cf-4d42-92d6-2af9ec3b1e76" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.00trains" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.01_training_val" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/00testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/00testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pickle02_training_val" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pickle03_training_val" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/00log.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/00testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/00testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/01log.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/01testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/01testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/02log.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/02testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/02testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/03log.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/03testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/04log.pickle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/04testingcomplete.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/04testingdict.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/dl_logs/pytorch_data_01" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/training_data_pytorch03.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/Batch_size/events.out.tfevents.1556969321.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/Batch_size/events.out.tfevents.1556969492.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/Batch_size/events.out.tfevents.1556969517.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/Batch_size/events.out.tfevents.1556970552.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/learning_rate/events.out.tfevents.1556969321.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/learning_rate/events.out.tfevents.1556969492.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/learning_rate/events.out.tfevents.1556969517.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/learning_rate/events.out.tfevents.1556970552.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/logid/events.out.tfevents.1556969321.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/logid/events.out.tfevents.1556969492.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/logid/events.out.tfevents.1556969517.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Metadata/logid/events.out.tfevents.1556970552.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Training_log/Epoch_acc/events.out.tfevents.1556974614.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/Training_log/Epoch_loss/events.out.tfevents.1556974614.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556968994.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556969239.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556969321.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556969492.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556969517.presag3l-bot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/04/events.out.tfevents.1556970552.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/Batch_size/events.out.tfevents.1556972385.lo-s4-037" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/Batch_size/events.out.tfevents.1556973073.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/learning_rate/events.out.tfevents.1556972385.lo-s4-037" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/learning_rate/events.out.tfevents.1556973073.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/logid/events.out.tfevents.1556972385.lo-s4-037" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Metadata/logid/events.out.tfevents.1556973073.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Training_log/Epoch_acc/events.out.tfevents.1556974718.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/Training_log/Epoch_loss/events.out.tfevents.1556974719.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/events.out.tfevents.1556972385.lo-s4-037" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/05/events.out.tfevents.1556973073.lo-s4-023" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/Batch_size/events.out.tfevents.1556981004.lo-s4-029" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/Batch_size/events.out.tfevents.1556981094.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/learning_rate/events.out.tfevents.1556981004.lo-s4-029" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/learning_rate/events.out.tfevents.1556981094.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/logid/events.out.tfevents.1556981004.lo-s4-029" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Metadata/logid/events.out.tfevents.1556981094.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Training_log/Epoch_acc/events.out.tfevents.1556982331.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/Training_log/Epoch_loss/events.out.tfevents.1556982331.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/events.out.tfevents.1556981004.lo-s4-029" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/06/events.out.tfevents.1556981094.lo-s4-005" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Batch_Training_log/Epoch_acc/events.out.tfevents.1556986809.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Batch_Training_log/Epoch_loss/events.out.tfevents.1556986809.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/Batch_size/events.out.tfevents.1556985915.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/Batch_size/events.out.tfevents.1556986514.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/Batch_size/events.out.tfevents.1556986755.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/learning_rate/events.out.tfevents.1556985915.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/learning_rate/events.out.tfevents.1556986514.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/learning_rate/events.out.tfevents.1556986755.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/logid/events.out.tfevents.1556985915.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/logid/events.out.tfevents.1556986514.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Metadata/logid/events.out.tfevents.1556986755.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Training_log/Epoch_acc/events.out.tfevents.1556987923.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/Training_log/Epoch_loss/events.out.tfevents.1556987923.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/events.out.tfevents.1556985915.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/events.out.tfevents.1556986514.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/07/events.out.tfevents.1556986755.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Batch_Training_log/Epoch_acc/events.out.tfevents.1556993320.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Batch_Training_log/Epoch_loss/events.out.tfevents.1556993320.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/Batch_size/events.out.tfevents.1556992576.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/Batch_size/events.out.tfevents.1556992604.lo-s4-040" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/Batch_size/events.out.tfevents.1556993264.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/learning_rate/events.out.tfevents.1556992576.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/learning_rate/events.out.tfevents.1556992604.lo-s4-040" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/learning_rate/events.out.tfevents.1556993264.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/logid/events.out.tfevents.1556992576.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/logid/events.out.tfevents.1556992604.lo-s4-040" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Metadata/logid/events.out.tfevents.1556993264.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Training_log/Epoch_acc/events.out.tfevents.1556994220.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/Training_log/Epoch_loss/events.out.tfevents.1556994220.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/events.out.tfevents.1556992576.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/events.out.tfevents.1556992604.lo-s4-040" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/08/events.out.tfevents.1556993264.lo-s4-027" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Batch_Training_log/Epoch_acc/events.out.tfevents.1556993279.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Batch_Training_log/Epoch_loss/events.out.tfevents.1556993279.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Metadata/Batch_size/events.out.tfevents.1556993265.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Metadata/learning_rate/events.out.tfevents.1556993265.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Metadata/logid/events.out.tfevents.1556993265.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Training_log/Epoch_acc/events.out.tfevents.1556993399.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/Training_log/Epoch_loss/events.out.tfevents.1556993399.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/09/events.out.tfevents.1556993265.lo-s4-006" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Batch_Training_log/Epoch_acc/events.out.tfevents.1557012297.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Batch_Training_log/Epoch_loss/events.out.tfevents.1557012297.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Metadata/Batch_size/events.out.tfevents.1557012239.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Metadata/learning_rate/events.out.tfevents.1557012239.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Metadata/logid/events.out.tfevents.1557012239.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Training_log/Epoch_acc/events.out.tfevents.1557014052.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/Training_log/Epoch_loss/events.out.tfevents.1557014052.lo-s4-048" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dl_logs/TBX/10/events.out.tfevents.1557012239.lo-s4-048" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,10 +105,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="33" column="7" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="7" />
+            <state relative-caret-position="464">
+              <caret line="206" column="28" selection-start-line="206" selection-start-column="28" selection-end-line="206" selection-end-column="28" />
               <folding>
-                <element signature="e#61#92#0" expanded="true" />
+                <element signature="e#62#93#0" expanded="true" />
+                <element signature="e#2718#3307#0" />
+                <element signature="e#3337#5124#0" />
               </folding>
             </state>
           </provider>
@@ -56,7 +119,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/openlogs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
+            <state relative-caret-position="108">
               <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
               <folding>
                 <element signature="e#60#73#0" expanded="true" />
@@ -105,6 +168,7 @@
       <find>batch</find>
       <find>pickle</find>
       <find>args</find>
+      <find>dl_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -128,9 +192,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="978" />
-    <option name="y" value="244" />
-    <option name="width" value="940" />
+    <option name="x" value="645" />
+    <option name="y" value="27" />
+    <option name="width" value="930" />
     <option name="height" value="815" />
   </component>
   <component name="ProjectView">
@@ -138,6 +202,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -154,7 +219,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -190,7 +254,7 @@
     <frame x="0" y="25" width="1920" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2950907" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19637139" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -300,6 +364,28 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/training(pytorch).py" />
+    <entry file="file://$PROJECT_DIR$/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="206" column="28" selection-start-line="206" selection-start-column="28" selection-end-line="206" selection-end-column="28" />
+          <folding>
+            <element signature="e#62#93#0" expanded="true" />
+            <element signature="e#2718#3307#0" />
+            <element signature="e#3337#5124#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/openlogs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding>
+            <element signature="e#60#73#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rename_files.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
@@ -314,26 +400,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
           <caret line="32" column="38" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
-          <folding>
-            <element signature="e#61#92#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/openlogs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
-          <folding>
-            <element signature="e#60#73#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="33" column="7" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="7" />
           <folding>
             <element signature="e#61#92#0" expanded="true" />
           </folding>
