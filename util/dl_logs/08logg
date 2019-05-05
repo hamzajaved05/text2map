@@ -102,3 +102,343 @@ Traceback (most recent call last):
   File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/conv.py", line 187, in forward
     self.padding, self.dilation, self.groups)
 RuntimeError: Given groups=1, weight of size [64, 16, 5], expected input[1024, 32, 6] to have 16 channels, but got 32 channels instead
+Sender: LSF System <lsfadmin@lo-s4-027>
+Subject: Job 1890675: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000> in cluster <leonhard> Done
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000> was submitted from host <lo-s4-006> by user <javedh> in cluster <leonhard> at Sat May  4 20:07:13 2019
+Job was executed on host(s) <2*lo-s4-027>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sat May  4 20:07:41 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sat May  4 20:07:41 2019
+Terminated at Sun May  5 07:00:28 2019
+Results reported at Sun May  5 07:00:28 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 300 --batch 2048 --lr 0.001 --logid 08 --write True --limit 40000
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   31184.91 sec.
+    Max Memory :                                 4660 MB
+    Average Memory :                             3839.53 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3532.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                19
+    Run time :                                   39192 sec.
+    Turnaround time :                            39195 sec.
+
+The output (if any) follows:
+
+
+
+Data Loaded
+
+
+Dataset accuracy >> 403, Epoch 1, loss > 0.0033137181997299195
+Dataset accuracy >> 587, Epoch 2, loss > 0.0030055360198020936
+Dataset accuracy >> 929, Epoch 3, loss > 0.002912602198123932
+Dataset accuracy >> 1912, Epoch 4, loss > 0.0027134960532188414
+Dataset accuracy >> 4104, Epoch 5, loss > 0.002419341719150543
+Dataset accuracy >> 7230, Epoch 6, loss > 0.002105038720369339
+Dataset accuracy >> 10873, Epoch 7, loss > 0.0018178027391433716
+Dataset accuracy >> 14109, Epoch 8, loss > 0.00156842782497406
+Dataset accuracy >> 16464, Epoch 9, loss > 0.001396668142080307
+Dataset accuracy >> 17954, Epoch 10, loss > 0.0012813734889030456
+Dataset accuracy >> 19897, Epoch 11, loss > 0.0011603166580200195
+Dataset accuracy >> 21084, Epoch 12, loss > 0.0010726051330566407
+Dataset accuracy >> 22030, Epoch 13, loss > 0.001000421041250229
+Dataset accuracy >> 23009, Epoch 14, loss > 0.0009406573712825775
+Dataset accuracy >> 23403, Epoch 15, loss > 0.000898818439245224
+Dataset accuracy >> 24268, Epoch 16, loss > 0.0008502032101154328
+Dataset accuracy >> 24894, Epoch 17, loss > 0.0008087117075920105
+Dataset accuracy >> 25358, Epoch 18, loss > 0.0007746482938528061
+Dataset accuracy >> 25886, Epoch 19, loss > 0.0007399472594261169
+Dataset accuracy >> 26158, Epoch 20, loss > 0.0007192894876003266
+Dataset accuracy >> 26601, Epoch 21, loss > 0.0006833855509757996
+Dataset accuracy >> 26984, Epoch 22, loss > 0.0006638603299856186
+Dataset accuracy >> 27422, Epoch 23, loss > 0.0006355570018291473
+Dataset accuracy >> 27722, Epoch 24, loss > 0.0006171293020248413
+Dataset accuracy >> 28072, Epoch 25, loss > 0.0006002362906932831
+Dataset accuracy >> 28359, Epoch 26, loss > 0.0005732529073953628
+Dataset accuracy >> 28688, Epoch 27, loss > 0.0005558389186859131
+Dataset accuracy >> 28999, Epoch 28, loss > 0.0005373182848095894
+Dataset accuracy >> 29180, Epoch 29, loss > 0.0005249928057193756
+Dataset accuracy >> 29589, Epoch 30, loss > 0.0005013429313898087
+Dataset accuracy >> 29794, Epoch 31, loss > 0.000488280288875103
+Dataset accuracy >> 30153, Epoch 32, loss > 0.00047057445645332335
+Dataset accuracy >> 30323, Epoch 33, loss > 0.0004597011998295784
+Dataset accuracy >> 30373, Epoch 34, loss > 0.00045472438931465147
+Dataset accuracy >> 30591, Epoch 35, loss > 0.00043995869755744936
+Dataset accuracy >> 30773, Epoch 36, loss > 0.0004325310379266739
+Dataset accuracy >> 31014, Epoch 37, loss > 0.00041594624221324923
+Dataset accuracy >> 31413, Epoch 38, loss > 0.00039736543744802475
+Dataset accuracy >> 31800, Epoch 39, loss > 0.00037812392562627795
+Dataset accuracy >> 32053, Epoch 40, loss > 0.00036751017570495605
+Dataset accuracy >> 32085, Epoch 41, loss > 0.0003616927519440651
+Dataset accuracy >> 32289, Epoch 42, loss > 0.00034603241533041
+Dataset accuracy >> 32602, Epoch 43, loss > 0.0003364278480410576
+Dataset accuracy >> 32794, Epoch 44, loss > 0.0003244000971317291
+Dataset accuracy >> 32912, Epoch 45, loss > 0.00032038814574480057
+Dataset accuracy >> 33098, Epoch 46, loss > 0.00030869639962911605
+Dataset accuracy >> 33236, Epoch 47, loss > 0.00030014918744564054
+Dataset accuracy >> 33515, Epoch 48, loss > 0.0002884474664926529
+Dataset accuracy >> 33673, Epoch 49, loss > 0.00028193881064653397
+Dataset accuracy >> 33757, Epoch 50, loss > 0.000275503096729517
+Dataset accuracy >> 33840, Epoch 51, loss > 0.00027235173135995865
+Dataset accuracy >> 34249, Epoch 52, loss > 0.0002502020224928856
+Dataset accuracy >> 34301, Epoch 53, loss > 0.00024717997908592224
+Dataset accuracy >> 34341, Epoch 54, loss > 0.0002459979645907879
+Dataset accuracy >> 34345, Epoch 55, loss > 0.0002421881504356861
+Dataset accuracy >> 34720, Epoch 56, loss > 0.0002309681162238121
+Dataset accuracy >> 34826, Epoch 57, loss > 0.0002225365236401558
+Dataset accuracy >> 34948, Epoch 58, loss > 0.0002156123235821724
+Dataset accuracy >> 35019, Epoch 59, loss > 0.00021313972920179367
+Dataset accuracy >> 35015, Epoch 60, loss > 0.00021272876337170602
+Dataset accuracy >> 35357, Epoch 61, loss > 0.00019676072001457214
+Dataset accuracy >> 35399, Epoch 62, loss > 0.00019823758080601692
+Dataset accuracy >> 35558, Epoch 63, loss > 0.0001913454182446003
+Dataset accuracy >> 35571, Epoch 64, loss > 0.00018737552538514139
+Dataset accuracy >> 35823, Epoch 65, loss > 0.00017588132321834563
+Dataset accuracy >> 35863, Epoch 66, loss > 0.0001754438668489456
+Dataset accuracy >> 35905, Epoch 67, loss > 0.00017391386553645134
+Dataset accuracy >> 36119, Epoch 68, loss > 0.00016707685440778733
+Dataset accuracy >> 36194, Epoch 69, loss > 0.0001593347705900669
+Dataset accuracy >> 36240, Epoch 70, loss > 0.00015771821960806846
+Dataset accuracy >> 36292, Epoch 71, loss > 0.00015632994696497917
+Dataset accuracy >> 36265, Epoch 72, loss > 0.00015564677119255066
+Dataset accuracy >> 36493, Epoch 73, loss > 0.0001445797175168991
+Dataset accuracy >> 36460, Epoch 74, loss > 0.00014668151997029782
+Dataset accuracy >> 36391, Epoch 75, loss > 0.00015030434839427472
+Dataset accuracy >> 36634, Epoch 76, loss > 0.0001431835327297449
+Dataset accuracy >> 36757, Epoch 77, loss > 0.00013577818125486374
+Dataset accuracy >> 36737, Epoch 78, loss > 0.00013679967261850834
+Dataset accuracy >> 36600, Epoch 79, loss > 0.0001430045023560524
+Dataset accuracy >> 36702, Epoch 80, loss > 0.0001403904590755701
+Dataset accuracy >> 36813, Epoch 81, loss > 0.00013044904582202435
+Dataset accuracy >> 36995, Epoch 82, loss > 0.00012696794643998147
+Dataset accuracy >> 36990, Epoch 83, loss > 0.00012263305597007274
+Dataset accuracy >> 37110, Epoch 84, loss > 0.00012197764329612255
+Dataset accuracy >> 37155, Epoch 85, loss > 0.00012085281051695347
+Dataset accuracy >> 37193, Epoch 86, loss > 0.0001158360879868269
+Dataset accuracy >> 37249, Epoch 87, loss > 0.00011232875995337963
+Dataset accuracy >> 37296, Epoch 88, loss > 0.00011616846546530724
+Dataset accuracy >> 37302, Epoch 89, loss > 0.0001130210280418396
+Dataset accuracy >> 37377, Epoch 90, loss > 0.00010881354659795761
+Dataset accuracy >> 37297, Epoch 91, loss > 0.00011059814803302288
+Dataset accuracy >> 37329, Epoch 92, loss > 0.00010950226783752441
+Dataset accuracy >> 37492, Epoch 93, loss > 0.00010621029250323772
+Dataset accuracy >> 37447, Epoch 94, loss > 0.00010648218654096127
+Dataset accuracy >> 37359, Epoch 95, loss > 0.00011054884791374207
+Dataset accuracy >> 37628, Epoch 96, loss > 0.0001007763147354126
+Dataset accuracy >> 37434, Epoch 97, loss > 0.00010526044443249702
+Dataset accuracy >> 37635, Epoch 98, loss > 9.844115562736988e-05
+Dataset accuracy >> 37676, Epoch 99, loss > 9.590692184865474e-05
+Dataset accuracy >> 37674, Epoch 100, loss > 9.756567031145096e-05
+Dataset accuracy >> 37723, Epoch 101, loss > 9.182541593909264e-05
+Dataset accuracy >> 37763, Epoch 102, loss > 9.325778000056744e-05
+Dataset accuracy >> 37913, Epoch 103, loss > 8.69540262967348e-05
+Dataset accuracy >> 37870, Epoch 104, loss > 8.877946883440017e-05
+Dataset accuracy >> 37778, Epoch 105, loss > 9.235363528132439e-05
+Dataset accuracy >> 37894, Epoch 106, loss > 8.709032684564591e-05
+Dataset accuracy >> 37760, Epoch 107, loss > 9.280502460896969e-05
+Dataset accuracy >> 37904, Epoch 108, loss > 8.61970640718937e-05
+Dataset accuracy >> 37872, Epoch 109, loss > 8.89391951262951e-05
+Dataset accuracy >> 37925, Epoch 110, loss > 8.614859841763973e-05
+Dataset accuracy >> 37931, Epoch 111, loss > 8.720158636569976e-05
+Dataset accuracy >> 37971, Epoch 112, loss > 8.344754241406917e-05
+Dataset accuracy >> 37977, Epoch 113, loss > 8.413311801850796e-05
+Dataset accuracy >> 38099, Epoch 114, loss > 7.985304817557335e-05
+Dataset accuracy >> 37994, Epoch 115, loss > 8.519191816449165e-05
+Dataset accuracy >> 37994, Epoch 116, loss > 8.259225524961948e-05
+Dataset accuracy >> 38078, Epoch 117, loss > 7.836704701185226e-05
+Dataset accuracy >> 38088, Epoch 118, loss > 8.123790938407182e-05
+Dataset accuracy >> 38185, Epoch 119, loss > 7.630100511014462e-05
+Dataset accuracy >> 38170, Epoch 120, loss > 7.689752541482449e-05
+Dataset accuracy >> 38100, Epoch 121, loss > 7.943430133163929e-05
+Dataset accuracy >> 38089, Epoch 122, loss > 7.886209674179554e-05
+Dataset accuracy >> 38125, Epoch 123, loss > 7.872317265719175e-05
+Dataset accuracy >> 38123, Epoch 124, loss > 7.669865675270558e-05
+Dataset accuracy >> 37879, Epoch 125, loss > 8.88239935040474e-05
+Dataset accuracy >> 38178, Epoch 126, loss > 7.571428008377552e-05
+Dataset accuracy >> 38239, Epoch 127, loss > 7.325021233409644e-05
+Dataset accuracy >> 38428, Epoch 128, loss > 6.78370850160718e-05
+Dataset accuracy >> 38350, Epoch 129, loss > 6.992693692445755e-05
+Dataset accuracy >> 38346, Epoch 130, loss > 6.804085820913315e-05
+Dataset accuracy >> 38481, Epoch 131, loss > 6.282309778034687e-05
+Dataset accuracy >> 38342, Epoch 132, loss > 6.854526828974486e-05
+Dataset accuracy >> 38344, Epoch 133, loss > 6.848532315343619e-05
+Dataset accuracy >> 38138, Epoch 134, loss > 7.962648663669825e-05
+Dataset accuracy >> 38300, Epoch 135, loss > 7.297828774899244e-05
+Dataset accuracy >> 38322, Epoch 136, loss > 7.120455615222454e-05
+Dataset accuracy >> 38238, Epoch 137, loss > 7.5939273647964e-05
+Dataset accuracy >> 38239, Epoch 138, loss > 7.324512638151645e-05
+Dataset accuracy >> 38300, Epoch 139, loss > 7.139942739158868e-05
+Dataset accuracy >> 38333, Epoch 140, loss > 6.99696397408843e-05
+Dataset accuracy >> 38376, Epoch 141, loss > 6.765023414045573e-05
+Dataset accuracy >> 38321, Epoch 142, loss > 6.954598985612392e-05
+Dataset accuracy >> 38415, Epoch 143, loss > 6.785628776997328e-05
+Dataset accuracy >> 38265, Epoch 144, loss > 7.292625661939382e-05
+Dataset accuracy >> 38413, Epoch 145, loss > 6.670614629983902e-05
+Dataset accuracy >> 38376, Epoch 146, loss > 6.854361370205879e-05
+Dataset accuracy >> 38445, Epoch 147, loss > 6.516159605234861e-05
+Dataset accuracy >> 38457, Epoch 148, loss > 6.499524265527726e-05
+Dataset accuracy >> 38553, Epoch 149, loss > 6.0474438033998014e-05
+Dataset accuracy >> 38506, Epoch 150, loss > 6.414783541113138e-05
+Dataset accuracy >> 38476, Epoch 151, loss > 6.161052100360394e-05
+Dataset accuracy >> 38536, Epoch 152, loss > 6.202113702893257e-05
+Dataset accuracy >> 38510, Epoch 153, loss > 6.110421922057866e-05
+Dataset accuracy >> 38217, Epoch 154, loss > 7.70764198154211e-05
+Dataset accuracy >> 37998, Epoch 155, loss > 8.660194594413042e-05
+Dataset accuracy >> 38403, Epoch 156, loss > 6.833901349455118e-05
+Dataset accuracy >> 38429, Epoch 157, loss > 6.634757220745086e-05
+Dataset accuracy >> 38278, Epoch 158, loss > 7.326507084071636e-05
+Dataset accuracy >> 38443, Epoch 159, loss > 6.532442774623633e-05
+Dataset accuracy >> 38424, Epoch 160, loss > 6.626301445066928e-05
+Dataset accuracy >> 38453, Epoch 161, loss > 6.545663010329008e-05
+Dataset accuracy >> 38377, Epoch 162, loss > 6.923693157732487e-05
+Dataset accuracy >> 38477, Epoch 163, loss > 6.486339289695025e-05
+Dataset accuracy >> 38611, Epoch 164, loss > 5.7496539503335953e-05
+Dataset accuracy >> 38592, Epoch 165, loss > 6.0618334822356704e-05
+Dataset accuracy >> 38685, Epoch 166, loss > 5.673261843621731e-05
+Dataset accuracy >> 38650, Epoch 167, loss > 5.559193398803472e-05
+Dataset accuracy >> 38605, Epoch 168, loss > 5.7530277967453e-05
+Dataset accuracy >> 38576, Epoch 169, loss > 6.241876650601625e-05
+Dataset accuracy >> 38533, Epoch 170, loss > 6.040845438838005e-05
+Dataset accuracy >> 38401, Epoch 171, loss > 7.062435466796159e-05
+Dataset accuracy >> 38505, Epoch 172, loss > 6.502383779734372e-05
+Dataset accuracy >> 38430, Epoch 173, loss > 6.42044747248292e-05
+Dataset accuracy >> 38622, Epoch 174, loss > 5.879560429602862e-05
+Dataset accuracy >> 38708, Epoch 175, loss > 5.490431170910597e-05
+Dataset accuracy >> 38678, Epoch 176, loss > 5.87841073051095e-05
+Dataset accuracy >> 38651, Epoch 177, loss > 5.75422715395689e-05
+Dataset accuracy >> 38709, Epoch 178, loss > 5.683401431888342e-05
+Dataset accuracy >> 38579, Epoch 179, loss > 6.111842226237058e-05
+Dataset accuracy >> 38521, Epoch 180, loss > 6.204610709100961e-05
+Dataset accuracy >> 38566, Epoch 181, loss > 6.143012866377831e-05
+Dataset accuracy >> 38667, Epoch 182, loss > 5.582251325249672e-05
+Dataset accuracy >> 38658, Epoch 183, loss > 5.631305556744337e-05
+Dataset accuracy >> 38710, Epoch 184, loss > 5.795627254992723e-05
+Dataset accuracy >> 38735, Epoch 185, loss > 5.4115493781864646e-05
+Dataset accuracy >> 38824, Epoch 186, loss > 5.101695992052555e-05
+Dataset accuracy >> 38517, Epoch 187, loss > 6.48435041308403e-05
+Dataset accuracy >> 38489, Epoch 188, loss > 6.487370990216732e-05
+Dataset accuracy >> 38710, Epoch 189, loss > 5.5688558146357535e-05
+Dataset accuracy >> 38690, Epoch 190, loss > 5.467257499694824e-05
+Dataset accuracy >> 38672, Epoch 191, loss > 5.711625684052706e-05
+Dataset accuracy >> 38618, Epoch 192, loss > 5.7863881252706054e-05
+Dataset accuracy >> 38777, Epoch 193, loss > 5.2335388399660584e-05
+Dataset accuracy >> 38817, Epoch 194, loss > 5.157248675823212e-05
+Dataset accuracy >> 38808, Epoch 195, loss > 5.1106973364949224e-05
+Dataset accuracy >> 38885, Epoch 196, loss > 4.844515696167946e-05
+Dataset accuracy >> 38908, Epoch 197, loss > 4.993785079568624e-05
+Dataset accuracy >> 38832, Epoch 198, loss > 4.925474356859922e-05
+Dataset accuracy >> 38845, Epoch 199, loss > 5.038799475878477e-05
+Dataset accuracy >> 38830, Epoch 200, loss > 4.925228096544742e-05
+Dataset accuracy >> 38841, Epoch 201, loss > 4.699326567351818e-05
+Dataset accuracy >> 38853, Epoch 202, loss > 5.0748013146221636e-05
+Dataset accuracy >> 38809, Epoch 203, loss > 5.085711684077978e-05
+Dataset accuracy >> 38768, Epoch 204, loss > 5.3681588731706144e-05
+Dataset accuracy >> 38856, Epoch 205, loss > 4.7697176411747936e-05
+Dataset accuracy >> 38845, Epoch 206, loss > 4.990217946469784e-05
+Dataset accuracy >> 38883, Epoch 207, loss > 4.906582981348038e-05
+Dataset accuracy >> 38766, Epoch 208, loss > 5.204631481319666e-05
+Dataset accuracy >> 38768, Epoch 209, loss > 5.330978911370039e-05
+Dataset accuracy >> 38752, Epoch 210, loss > 5.479997023940086e-05
+Dataset accuracy >> 38713, Epoch 211, loss > 5.677656885236502e-05
+Dataset accuracy >> 38673, Epoch 212, loss > 5.829610675573349e-05
+Dataset accuracy >> 38351, Epoch 213, loss > 7.227540537714958e-05
+Dataset accuracy >> 38488, Epoch 214, loss > 6.760147716850042e-05
+Dataset accuracy >> 38617, Epoch 215, loss > 5.844193696975708e-05
+Dataset accuracy >> 38680, Epoch 216, loss > 5.7579708099365234e-05
+Dataset accuracy >> 38741, Epoch 217, loss > 5.5263897217810155e-05
+Dataset accuracy >> 38812, Epoch 218, loss > 5.276679899543524e-05
+Dataset accuracy >> 38816, Epoch 219, loss > 5.0763963162899014e-05
+Dataset accuracy >> 38797, Epoch 220, loss > 5.257435869425535e-05
+Dataset accuracy >> 38895, Epoch 221, loss > 4.83022753149271e-05
+Dataset accuracy >> 38411, Epoch 222, loss > 7.577310483902693e-05
+Dataset accuracy >> 38223, Epoch 223, loss > 7.917283177375794e-05
+Dataset accuracy >> 38539, Epoch 224, loss > 6.446058396250009e-05
+Dataset accuracy >> 38744, Epoch 225, loss > 5.726657919585705e-05
+Dataset accuracy >> 38899, Epoch 226, loss > 4.9309315718710424e-05
+Dataset accuracy >> 38881, Epoch 227, loss > 4.6142255142331124e-05
+Dataset accuracy >> 38955, Epoch 228, loss > 4.757107514888048e-05
+Dataset accuracy >> 38983, Epoch 229, loss > 4.320309404283762e-05
+Dataset accuracy >> 38775, Epoch 230, loss > 5.3178113512694834e-05
+Dataset accuracy >> 38603, Epoch 231, loss > 6.223383154720068e-05
+Dataset accuracy >> 38484, Epoch 232, loss > 6.716192197054624e-05
+Dataset accuracy >> 38709, Epoch 233, loss > 5.8745963498950004e-05
+Dataset accuracy >> 38789, Epoch 234, loss > 5.015990696847439e-05
+Dataset accuracy >> 38810, Epoch 235, loss > 5.1791048794984816e-05
+Dataset accuracy >> 38777, Epoch 236, loss > 5.183078870177269e-05
+Dataset accuracy >> 38848, Epoch 237, loss > 5.128662288188934e-05
+Dataset accuracy >> 38993, Epoch 238, loss > 4.590467363595962e-05
+Dataset accuracy >> 38917, Epoch 239, loss > 4.680896122008562e-05
+Dataset accuracy >> 38933, Epoch 240, loss > 4.686308326199651e-05
+Dataset accuracy >> 39071, Epoch 241, loss > 4.151213075965643e-05
+Dataset accuracy >> 39034, Epoch 242, loss > 4.276664275676012e-05
+Dataset accuracy >> 38985, Epoch 243, loss > 4.521658131852746e-05
+Dataset accuracy >> 38984, Epoch 244, loss > 4.82015673071146e-05
+Dataset accuracy >> 38889, Epoch 245, loss > 4.818405658006668e-05
+Dataset accuracy >> 38957, Epoch 246, loss > 4.638066478073597e-05
+Dataset accuracy >> 38828, Epoch 247, loss > 5.2229281701147554e-05
+Dataset accuracy >> 39056, Epoch 248, loss > 4.262763168662787e-05
+Dataset accuracy >> 38884, Epoch 249, loss > 5.0193424243479965e-05
+Dataset accuracy >> 38781, Epoch 250, loss > 5.706622786819935e-05
+Dataset accuracy >> 38657, Epoch 251, loss > 5.9969370625913147e-05
+Dataset accuracy >> 38870, Epoch 252, loss > 4.977688994258642e-05
+Dataset accuracy >> 38937, Epoch 253, loss > 4.78257417678833e-05
+Dataset accuracy >> 38752, Epoch 254, loss > 5.683557353913784e-05
+Dataset accuracy >> 38721, Epoch 255, loss > 5.568641200661659e-05
+Dataset accuracy >> 38922, Epoch 256, loss > 4.738476723432541e-05
+Dataset accuracy >> 39019, Epoch 257, loss > 4.312218483537435e-05
+Dataset accuracy >> 39035, Epoch 258, loss > 4.213989665731788e-05
+Dataset accuracy >> 39012, Epoch 259, loss > 4.195414818823338e-05
+Dataset accuracy >> 38861, Epoch 260, loss > 5.019933134317398e-05
+Dataset accuracy >> 38922, Epoch 261, loss > 4.900981970131397e-05
+Dataset accuracy >> 38797, Epoch 262, loss > 5.393584631383419e-05
+Dataset accuracy >> 38837, Epoch 263, loss > 5.3608384542167185e-05
+Dataset accuracy >> 38816, Epoch 264, loss > 5.244376212358475e-05
+Dataset accuracy >> 38952, Epoch 265, loss > 4.5236955024302e-05
+Dataset accuracy >> 39037, Epoch 266, loss > 4.302799887955189e-05
+Dataset accuracy >> 38951, Epoch 267, loss > 4.493659045547247e-05
+Dataset accuracy >> 38850, Epoch 268, loss > 5.193042131140828e-05
+Dataset accuracy >> 38744, Epoch 269, loss > 5.934541746973991e-05
+Dataset accuracy >> 38831, Epoch 270, loss > 5.241002030670643e-05
+Dataset accuracy >> 38852, Epoch 271, loss > 5.049602072685957e-05
+Dataset accuracy >> 38907, Epoch 272, loss > 4.95333606377244e-05
+Dataset accuracy >> 38922, Epoch 273, loss > 4.9583972431719305e-05
+Dataset accuracy >> 38942, Epoch 274, loss > 4.8692654259502885e-05
+Dataset accuracy >> 38931, Epoch 275, loss > 4.843367207795382e-05
+Dataset accuracy >> 39152, Epoch 276, loss > 3.697786908596754e-05
+Dataset accuracy >> 39054, Epoch 277, loss > 4.4018952921032905e-05
+Dataset accuracy >> 39046, Epoch 278, loss > 4.249008288607001e-05
+Dataset accuracy >> 39055, Epoch 279, loss > 4.176019178703427e-05
+Dataset accuracy >> 38998, Epoch 280, loss > 4.3940642010420564e-05
+Dataset accuracy >> 39010, Epoch 281, loss > 4.436818975955248e-05
+Dataset accuracy >> 38957, Epoch 282, loss > 4.644139613956213e-05
+Dataset accuracy >> 38989, Epoch 283, loss > 4.536476470530033e-05
+Dataset accuracy >> 38888, Epoch 284, loss > 5.0748923141509296e-05
+Dataset accuracy >> 38902, Epoch 285, loss > 5.166331771761179e-05
+Dataset accuracy >> 38799, Epoch 286, loss > 5.515655800700188e-05
+Dataset accuracy >> 38259, Epoch 287, loss > 9.541237149387599e-05
+Dataset accuracy >> 36396, Epoch 288, loss > 0.00018426676243543625
+Dataset accuracy >> 38138, Epoch 289, loss > 8.629216812551021e-05
+Dataset accuracy >> 38680, Epoch 290, loss > 5.855032969266176e-05
+Dataset accuracy >> 38893, Epoch 291, loss > 5.006819069385529e-05
+Dataset accuracy >> 38951, Epoch 292, loss > 4.8948964849114415e-05
+Dataset accuracy >> 39050, Epoch 293, loss > 4.1255085356533525e-05
+Dataset accuracy >> 39116, Epoch 294, loss > 4.1151717398315665e-05
+Dataset accuracy >> 39212, Epoch 295, loss > 3.7933262810111046e-05
+Dataset accuracy >> 39060, Epoch 296, loss > 4.3478399608284234e-05
+Dataset accuracy >> 39230, Epoch 297, loss > 3.434638101607561e-05
+Dataset accuracy >> 39070, Epoch 298, loss > 3.956951079890132e-05
+Dataset accuracy >> 39188, Epoch 299, loss > 3.665558397769928e-05
+Dataset accuracy >> 39249, Epoch 300, loss > 3.4207259211689236e-05
