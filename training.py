@@ -75,9 +75,11 @@ class Model(nn.Module):
         self.t_linear = nn.Linear(64*6,16)
 
         self.c_linear1 = nn.Linear(512+16, 512)
-        self.c_dropout = nn.Dropout(p = 0.2)
-        self.c_linear2 = nn.Linear(512, 128)
-        self.c_linear3 = nn.Linear(128,classes)
+        self.c_dropout1= nn.Dropout(p = 0.4)
+        self.c_linear2 = nn.Linear(512, 1024)
+        self.c_dropout2= nn .Dropout(p = 0.4)
+        self.c_linear3 = nn.Linear(1024, 128)
+        self.c_linear4 = nn.Linear(128,classes)
 
 
     def forward(self, im, tx):
@@ -103,14 +105,15 @@ class Model(nn.Module):
         c = torch.cat((im,tx), 1)
         c = self.c_linear1(c)
         c = F.relu(c)
-        c = self.c_dropout(c)
+        c = self.c_dropout1(c)
+
         c = self.c_linear2(c)
         c = F.relu(c)
-        c = self.c_dropout(c)
+        c = self.c_dropout2(c)
+
         c = self.c_linear3(c)
+        c = self.c_linear4(c)
         return c
-
-
 
 com_dataset = image_word_dataset(jpgs, words, words_sparse, klass, args.impath)
 train_size = args.ratio
@@ -123,8 +126,8 @@ if args.write:
     Writer.add_scalars("Metadata", {"Batch_size": args.batch,
                                     "learning_rate": args.lr,
                                     "logid": int(args.logid),
-                                    "training_size":train_dataset.__len__,
-                                    "Validation_size": val_dataset.__len__,
+                                    "training_size":train_dataset.__len__(),
+                                    "Validation_size": val_dataset.__len__(),
                                     "No_of_classes": no_classes})
 
 criterion = nn.CrossEntropyLoss()
@@ -196,11 +199,11 @@ for epoch in range(1, epochs + 1):
     if args.write:
         for name, param in Network.named_parameters():
             Writer.add_histogram(name, param.clone().cpu().data.numpy(), epochs * batches + batch_idx)
-        Writer.add_scalars("Training_log", {"Epoch_acc": sum(training_batch_acc) / train_dataset.__len__,
-                                            "Epoch_loss": sum(training_batch_loss) / train_dataset.__len__,
+        Writer.add_scalars("Training_log", {"Epoch_acc": sum(training_batch_acc) / train_dataset.__len__(),
+                                            "Epoch_loss": sum(training_batch_loss) / train_dataset.__len__(),
                                             "lr": optimizer.param_groups[0]["lr"],
-                                            "Epoch_val_acc" : sum(validation_batch_acc)/val_dataset.__len__,
-                                            "Epoch_val_loss": sum(validation_batch_loss)/val_dataset.__len__},
+                                            "Epoch_val_acc" : sum(validation_batch_acc)/val_dataset.__len__(),
+                                            "Epoch_val_loss": sum(validation_batch_loss)/val_dataset.__len__()},
                            epoch)
 
 Writer.close()

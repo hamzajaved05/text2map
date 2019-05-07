@@ -1,0 +1,47 @@
+Sender: LSF System <lsfadmin@lo-s4-020>
+Subject: Job 1915272: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 18 --write True --limit -1 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 18 --write True --limit -1 --ratio 0.8> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Tue May  7 16:21:57 2019
+Job was executed on host(s) <2*lo-s4-020>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Tue May  7 16:22:49 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Tue May  7 16:22:49 2019
+Terminated at Tue May  7 16:56:11 2019
+Results reported at Tue May  7 16:56:11 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 18 --write True --limit -1 --ratio 0.8
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   580.87 sec.
+    Max Memory :                                 5124 MB
+    Average Memory :                             3915.06 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3068.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                20
+    Run time :                                   2028 sec.
+    Turnaround time :                            2054 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 180, in <module>
+    Network.eval()
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "training.py", line 87, in forward
+    im = self.i_pool1(im)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/conv.py", line 320, in forward
+    self.padding, self.dilation, self.groups)
+RuntimeError: CUDA out of memory. Tried to allocate 512.00 MiB (GPU 0; 7.93 GiB total capacity; 6.62 GiB already allocated; 338.56 MiB free; 442.88 MiB cached)

@@ -1,0 +1,48 @@
+Sender: LSF System <lsfadmin@lo-s4-006>
+Subject: Job 1892664: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 12 --write True --limit 50000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 12 --write True --limit 50000 --ratio 0.8> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sun May  5 16:00:42 2019
+Job was executed on host(s) <2*lo-s4-006>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sun May  5 16:00:54 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sun May  5 16:00:54 2019
+Terminated at Mon May  6 12:43:03 2019
+Results reported at Mon May  6 12:43:03 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 12 --write True --limit 50000 --ratio 0.8
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   59865.54 sec.
+    Max Memory :                                 4100 MB
+    Average Memory :                             3583.70 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4092.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                27
+    Run time :                                   74554 sec.
+    Turnaround time :                            74541 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 162, in <module>
+    for batch_idx, data in enumerate(train_loader):
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/utils/data/dataloader.py", line 615, in __next__
+    batch = self.collate_fn([self.dataset[i] for i in indices])
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/utils/data/dataloader.py", line 615, in <listcomp>
+    batch = self.collate_fn([self.dataset[i] for i in indices])
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/utils/data/dataset.py", line 103, in __getitem__
+    return self.dataset[self.indices[idx]]
+  File "training.py", line 56, in __getitem__
+    im = torch.tensor(cv2.imread(self.im_path+jpgs[index][:-4]+"_"+words[index] + ".jpg")).view(3,128,256)
+KeyboardInterrupt

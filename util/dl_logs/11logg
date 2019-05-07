@@ -1,0 +1,45 @@
+Sender: LSF System <lsfadmin@lo-s4-006>
+Subject: Job 1892655: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 11 --write True --limit 50000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 11 --write True --limit 50000 --ratio 0.8> was submitted from host <lo-login-01> by user <javedh> in cluster <leonhard> at Sun May  5 15:50:53 2019
+Job was executed on host(s) <2*lo-s4-006>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Sun May  5 15:51:23 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Sun May  5 15:51:23 2019
+Terminated at Sun May  5 15:51:30 2019
+Results reported at Sun May  5 15:51:30 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 11 --write True --limit 50000 --ratio 0.8
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   3.23 sec.
+    Max Memory :                                 390 MB
+    Average Memory :                             275.00 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               7802.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                5
+    Run time :                                   33 sec.
+    Turnaround time :                            37 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 128, in <module>
+    "No_of_classes": no_classes})
+  File "/cluster/home/javedh/.local/lib/python3.7/site-packages/tensorboardX/writer.py", line 374, in add_scalars
+    fw.add_summary(scalar(main_tag, scalar_value),
+  File "/cluster/home/javedh/.local/lib/python3.7/site-packages/tensorboardX/summary.py", line 120, in scalar
+    scalar = make_np(scalar)
+  File "/cluster/home/javedh/.local/lib/python3.7/site-packages/tensorboardX/x2num.py", line 24, in make_np
+    'Got {}, but expected numpy array or torch tensor.'.format(type(x)))
+NotImplementedError: Got <class 'method'>, but expected numpy array or torch tensor.

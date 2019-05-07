@@ -1,0 +1,168 @@
+Sender: LSF System <lsfadmin@lo-s4-024>
+Subject: Job 1896004: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 15 --write True --limit 150000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 15 --write True --limit 150000 --ratio 0.8> was submitted from host <lo-login-02> by user <javedh> in cluster <leonhard> at Mon May  6 12:42:29 2019
+Job was executed on host(s) <2*lo-s4-024>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Mon May  6 12:42:53 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Mon May  6 12:42:53 2019
+Terminated at Mon May  6 12:45:33 2019
+Results reported at Mon May  6 12:45:33 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.001 --logid 15 --write True --limit 150000 --ratio 0.8
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   32.64 sec.
+    Max Memory :                                 5087 MB
+    Average Memory :                             3625.38 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3105.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                20
+    Run time :                                   167 sec.
+    Turnaround time :                            184 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 167, in <module>
+    loss.backward()
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/tensor.py", line 102, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/autograd/__init__.py", line 90, in backward
+    allow_unreachable=True)  # allow_unreachable flag
+RuntimeError: CUDA out of memory. Tried to allocate 2.00 GiB (GPU 0; 10.92 GiB total capacity; 4.46 GiB already allocated; 1.96 GiB free; 3.92 GiB cached)
+Sender: LSF System <lsfadmin@lo-s4-005>
+Subject: Job 1896005: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> was submitted from host <lo-login-02> by user <javedh> in cluster <leonhard> at Mon May  6 12:43:22 2019
+Job was executed on host(s) <2*lo-s4-005>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Mon May  6 12:43:24 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Mon May  6 12:43:24 2019
+Terminated at Mon May  6 12:46:02 2019
+Results reported at Mon May  6 12:46:02 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 2048 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   33.27 sec.
+    Max Memory :                                 5160 MB
+    Average Memory :                             3791.75 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3032.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                20
+    Run time :                                   178 sec.
+    Turnaround time :                            160 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 167, in <module>
+    loss.backward()
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/tensor.py", line 102, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/autograd/__init__.py", line 90, in backward
+    allow_unreachable=True)  # allow_unreachable flag
+RuntimeError: CUDA out of memory. Tried to allocate 2.00 GiB (GPU 0; 10.92 GiB total capacity; 4.46 GiB already allocated; 1.96 GiB free; 3.92 GiB cached)
+Sender: LSF System <lsfadmin@lo-s4-040>
+Subject: Job 1896012: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> was submitted from host <lo-login-02> by user <javedh> in cluster <leonhard> at Mon May  6 12:49:35 2019
+Job was executed on host(s) <2*lo-s4-040>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Mon May  6 12:49:55 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Mon May  6 12:49:55 2019
+Terminated at Mon May  6 13:25:55 2019
+Results reported at Mon May  6 13:25:55 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 1024 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   482.75 sec.
+    Max Memory :                                 4765 MB
+    Average Memory :                             3829.20 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               3427.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                22
+    Run time :                                   2180 sec.
+    Turnaround time :                            2180 sec.
+
+The output (if any) follows:
+
+Traceback (most recent call last):
+  File "training.py", line 180, in <module>
+    outputs = Network(im.to(device), inputs.to(device))
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "training.py", line 89, in forward
+    im = F.relu(im)
+  File "/cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/functional.py", line 862, in relu
+    result = torch.relu(input)
+RuntimeError: CUDA out of memory. Tried to allocate 128.00 MiB (GPU 0; 7.93 GiB total capacity; 7.35 GiB already allocated; 8.56 MiB free; 29.61 MiB cached)
+Sender: LSF System <lsfadmin@lo-s4-039>
+Subject: Job 1896146: <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 512 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> in cluster <leonhard> Exited
+
+Job <python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 512 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8> was submitted from host <lo-login-02> by user <javedh> in cluster <leonhard> at Mon May  6 14:49:31 2019
+Job was executed on host(s) <2*lo-s4-039>, in queue <gpu.24h>, as user <javedh> in cluster <leonhard> at Mon May  6 14:49:56 2019
+</cluster/home/javedh> was used as the home directory.
+</cluster/scratch/javedh/text2map> was used as the working directory.
+Started at Mon May  6 14:49:56 2019
+Terminated at Tue May  7 14:49:34 2019
+Results reported at Tue May  7 14:49:34 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python training.py --impath ../jpeg_patch/ --inpickle util/training_data_03.pickle --epoch 500 --batch 512 --lr 0.0001 --logid 15 --write True --limit 150000 --ratio 0.8
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time :                                   67588.50 sec.
+    Max Memory :                                 3896 MB
+    Average Memory :                             3663.03 MB
+    Total Requested Memory :                     8192.00 MB
+    Delta Memory :                               4296.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                27
+    Run time :                                   86406 sec.
+    Turnaround time :                            86403 sec.
+
+The output (if any) follows:
+
+User defined signal 2
