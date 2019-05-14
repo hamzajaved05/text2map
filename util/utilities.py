@@ -9,8 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 import pickle
 from scipy.sparse import csc_matrix,hstack
-
-
+import collections
 
 def write_dict_to_txt(dict, path):
 	trainfile = open(path, 'w')
@@ -20,6 +19,15 @@ def write_dict_to_txt(dict, path):
 			if isinstance(word, str):
 				trainfile.write(str(word) + "\n")
 	trainfile.close()
+
+def flatten(x):
+    result = []
+    for el in x:
+        if isinstance(x, collections.Iterable) and not isinstance(el, str):
+            result.extend(flatten(el))
+        else:
+            result.append(el)
+    return result
 
 def removeemptykeys(dict):
 	for jpg in dict.copy():
@@ -61,7 +69,6 @@ def encoding(klasses, sparsity= True, lowercase = True):
 
 def word2encdict(enc, wordsarray, length, lowercase = True):
 	dict = {}
-
 	for word in wordsarray:
 		if lowercase:
 			temp = list(word.lower())
@@ -189,3 +196,10 @@ def getproximalwords(Proximaljpgs, jpg_dict, write, writenamed = "00"):
 #
 # 		write_dict_to_txt()
 # 	return proximal_word_dict(proximal_word_dict,writenamed)
+
+def word2encodedword(enc, word,length):
+	temp = list(word)
+	dummy = enc.transform(np.array(temp).reshape(-1, 1)).transpose()
+	x = np.concatenate((dummy.todense(), np.zeros((dummy.shape[0], length - dummy.shape[1]))), axis=1)
+	x = csc_matrix(x)
+	return x

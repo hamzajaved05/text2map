@@ -96,21 +96,19 @@ class image_word_dataset(data.Dataset):
   def __getitem__(self, index):
         word_indexed = torch.from_numpy(self.words_sparse[index].todense())
         y = torch.tensor(self.labels[index])
-        im = torch.tensor(cv2.imread(self.im_path+jpgs[index][:-4]+"_"+words[index] + ".jpg")).view(3,128,256)
+        im = torch.tensor(cv2.imread(self.im_path+self.jpeg[index][:-4]+"_"+self.words[index] + ".jpg")).permute(2,0,1)
         return torch.div(im.float(),255), word_indexed.float(), y.float()
-
-
 
 class Model(nn.Module):
     def __init__(self, classes):
         super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=7, padding=3)
+        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
         self.i_pool1 = nn.MaxPool2d(2)
-        self.i_conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=7, padding=3)
+        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
         self.i_pool2 = nn.MaxPool2d(2)
-        self.i_conv3 = nn.Conv2d(in_channels=16, out_channels= 32, kernel_size=7, padding=3)
+        self.i_conv3 = nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=7, padding=3)
         self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(32*32*16, 512)
+        self.i_linear = nn.Linear(64*32*16, 512)
 
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
@@ -121,8 +119,8 @@ class Model(nn.Module):
         self.c_dropout1= nn.Dropout(p = 0.4)
         self.c_linear2 = nn.Linear(512, 1024)
         self.c_dropout2= nn .Dropout(p = 0.4)
-        self.c_linear3 = nn.Linear(1024, 128)
-        self.c_linear4 = nn.Linear(128,classes)
+        self.c_linear3 = nn.Linear(1024, 256)
+        self.c_linear4 = nn.Linear(256,classes)
 
 
     def forward(self, im, tx):
@@ -135,7 +133,7 @@ class Model(nn.Module):
         im = self.i_conv3(im)
         im = self.i_pool3(im)
         im = F.relu(im)
-        im = im.view(-1, 32*16*32)
+        im = im.view(-1, 64*16*32)
         im = self.i_linear(im)
 
         tx = self.t_conv1(tx)
@@ -189,7 +187,7 @@ train_loss = []
 validation_accuracy = []
 validation_loss = []
 
-early_stop = EarlyStopping(patience= 1000, verbose = True)
+early_stop = EarlyStopping(patience= 1000, verbose = True,name = "logs/"+args.logid+"_checkpoint_dict.pt")
 
 batches = ceil(len(klass)/args.batch)
 
@@ -246,8 +244,7 @@ for epoch in range(1, epochs + 1):
                            epoch)
 
     if args.earlystopping:
-        early_stop(sum(validation_batch_loss), Network, "logs/"+args.logid+"_checkpoint_dict.pt")
-
+        early_stop(sum(validation_batch_loss), Network)
 
 Writer.close()
 # with open("logs/"+args.logid+"_data.pickle","wb") as F:
