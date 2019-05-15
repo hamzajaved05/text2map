@@ -105,10 +105,10 @@ class Model(nn.Module):
         self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
         self.i_pool1 = nn.MaxPool2d(2)
         self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(2)
+        self.i_pool2 = nn.MaxPool2d(4)
         self.i_conv3 = nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=7, padding=3)
         self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(64*32*16, 512)
+        self.i_linear = nn.Linear(64*16*8, 512)
 
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
@@ -119,8 +119,8 @@ class Model(nn.Module):
         self.c_dropout1= nn.Dropout(p = 0.4)
         self.c_linear2 = nn.Linear(512, 1024)
         self.c_dropout2= nn .Dropout(p = 0.4)
-        self.c_linear3 = nn.Linear(1024, 256)
-        self.c_linear4 = nn.Linear(256,classes)
+        self.c_linear3 = nn.Linear(1024, 128)
+        self.c_linear4 = nn.Linear(128,classes)
 
 
     def forward(self, im, tx):
@@ -133,7 +133,7 @@ class Model(nn.Module):
         im = self.i_conv3(im)
         im = self.i_pool3(im)
         im = F.relu(im)
-        im = im.view(-1, 64*16*32)
+        im = im.view(-1, 64*16*8)
         im = self.i_linear(im)
 
         tx = self.t_conv1(tx)
@@ -164,7 +164,7 @@ data_size = len(klass)
 train_dataset, val_dataset = data.random_split(com_dataset, [int(data_size*(train_size)), data_size-int(data_size*(train_size))])
 
 if args.write:
-    Writer = SummaryWriter("TBX/"+args.logid)
+    Writer = SummaryWriter("tbx/"+args.logid)
     Writer.add_scalars("Metadata", {"Batch_size": args.batch,
                                     "learning_rate": args.lr,
                                     "logid": int(args.logid),
@@ -245,6 +245,12 @@ for epoch in range(1, epochs + 1):
 
     if args.earlystopping:
         early_stop(sum(validation_batch_loss), Network)
+    power = 0
+    if (epoch+1)%5 == 0:
+        power+=1
+        for g in optimizer.param_groups:
+            g['lr'] = args.lr/3**power
+
 
 Writer.close()
 # with open("logs/"+args.logid+"_data.pickle","wb") as F:
