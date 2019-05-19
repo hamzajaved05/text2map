@@ -30,6 +30,7 @@ parser.add_argument("--write", default=True,type = bool, help = "Write on tensor
 parser.add_argument("--limit", default=-1, type = int, help = "Limit dataset")
 parser.add_argument("--ratio", default = 0.8, type = float, help= "Ratio of train to complete dataset")
 parser.add_argument("--earlystopping",default = True, type = bool, help="Enable or disable early stopping")
+parser.add_argument("--decay_freq", default = None, type = int, help = "Decay by half after number of epochs")
 args= parser.parse_args()
 
 with open(args.inpickle, "rb") as a:
@@ -42,14 +43,7 @@ modes = modes[:args.limit]
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False, name = "checkpoint.pt"):
-        """
-        Args:
-            patience (int): How long to wait after last time validation loss improved.
-                            Default: 7
-            verbose (bool): If True, prints a message for each validation loss improvement.
-                            Default: False
-        """
+    def __init__(self, patience=7, verbose=False, name = "checkpoint.pt", path = "logs/"):
         self.patience = patience
         self.verbose = verbose
         self.counter = 0
@@ -57,11 +51,10 @@ class EarlyStopping:
         self.early_stop = False
         self.val_loss_min = np.Inf
         self.name = name
+        self.path = path
 
     def __call__(self, val_loss, model):
-
         score = -val_loss
-
         if self.best_score is None:
             self.best_score = score
             self.save_checkpoint(val_loss, model)
@@ -76,10 +69,8 @@ class EarlyStopping:
             self.counter = 0
 
     def save_checkpoint(self, val_loss, model):
-        '''Saves model when validation loss decrease.'''
-        if self.verbose:
-            print(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
-        torch.save(model.state_dict(), self.name)
+        torch.save(model.state_dict(), self.path+self.name+"checkdict.pt")
+        torch.save(model, self.path+self.name+"checkcomplete.pt" )
         self.val_loss_min = val_loss
 
 class image_word_dataset(data.Dataset):
@@ -113,13 +104,14 @@ class Model(nn.Module):
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
         self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(64*6,16)
+        self.t_linear= nn.Linear(64*6,16)
 
         self.c_linear1 = nn.Linear(512+16, 512)
         self.c_dropout1= nn.Dropout(p = 0.4)
         self.c_linear2 = nn.Linear(512, 1024)
         self.c_dropout2= nn .Dropout(p = 0.4)
         self.c_linear3 = nn.Linear(1024, 128)
+        self.c_dropout3= nn .Dropout(p = 0.1)
         self.c_linear4 = nn.Linear(128,classes)
 
 
@@ -154,6 +146,9 @@ class Model(nn.Module):
 
         c = self.c_linear3(c)
         c = F.relu(c)
+        c = self.c_dropout3(c)
+        c = F.normalize(c, p=2, dim=1)
+
         c = self.c_linear4(c)
         return c
 
@@ -172,6 +167,12 @@ if args.write:
                                     "Validation_size": val_dataset.__len__(),
                                     "No_of_classes": no_classes})
 
+activation = {}
+def get_activation(name):
+	def hook(model, input, output):
+		activation[name] = output.detach()
+	return hook
+
 criterion = nn.CrossEntropyLoss()
 train_loader = DataLoader(train_dataset, batch_size=args.batch, shuffle = True)
 val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
@@ -181,15 +182,16 @@ Network = Model(no_classes)
 Network.to(device)
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
-
+Network.c_linear3.register_forward_hook(get_activation('c_linear3'))
 train_accuracy = []
 train_loss = []
 validation_accuracy = []
 validation_loss = []
 
-early_stop = EarlyStopping(patience= 1000, verbose = True,name = "logs/"+args.logid+"_checkpoint_dict.pt")
+early_stop = EarlyStopping(patience= 100, verbose = False,name = args.logid, path = 'logs/')
 
 batches = ceil(len(klass)/args.batch)
+
 
 for epoch in range(1, epochs + 1):
 
@@ -197,6 +199,7 @@ for epoch in range(1, epochs + 1):
     training_batch_loss = []
     validation_batch_acc = []
     validation_batch_loss = []
+
 
     Network.train()
     for batch_idx, data in enumerate(train_loader):
@@ -212,7 +215,9 @@ for epoch in range(1, epochs + 1):
         training_batch_loss.append(loss.item())
         Writer.add_scalars("Training_batch", {"Epoch_acc":(correct)/labels.size()[0],
                                                   "Epoch_loss":loss.item()/labels.size()[0]},
-                           (epoch-1)*batches+batch_idx)
+                           batches*epoch+batch_idx)
+        if epoch%10==0:
+            Writer.add_embedding(F.normalize(F.relu(get_activation(['c_linear3'])),p =2, dim = 1), global_step=batches*epoch+batch_idx)
 
     Network.eval()
     for batch_idx, data in enumerate(val_loader):
@@ -225,13 +230,10 @@ for epoch in range(1, epochs + 1):
         validation_batch_loss.append(loss.item())
         Writer.add_scalars("Validation_batch", {"Epoch_acc":correct/labels.size()[0],
                                              "Epoch_loss":loss.item()/labels.size()[0]},
-                           (epoch-1)*batches+batch_idx)
+                           batches*epoch+batch_idx)
+        if epoch%10==0:
+            Writer.add_embedding(F.normalize(F.relu(get_activation(['c_linear3'])),p =2, dim = 1), global_step=batches*epoch+batch_idx)
 
-    # print("Dataset accuracy >> " + str(sum(training_batch_acc)) + ", Epoch " + str(epoch) + ", loss > " + str(sum(training_batch_loss) / len(klass)))
-    # train_accuracy.append(sum(training_batch_acc))
-    # train_loss.append(sum(training_batch_loss))
-    # validation_accuracy.append(sum(validation_batch_acc))
-    # validation_loss.append(sum(validation_batch_loss))
 
     if args.write:
         for name, param in Network.named_parameters():
@@ -245,15 +247,14 @@ for epoch in range(1, epochs + 1):
 
     if args.earlystopping:
         early_stop(sum(validation_batch_loss), Network)
-    power = 0
-    if (epoch+1)%5 == 0:
-        power+=1
-        for g in optimizer.param_groups:
-            g['lr'] = args.lr/3**power
+
+    if args.decay_freq is not None:
+        if epoch%args.decay_freq==0:
+            for g in optimizer.param_groups:
+                g['lr'] = args.lr/2**(epoch//args.decay_freq)
 
 
 Writer.close()
-# with open("logs/"+args.logid+"_data.pickle","wb") as F:
-#   pickle.dump([train_loss, train_accuracy, train_loss, validation_loss, validation_loss, args.batch, args.lr, args.epoch], F)
+
 torch.save(Network.state_dict(), "logs/"+args.logid+"_dict.pt")
 torch.save(Network, "logs/"+args.logid+"_dict_c.pt")

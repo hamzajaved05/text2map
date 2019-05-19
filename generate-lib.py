@@ -16,23 +16,26 @@ import cv2
 from util.utilities import word2encdict
 from util.utilities import flatten
 import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.sparse import csc_matrix,hstack
 from sklearn.decomposition import PCA
 
-pca = PCA(n_components=32)
+# pca = PCA(n_components=32)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 jpg_dict_train = Reader(path = 'Dataset_processing/train03.txt')
 # jpg_dict_test = Reader(path = 'Dataset_processing/test03.txt')
 with open('training_data_pytorch04.pickle', "rb") as a:
-    [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
+    [klass, words_sparse, words_strings, jpgs, enc, modes] = pickle.load(a)
 
 
 class image_word_dataset(data.Dataset):
-  def __init__(self, jpeg, words, words_sparse, path):
+  def __init__(self, jpeg, words, words_sparse, labels, path):
         self. words = words
         self.im_path = path
         self.jpeg = jpeg
         self.words_sparse = words_sparse
+        self.labels = labels
 
   def __len__(self):
         return len(self.labels)
@@ -40,19 +43,19 @@ class image_word_dataset(data.Dataset):
   def __getitem__(self, index):
         word_indexed = torch.from_numpy(self.words_sparse[index].todense())
         im_path = self.jpeg[index]
-        im = torch.tensor(cv2.imread(self.im_path+self.jpeg[index][:-4]+"_"+self.words[index] + ".jpg")).view(3,128,256)
+        im = torch.tensor(cv2.imread(self.im_path+self.jpeg[index][:-4]+"_"+self.words[index] + ".jpg")).permute(2,0,1)
         return torch.div(im.float(),255), word_indexed.float(), im_path
 
 class Model(nn.Module):
     def __init__(self, classes):
         super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=7, padding=3)
+        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
         self.i_pool1 = nn.MaxPool2d(2)
-        self.i_conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(2)
-        self.i_conv3 = nn.Conv2d(in_channels=16, out_channels= 32, kernel_size=7, padding=3)
+        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
+        self.i_pool2 = nn.MaxPool2d(4)
+        self.i_conv3 = nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=7, padding=3)
         self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(32*32*16, 512)
+        self.i_linear = nn.Linear(64*16*8, 512)
 
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
@@ -77,7 +80,7 @@ class Model(nn.Module):
         im = self.i_conv3(im)
         im = self.i_pool3(im)
         im = F.relu(im)
-        im = im.view(-1, 32*16*32)
+        im = im.view(-1, 64*16*8)
         im = self.i_linear(im)
 
         tx = self.t_conv1(tx)
@@ -102,48 +105,53 @@ class Model(nn.Module):
         return c
 
 
-dummy = list(set(flatten(jpg_dict_train.values())))
+# dummy = list(set(flatten(jpg_dict_train.values())))
 
-words_set = [x for x in dummy if len(list(x))<12]
+# words_set = [x for x in dummy if len(list(x))<12]
 
-enc_dict = word2encdict(enc= enc, wordsarray=words_set, length=12, lowercase=False)
-del words_set
-del dummy
+# enc_dict = word2encdict(enc= enc, wordsarray=words_set, length=12, lowercase=False)
+# del words_set
+# del dummy
 
-dataset = image_word_dataset(jpgs, words, words_sparse, klass, 'Dataset_processing/jpeg_patch/')
+dataset = image_word_dataset(jpgs, words_strings, words_sparse, klass, 'Dataset_processing/jpeg_patch/')
 train_loader = DataLoader(dataset, batch_size=512, shuffle = False)
 
 lib = []
 
 model = Model(19408)
-model.load_state_dict(torch.load("Dataset_processing/logs/36_checkpoint_dict.pt", map_location = 'cpu'))
+model.load_state_dict(torch.load("Dataset_processing/logs/39_checkpoint_dict.pt", map_location = 'cpu'))
 activation = {}
 def get_activation(name):
 	def hook(model, input, output):
 		activation[name] = output.detach()
 	return hook
 model.c_linear3.register_forward_hook(get_activation('c_linear3'))
-# id = 0
 
 for batch_idx, data in enumerate(train_loader):
     im, word, jpg = data
-    model(im.to(device), word.to(device))
+    _ = model(im.to(device), word.to(device))
+
+    # index = 91
+    # image = plt.imshow(im[index].permute(1,2,0).numpy())
+    # tx = word[index].numpy()
+    # enc.inverse_transform(csc_matrix(tx[:,:int(np.sum(tx))]).transpose())
+
     if len(lib)==0:
         lib = F.relu(activation['c_linear3']).numpy()
-        JPGS = np.array(jpg)
+        filenames = np.array(jpg)
     lib = np.concatenate((lib, F.relu(activation['c_linear3']).numpy()), axis = 0)
-    JPGS = np.append(JPGS, np.array(jpg))
+    filenames = np.append(filenames, np.array(jpg))
     print(batch_idx)
 
-with open('lib/36LIB'+str(1).zfill(2) +'.pickle','wb') as q:
-    pickle.dump([lib, JPGS], q)
+with open('lib/39LIB'+str(1).zfill(2) +'.pickle','wb') as q:
+    pickle.dump([lib, filenames], q)
 
 indice_dict = {}
 # for i in set(jpgs):
 #     indice_dict[i] = []
 
 for i in jpg_dict_train.keys():
-    indice_dict[i] = np.argwhere(JPGS == i)
+    indice_dict[i] = np.argwhere(filenames == i)
 
-with open('lib/36lib_processed'+str(1).zfill(2) +'.pickle','wb') as q:
-    pickle.dump([lib, JPGS, indice_dict], q)
+with open('lib/39lib_processed'+str(1).zfill(2) +'.pickle','wb') as q:
+    pickle.dump([lib, filenames, indice_dict], q)
