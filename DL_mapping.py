@@ -28,7 +28,7 @@ import os
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-with open('lib/39lib_processed'+str(1).zfill(2) +'.pickle','rb') as q:
+with open('lib/39lib_processed'+str(1).zfill(3) +'.pickle','rb') as q:
     [lib,jpgs,indice_dict] = pickle.load(q)
 
 # jpgs_point = []
@@ -63,6 +63,7 @@ class image_word_dataset(data.Dataset):
         return len(self.jpgs)
 
     def __getitem__(self, index):
+        # print(index)
         x = self.jpg_dict[self.jpgs[index]]
         ind = 0
         for itera, word in enumerate(x):
@@ -79,71 +80,76 @@ class image_word_dataset(data.Dataset):
                 else:
                     word_batch = torch.cat((word_batch,word_tensor.unsqueeze(0)),dim=0)
                     image_batch = torch.cat((image_batch, im.unsqueeze(0)), dim=0)
-        return image_batch, word_batch.float(), self.jpgs[index]
+        if ind:
+            return image_batch, word_batch.float(), self.jpgs[index], bool(ind)
+        else:
+            return [], [], [], bool(ind)
 
 
 class Model(nn.Module):
-        def __init__(self, classes):
-            super(Model, self).__init__()
-            self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=7, padding=3)
-            self.i_pool1 = nn.MaxPool2d(2)
-            self.i_conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=7, padding=3)
-            self.i_pool2 = nn.MaxPool2d(2)
-            self.i_conv3 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
-            self.i_pool3 = nn.MaxPool2d(2)
-            self.i_linear = nn.Linear(32 * 32 * 16, 512)
+    def __init__(self, classes):
+        super(Model, self).__init__()
+        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
+        self.i_pool1 = nn.MaxPool2d(2)
+        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
+        self.i_pool2 = nn.MaxPool2d(4)
+        self.i_conv3 = nn.Conv2d(in_channels=32, out_channels= 64, kernel_size=7, padding=3)
+        self.i_pool3 = nn.MaxPool2d(2)
+        self.i_linear = nn.Linear(64*16*8, 512)
 
-            self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
-            self.t_pool1 = nn.MaxPool1d(kernel_size=2)
-            self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-            self.t_linear = nn.Linear(64 * 6, 16)
+        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
+        self.t_pool1 = nn.MaxPool1d(kernel_size=2)
+        self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
+        self.t_linear= nn.Linear(64*6,16)
 
-            self.c_linear1 = nn.Linear(512 + 16, 512)
-            self.c_dropout1 = nn.Dropout(p=0.2)
-            self.c_linear2 = nn.Linear(512, 1024)
-            self.c_dropout2 = nn.Dropout(p=0.2)
-            self.c_linear3 = nn.Linear(1024, 128)
-            self.c_dropout3 = nn.Dropout(0.1)
-            self.c_linear4 = nn.Linear(128, classes)
-
-        def forward(self, im, tx):
-            im = self.i_conv1(im)
-            im = self.i_pool1(im)
-            im = F.relu(im)
-            im = self.i_conv2(im)
-            im = self.i_pool2(im)
-            im = F.relu(im)
-            im = self.i_conv3(im)
-            im = self.i_pool3(im)
-            im = F.relu(im)
-            im = im.view(-1, 32 * 16 * 32)
-            im = self.i_linear(im)
-
-            tx = self.t_conv1(tx)
-            tx = self.t_pool1(tx)
-            tx = F.relu(tx)
-            tx = self.t_conv2(tx)
-            tx = tx.view(-1, 64 * 6)
-            tx = self.t_linear(tx)
-
-            c = torch.cat((im, tx), 1)
-            c = self.c_linear1(c)
-            c = F.relu(c)
-            c = self.c_dropout1(c)
-
-            c = self.c_linear2(c)
-            c = F.relu(c)
-            c = self.c_dropout2(c)
-
-            c = self.c_linear3(c)
-            c = F.relu(c)
+        self.c_linear1 = nn.Linear(512+16, 512)
+        self.c_dropout1= nn.Dropout(p = 0.4)
+        self.c_linear2 = nn.Linear(512, 1024)
+        self.c_dropout2= nn .Dropout(p = 0.4)
+        self.c_linear3 = nn.Linear(1024, 128)
+        self.c_dropout3= nn .Dropout(p = 0.1)
+        self.c_linear4 = nn.Linear(128,classes)
 
 
-            c = self.c_linear4(c)
-            return c
+    def forward(self, im, tx):
+        im = self.i_conv1(im)
+        im = self.i_pool1(im)
+        im = F.relu(im)
+        im = self.i_conv2(im)
+        im = self.i_pool2(im)
+        im = F.relu(im)
+        im = self.i_conv3(im)
+        im = self.i_pool3(im)
+        im = F.relu(im)
+        im = im.view(-1, 64*16*8)
+        im = self.i_linear(im)
+
+        tx = self.t_conv1(tx)
+        tx = self.t_pool1(tx)
+        tx = F.relu(tx)
+        tx = self.t_conv2(tx)
+        tx = tx.view(-1, 64*6)
+        tx = self.t_linear(tx)
+
+        c = torch.cat((im,tx), 1)
+        c = self.c_linear1(c)
+        c = F.relu(c)
+        c = self.c_dropout1(c)
+
+        c = self.c_linear2(c)
+        c = F.relu(c)
+        c = self.c_dropout2(c)
+
+        c = self.c_linear3(c)
+        c = F.relu(c)
+        c = self.c_dropout3(c)
+        c = F.normalize(c, p=2, dim=1)
+
+        c = self.c_linear4(c)
+        return c
 
 model = Model(19408)
-model.load_state_dict(torch.load("Dataset_processing/logs/31_checkpoint_dict.pt", map_location = 'cpu'))
+model.load_state_dict(torch.load("logs/009checkdict.pt", map_location = 'cpu'))
 
 
 activation = {}
@@ -151,17 +157,21 @@ def get_activation(name):
 	def hook(model, input, output):
 		activation[name] = output.detach()
 	return hook
-model.c_linear3.register_forward_hook(get_activation('c_linear3'))
+model.c_dropout3.register_forward_hook(get_activation('embedding'))
 
 
-jpg_dict_test = Reader(path = 'Dataset_processing/train03.txt')
+jpg_dict_test = Reader(path = 'Dataset_processing/test03.txt')
 
-dataset = image_word_dataset(enc, 12, list(jpg_dict_test.keys()), jpg_dict_test, 'Dataset_processing/jpeg_patch/')
+dataset = image_word_dataset(enc, 12, list(jpg_dict_test.keys()), jpg_dict_test, path = 'Dataset_processing/jpeg_patch/')
 
 train_loader = DataLoader(dataset, batch_size=1, shuffle = False)
 
-def probadd(x,y):
+def prob_un(x,y):
+    return x+y-x*y
 
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
 
 def match(query, lib, rev_dict_indice):
     dic = {}
@@ -169,21 +179,19 @@ def match(query, lib, rev_dict_indice):
     # no_patches = query.shape[0]
     for iter in range(query.shape[0]):
         normal_score = LA.norm(query[iter] - lib, axis = 1)
-        normal_score = torch.tensor(1-normal_score/LA.norm(normal_score))
-        normal_score = F.softmax(normal_score)
-
+        # normal_score = torch.tensor(normal_score)
+        # normal_score = F.softmax(normal_score, dim = 0)
 
         ind = np.argpartition(normal_score, 100)[:100]
         selected_normal_scores = normal_score[ind]
-        max_norm = max(selected_normal_scores)
-        for it, norms in enumerate(selected_normal_scores):
+        soft_norms = softmax(selected_normal_scores)
+        for it, norms in enumerate(soft_norms):
             try:
-                dic[rev_dict_indice[ind[it]][0]] += norms / query.shape[0]
+                dic[rev_dict_indice[ind[it]][0]] = prob_un(dic[rev_dict_indice[ind[it]][0]],norms)
             except:
-                dic[rev_dict_indice[ind[it]][0]] = norms / query.shape[0]
+                dic[rev_dict_indice[ind[it]][0]] = norms
 
         # normalized_score_indices = np.argwhere(ind == normal_score)
-
         # file_ids = np.array([np.argwhere(indice == np.array(jpgs_pointer).reshape(-1)) for indice in ind]).reshape(-1)
         # for itera, index in enumerate(file_ids):
         #     try:
@@ -194,17 +202,16 @@ def match(query, lib, rev_dict_indice):
         #         count+=1
         # # for key, value in indice_dict.items():
         #     if value in ind:
-
-
     # assert count == len(dic)
-    
-    return min(dic, key=dic.get)
 
-# def match_check(query, lib)
+    n = 10
+    return list({key: dic[key] for key in sorted(dic, key=dic.get, reverse=True)[:n]}.items())
 
-results = []
+results = {}
 for batch_idx, data in enumerate(train_loader):
-    im_batch, word_batch, query_jpg = data
+    im_batch, word_batch, query_jpg, check = data
+    if check==False:
+        continue
     # print(word_batch.size(), im_batch.size())
 
     # index = 7
@@ -213,13 +220,12 @@ for batch_idx, data in enumerate(train_loader):
     # enc.inverse_transform(csc_matrix(tx[:,:int(np.sum(tx))]).transpose())
 
     model(im_batch.squeeze(0).to(device), word_batch.squeeze(0).to(device))
-    query = F.relu(activation['c_linear3']).numpy()
+    query = F.normalize(F.relu(activation['embedding']),p = 2, dim =1 ).numpy()
     best_match =  match(query, lib, rev_dict_indice)
-    results.append([query_jpg[0],best_match])
-    print(batch_idx/train_loader.__len__())
-    if batch_idx == 1000:
+    results[query_jpg[0]] = best_match
+    print(batch_idx ,batch_idx/train_loader.__len__())
+    if batch_idx == 3000:
         break
 
-
-with open('util/dl_logs/resultsmatched_train.pickle', 'wb') as a:
+with open('util/dl_logs/03_test_result_confidenceT.pickle', 'wb') as a:
     pickle.dump(results,a)

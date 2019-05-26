@@ -60,13 +60,14 @@ class Model(nn.Module):
         self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
         self.t_pool1 = nn.MaxPool1d(kernel_size=2)
         self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(64*6,16)
+        self.t_linear= nn.Linear(64*6,16)
 
         self.c_linear1 = nn.Linear(512+16, 512)
         self.c_dropout1= nn.Dropout(p = 0.4)
         self.c_linear2 = nn.Linear(512, 1024)
         self.c_dropout2= nn .Dropout(p = 0.4)
         self.c_linear3 = nn.Linear(1024, 128)
+        self.c_dropout3= nn .Dropout(p = 0.1)
         self.c_linear4 = nn.Linear(128,classes)
 
 
@@ -101,6 +102,9 @@ class Model(nn.Module):
 
         c = self.c_linear3(c)
         c = F.relu(c)
+        c = self.c_dropout3(c)
+        c = F.normalize(c, p=2, dim=1)
+
         c = self.c_linear4(c)
         return c
 
@@ -119,13 +123,13 @@ train_loader = DataLoader(dataset, batch_size=512, shuffle = False)
 lib = []
 
 model = Model(19408)
-model.load_state_dict(torch.load("Dataset_processing/logs/39_checkpoint_dict.pt", map_location = 'cpu'))
+model.load_state_dict(torch.load("logs/009checkdict.pt", map_location = 'cpu'))
 activation = {}
 def get_activation(name):
 	def hook(model, input, output):
 		activation[name] = output.detach()
 	return hook
-model.c_linear3.register_forward_hook(get_activation('c_linear3'))
+model.c_dropout3.register_forward_hook(get_activation('embedding'))
 
 for batch_idx, data in enumerate(train_loader):
     im, word, jpg = data
@@ -137,13 +141,13 @@ for batch_idx, data in enumerate(train_loader):
     # enc.inverse_transform(csc_matrix(tx[:,:int(np.sum(tx))]).transpose())
 
     if len(lib)==0:
-        lib = F.relu(activation['c_linear3']).numpy()
+        lib = F.normalize(F.relu(activation['embedding']),p = 2, dim = 1).numpy()
         filenames = np.array(jpg)
-    lib = np.concatenate((lib, F.relu(activation['c_linear3']).numpy()), axis = 0)
+    lib = np.concatenate((lib, F.normalize(F.relu(activation['embedding']),p=2,dim=1).numpy()), axis = 0)
     filenames = np.append(filenames, np.array(jpg))
     print(batch_idx)
 
-with open('lib/39LIB'+str(1).zfill(2) +'.pickle','wb') as q:
+with open('lib/39LIB'+str(1).zfill(3) +'.pickle','wb') as q:
     pickle.dump([lib, filenames], q)
 
 indice_dict = {}
@@ -153,5 +157,5 @@ indice_dict = {}
 for i in jpg_dict_train.keys():
     indice_dict[i] = np.argwhere(filenames == i)
 
-with open('lib/39lib_processed'+str(1).zfill(2) +'.pickle','wb') as q:
+with open('lib/39lib_processed'+str(1).zfill(3) +'.pickle','wb') as q:
     pickle.dump([lib, filenames, indice_dict], q)
