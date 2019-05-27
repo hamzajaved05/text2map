@@ -54,13 +54,16 @@ train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size 
                                                                   data_size - int(data_size * (train_size))])
 
 if args.write:
-    Writer = SummaryWriter("tbx/" + args.logid)
-    Writer.add_scalars("Metadata", {"Batch_size": args.batch,
-                                    "learning_rate": args.lr,
-                                    "logid": int(args.logid),
-                                    "training_size": train_dataset.__len__(),
-                                    "Validation_size": val_dataset.__len__(),
-                                    "No_of_classes": no_classes})
+    Writer = SummaryWriter("tbx/" + args.logid + args.model)
+    Writer.add_scalars("Metadata_" + args.model, {"Batch_size": args.batch,
+                                                  "learning_rate": args.lr,
+                                                  "logid": int(args.logid),
+                                                  "training_size": train_dataset.__len__(),
+                                                  "Validation_size": val_dataset.__len__(),
+                                                  "No_of_classes": no_classes,
+                                                  "embed_dropout": args.embed_dropout,
+                                                  "dropout": args.dropout,
+                                                  "embed_size": args.embed_size})
 
 activation = {}
 
@@ -99,6 +102,17 @@ early_stop = EarlyStopping(patience=100, verbose=False, name=args.logid, path='l
 
 batches = ceil(len(klass) / args.batch)
 
+epoch_metric = {"Training_loss": [], "Training_acc": [], "Validation_loss": [], "Validation_acc": []}
+
+
+def log_metric(dict, ta, tl, va, vl):
+    dict["Training_loss"].append(tl)
+    dict["Training_acc"].append(ta)
+    dict["Validation_loss"].append(vl)
+    dict["Validation_acc"].append(va)
+    return dict
+
+
 for epoch in range(1, epochs + 1):
 
     training_batch_acc = []
@@ -118,12 +132,6 @@ for epoch in range(1, epochs + 1):
         correct = pred.eq(labels.to(device).long().view_as(pred)).sum().item()
         training_batch_acc.append(correct)
         training_batch_loss.append(loss.item())
-        # Writer.add_scalars("Training_batch", {"Epoch_acc": (correct) / labels.size()[0],
-        #                                       "Epoch_loss": loss.item() / labels.size()[0]},
-        #                    batches * epoch + batch_idx)
-        # if epoch % 10 == 0:
-        #     Writer.add_embedding(F.normalize(F.relu(activation['embedding']), p=2, dim=1),
-        #                          global_step=batches * epoch + batch_idx)
 
     Network.eval()
     for batch_idx, data in enumerate(val_loader):
@@ -134,22 +142,21 @@ for epoch in range(1, epochs + 1):
         correct = pred.eq(labels.to(device).long().view_as(pred)).sum().item()
         validation_batch_acc.append(correct)
         validation_batch_loss.append(loss.item())
-        # Writer.add_scalars("Validation_batch", {"Epoch_acc": correct / labels.size()[0],
-        #                                         "Epoch_loss": loss.item() / labels.size()[0]},
-        #                    batches * epoch + batch_idx)
-        # if epoch % 10 == 0:
-        #     Writer.add_embedding(F.normalize(F.relu(activation['embedding']), p=2, dim=1),
-        #                          global_step=batches * epoch + batch_idx)
 
-    # if args.write:
-        #     for name, param in Network.named_parameters():
-        #         Writer.add_histogram(name, param.clone().cpu().data.numpy(), epochs * batches + batch_idx)
-        Writer.add_scalars("Training_log", {"Epoch_acc": sum(training_batch_acc) / train_dataset.__len__(),
-                                            "Epoch_loss": sum(training_batch_loss) / train_dataset.__len__(),
-                                            "Epoch_val_acc": sum(validation_batch_acc) / val_dataset.__len__(),
-                                            "Epoch_val_loss": sum(validation_batch_loss) / val_dataset.__len__(),
-                                            "lr": optimizer.param_groups[0]["lr"]},
-                           epoch)
+    Writer.add_scalars("Training_log", {"Epoch_acc": sum(training_batch_acc)*100 / train_dataset.__len__(),
+                                        "Epoch_loss": sum(training_batch_loss) / train_dataset.__len__(),
+                                        "Epoch_val_acc": sum(validation_batch_acc)*100 / val_dataset.__len__(),
+                                        "Epoch_val_loss": sum(validation_batch_loss) / val_dataset.__len__(),
+                                        "lr": optimizer.param_groups[0]["lr"]},
+                       epoch)
+    epoch_metric = log_metric(epoch_metric,
+                              sum(training_batch_acc)/ train_dataset.__len__(),
+                              sum(training_batch_loss)/ train_dataset.__len__(),
+                              sum(validation_batch_acc)/ val_dataset.__len__(),
+                              sum(validation_batch_loss)/val_dataset.__len__())
+
+    with open('logs/' + args.logid + 'logfile.pickle', 'wb') as q:
+        pickle.dump([epoch_metric, args], q)
 
     if args.earlystopping:
         early_stop(sum(validation_batch_loss), Network)
@@ -162,7 +169,3 @@ for epoch in range(1, epochs + 1):
 Writer.close()
 torch.save(Network.state_dict(), "logs/" + args.logid + "_dict.pt")
 torch.save(Network, "logs/" + args.logid + "_dict_c.pt")
-
-# embeddings size
-# image text seperately
-# dropout

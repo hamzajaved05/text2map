@@ -8,12 +8,9 @@ Created on Sat Mar 23 15:22:29 2019
 
 import numpy as np
 from py_stringmatching.similarity_measure.levenshtein import Levenshtein
-from py_stringmatching.similarity_measure.monge_elkan import MongeElkan
-from util.utilities import scoring_words
-
-def matching(jpg_dict, stringarray , scoring_dict ):
 
 
+def matching(jpg_dict, stringarray, scoring_dict):
     # jpgs = list(jpg_dict.keys())
     # stringid = 0
     # jpgid = 0
@@ -50,15 +47,15 @@ def matching(jpg_dict, stringarray , scoring_dict ):
             dummyscore = []
             for trainstrings in jpg_dict[trainimages]:
                 ld = lev.get_raw_score(trainstrings, querystrings) * scoring_dict[trainstrings]
-                if not (ld ==1 and (querystrings in trainstrings or trainstrings in querystrings)):
-                    dummyscore.append(1 / (1 + ld/2))
+                if not (ld == 1 and (querystrings in trainstrings or trainstrings in querystrings)):
+                    dummyscore.append(1 / (1 + ld / 2))
                     # dummyscore.append(ld*min(len(querystrings),len(trainstrings)))
                 else:
                     dummyscore.append(1 / (1 + ld))
                     # dummyscore.append(ld*min(len(querystrings),len(trainstrings)))
-            score[jpgid,stringid] = max(np.array(dummyscore))
+            score[jpgid, stringid] = max(np.array(dummyscore))
             # del jpg_dict[trainimages][np.argmax(np.array(dummyscore))]
-            stringid+=1
-        jpgid+=1
-    return jpgs[np.argmax(np.sum(score, axis = 1))] , ((np.max(np.sum(score,axis = 1)))/normalizer)
+            stringid += 1
+        jpgid += 1
+    return jpgs[np.argmax(np.sum(score, axis=1))], ((np.max(np.sum(score, axis=1))) / normalizer)
     # return jpg

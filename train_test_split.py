@@ -6,11 +6,11 @@ Created on Wed Mar 27 11:26:13 2019
 @author: presag3l
 """
 import pandas as pd
+
 from util.utilities import write_dict_to_txt as WDTT
 
-
 testlines = open("Dataset_processing/testjpgnames.txt").read().splitlines()
-data = data = pd.read_csv("Dataset_processing/68_data.csv", sep = ", ")
+data = data = pd.read_csv("Dataset_processing/68_data.csv", sep=", ")
 jpg_dict = {};
 for index, row in data.iterrows():
     if row["imagesource"] in jpg_dict:
@@ -27,5 +27,5 @@ for i in jpg_dict.keys():
     else:
         traindict[i] = jpg_dict[i]
 
-WDTT(traindict,"train03")
-WDTT(testdict,"test03")
+WDTT(traindict, "train03")
+WDTT(testdict, "test03")
