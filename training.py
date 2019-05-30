@@ -7,12 +7,10 @@ Project: texttomap
 
 import argparse
 import pickle
-
 import torch.optim as optim
 from math import ceil
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
-
 from util.early_stopping import EarlyStopping
 from util.loaders import *
 from util.models import *
@@ -39,6 +37,19 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
 
+def preprocess_klass(klass):
+    x = -1
+    arr = []
+    klass2 = []
+    for i in klass:
+        if i not in arr:
+            x+=1
+            arr.append(i)
+        klass2.append(x)
+    return klass2
+klass = preprocess_klass(klass)
+
+
 if not args.limit == -1:
     klass = klass[:args.limit]
     words_sparse = words_sparse[:args.limit]
@@ -46,12 +57,37 @@ if not args.limit == -1:
     jpgs = jpgs[:args.limit]
     modes = modes[:args.limit]
 
-complete_dataset = image_word_training_loader(jpgs, words, words_sparse, klass, args.impath)
 train_size = args.ratio
 no_classes = klass[-1] + 1
 data_size = len(klass)
+
+
+activation = {}
+
+def get_activation(name):
+    def hook(model, input, output):
+        activation[name] = output.detach()
+
+    return hook
+
+criterion = nn.CrossEntropyLoss()
+
+
+if args.model == 'ti':
+    Model = ModelC
+elif args.model == 't':
+    Model = ModelT
+elif args.model == 'i':
+    Model = ModelI
+else:
+    raise ("UnIdentified Model specified")
+Network = Model(no_classes, embedding=args.embed_size, do=args.dropout, em_do=args.embed_dropout)
+complete_dataset = image_word_training_loader(jpgs, words, words_sparse, klass, args.impath)
 train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size * (train_size)),
                                                                   data_size - int(data_size * (train_size))])
+train_loader = DataLoader(train_dataset, batch_size=args.batch, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
+
 
 if args.write:
     Writer = SummaryWriter("tbx/" + args.logid + args.model)
@@ -65,30 +101,6 @@ if args.write:
                                                   "dropout": args.dropout,
                                                   "embed_size": args.embed_size})
 
-activation = {}
-
-
-def get_activation(name):
-    def hook(model, input, output):
-        activation[name] = output.detach()
-
-    return hook
-
-
-criterion = nn.CrossEntropyLoss()
-train_loader = DataLoader(train_dataset, batch_size=args.batch, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
-
-if args.model == 'ti':
-    Model = ModelC
-elif args.model == 't':
-    Model = ModelT
-elif args.model == 'i':
-    Model = ModelI
-else:
-    raise ("UnIdentified Model specified")
-
-Network = Model(no_classes, embedding=args.embed_size, do=args.dropout, em_do=args.embed_dropout)
 Network.to(device)
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
@@ -165,6 +177,7 @@ for epoch in range(1, epochs + 1):
         if epoch % args.decay_freq == 0:
             for g in optimizer.param_groups:
                 g['lr'] = args.lr / 2 ** (epoch // args.decay_freq)
+
 
 Writer.close()
 torch.save(Network.state_dict(), "logs/" + args.logid + "_dict.pt")

@@ -154,3 +154,54 @@ class ModelI(nn.Module):
 
         c = self.c_linear4(c)
         return c
+
+
+class Embedding_net(nn.Module):
+    def __init__(self, p_embed = 512, v_embed = 4096, c_embed = 5120):
+        super(Embedding_net, self).__init__()
+        self.p1 = nn.Sequential(nn.Linear(1280, 512),
+                                nn.Linear(512, p_embed))
+        self.v1 = nn.Sequential(nn.Linear(4096, 4096),
+                                nn.Linear(4096, v_embed))
+        self.c1 = nn.Sequential(nn.Linear(p_embed+v_embed, 5120),
+                                nn.Linear(5120, c_embed))
+
+    def forward(self, pa, vl):
+        patch = pa
+        patch = self.p1(patch)
+        vlad = self.v1(vl)
+
+        com = torch.cat([vlad, patch], dim = 1)
+        com = self.c1(com)
+        return com
+
+
+class TripletNet(nn.Module):
+    def __init__(self, embedding_net):
+        super(TripletNet, self).__init__()
+        self.embedding_net = embedding_net.float()
+
+    def forward(self, array):
+        output1 = self.embedding_net(array[0], array[3])
+        output2 = self.embedding_net(array[1], array[4])
+        output3 = self.embedding_net(array[2], array[5])
+        return output1, output2, output3
+
+    def get_embedding(self, x):
+        return self.embedding_net(x)
+
+class TripletLoss(nn.Module):
+    """
+    Triplet loss
+    Takes embeddings of an anchor sample, a positive sample and a negative sample
+    """
+
+    def __init__(self, margin = 0.1):
+        super(TripletLoss, self).__init__()
+        self.margin = margin
+
+    def forward(self, anchor, positive, negative, size_average=True):
+        distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
+        distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
+        losses = F.relu(distance_positive - distance_negative + self.margin)
+        return losses.mean(), distance_positive, distance_negative if size_average else losses.sum()

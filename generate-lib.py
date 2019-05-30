@@ -5,15 +5,13 @@ Project: texttomap
 
 """
 import pickle
-
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils import data
 from torch.utils.data import DataLoader
-
+from util.models import *
 from util.updatelibrary import jpg_dict_lib as Reader
 
 # pca = PCA(n_components=32)
@@ -41,7 +39,7 @@ class image_word_dataset(data.Dataset):
         im_path = self.jpeg[index]
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
-        return torch.div(im.float(), 255), word_indexed.float(), im_path
+        return torch.div(im.float(), 255), word_indexed.float(), im_path, self.words[index]
 
 
 class Model(nn.Module):
@@ -134,8 +132,8 @@ def get_activation(name):
 model.c_dropout3.register_forward_hook(get_activation('embedding'))
 
 for batch_idx, data in enumerate(train_loader):
-    im, word, jpg = data
-    _ = model(im.to(device), word.to(device))
+    im, word_sp, jpg, word = data
+    _ = model(im.to(device), word_sp.to(device))
 
     # index = 91
     # image = plt.imshow(im[index].permute(1,2,0).numpy())
@@ -145,12 +143,14 @@ for batch_idx, data in enumerate(train_loader):
     if len(lib) == 0:
         lib = F.normalize(F.relu(activation['embedding']), p=2, dim=1).numpy()
         filenames = np.array(jpg)
+        words = np.array(word)
     lib = np.concatenate((lib, F.normalize(F.relu(activation['embedding']), p=2, dim=1).numpy()), axis=0)
     filenames = np.append(filenames, np.array(jpg))
+    words = np.append(words, np.array(word))
     print(batch_idx)
 
-with open('lib/39LIB' + str(1).zfill(3) + '.pickle', 'wb') as q:
-    pickle.dump([lib, filenames], q)
+with open('lib/final_load_lib' + str(1).zfill(3) + '.pickle', 'wb') as q:
+    pickle.dump([lib, filenames, words], q)
 
 indice_dict = {}
 # for i in set(jpgs):
@@ -159,5 +159,5 @@ indice_dict = {}
 for i in jpg_dict_train.keys():
     indice_dict[i] = np.argwhere(filenames == i)
 
-with open('lib/39lib_processed' + str(1).zfill(3) + '.pickle', 'wb') as q:
-    pickle.dump([lib, filenames, indice_dict], q)
+with open('lib/final_processed' + str(1).zfill(3) + '.pickle', 'wb') as q:
+    pickle.dump([lib, filenames, indice_dict, words], q)

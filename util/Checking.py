@@ -2,23 +2,25 @@ import pickle
 
 import matplotlib.pyplot as plt
 
-with open("plogs/log01.pickle", "rb") as f:
+with open("util/hc_logs/log01.pickle", "rb") as f:
     [testjpg1, libjpg1, confidence1, displacement1] = pickle.load(f)
 
-with open("plogs/log02.pickle", "rb") as f:
+with open("util/hc_logs/log02.pickle", "rb") as f:
     [testjpg2, libjpg2, confidence2, displacement2] = pickle.load(f)
 
-with open("plogs/log03.pickle", "rb") as f:
+with open("util/hc_logs/log03.pickle", "rb") as f:
     [testjpg3, libjpg3, confidence3, displacement3] = pickle.load(f)
 
-with open("plogs/log04.pickle", "rb") as f:
+with open("util/hc_logs/log04.pickle", "rb") as f:
     [testjpg4, libjpg4, confidence4, displacement4] = pickle.load(f)
 
-with open("plogs/log05.pickle", "rb") as f:
+with open("util/hc_logs/log05.pickle", "rb") as f:
     [testjpg5, libjpg5, confidence5, displacement5] = pickle.load(f)
 
-with open("plogs/log06.pickle", "rb") as f:
+with open("util/hc_logs/log06.pickle", "rb") as f:
     [testjpg6, libjpg6, confidence6, displacement6] = pickle.load(f)
+
+
 fig = plt.figure(1)
 lists, bins, patches = plt.hist([displacement4, displacement5], label=["1/lev_distance", "1/lev_distance^2"], bins=500,
                                 cumulative=True, histtype="step", normed=True, color=["r", "g"])

@@ -7,12 +7,31 @@ import numpy as np
 
 from util.updatelibrary import jpg_dict_lib as Reader
 
-matplotlib.use("TkAgg")
+# matplotlib.use("TkAgg")
 
 import cv2
 
 with open('util/dl_logs/03_test_result_confidenceT.pickle', 'rb') as e:
     results = pickle.load(e)
+
+with open("util/hc_logs/log01.pickle", "rb") as f:
+    [testjpg1, libjpg1, confidence1, displacement1] = pickle.load(f)
+
+with open("util/hc_logs/log02.pickle", "rb") as f:
+    [testjpg2, libjpg2, confidence2, displacement2] = pickle.load(f)
+
+with open("util/hc_logs/log03.pickle", "rb") as f:
+    [testjpg3, libjpg3, confidence3, displacement3] = pickle.load(f)
+
+with open("util/hc_logs/log04.pickle", "rb") as f:
+    [testjpg4, libjpg4, confidence4, displacement4] = pickle.load(f)
+
+with open("util/hc_logs/log05.pickle", "rb") as f:
+    [testjpg5, libjpg5, confidence5, displacement5] = pickle.load(f)
+
+with open("util/hc_logs/log06.pickle", "rb") as f:
+    [testjpg6, libjpg6, confidence6, displacement6] = pickle.load(f)
+
 keys = list(results.keys())
 
 jpg_dict_test = Reader(path='Dataset_processing/test03.txt')
@@ -29,7 +48,9 @@ for i in keys:
 
 print(len(displacement))
 plt.figure(0)
-lists, bins, patches = plt.hist(displacement, bins=500, range=(0, 200), cumulative=True, histtype="step", normed=True)
+lists, bins, patches = plt.hist([displacement, displacement1, displacement2, displacement3, displacement4, displacement5,
+                                 displacement6], bins=1000, range=(0, 500), cumulative=True, histtype="step", normed=True ,
+                                color=['r','b','g', 'y', 'c', 'm', 'k'])
 
 while True:
     index = np.random.randint(0, len(keys))
