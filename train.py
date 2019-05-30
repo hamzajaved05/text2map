@@ -115,4 +115,7 @@ for i_epoch in range(1, epochs + 1):
                                         "lr": optimizer.param_groups[0]["lr"]
                                         },
                        i_epoch)
+    torch.save(model.state_dict(), "final/"+args.logid+"dict.pt")
+    torch.save(model, "final/"+args.logid+"modelcom.pt")
+
 
