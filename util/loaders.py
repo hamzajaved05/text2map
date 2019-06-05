@@ -2,6 +2,7 @@ import cv2
 from torch.utils import data
 import numpy as np
 from random import sample
+from random import randint
 import torch
 import torch.nn.functional as F
 import pandas as pd
@@ -31,7 +32,7 @@ def check(triple, ids):
 
 class image_word_training_loader(data.Dataset):
     def __init__(self, jpeg, words, words_sparse, labels, path):
-        self.labels = np.array(labels)
+        self.labels = labels#np.array(labels)
         self.words = words
         self.im_path = path
         self.jpeg = np.array(jpeg)
@@ -46,6 +47,44 @@ class image_word_training_loader(data.Dataset):
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
         return torch.div(im.float(), 255), word_indexed.float(), y.float()
+    
+    def __gettriplet__(self, index):
+        #Get anchor
+        anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
+            2, 0, 1)
+        anchor_im = torch.div(im.float(), 255)
+        anchor_patch_name = self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg"
+        
+        #Get positive
+        random_index = (index+randint(0,10)) 
+        if (labels[index]==labels[positive_index]):
+            positive_index=random_index
+        elif (labels[index]==labels[index+1] and index<(len(self.labels)-1)):
+            positive_index=index+1
+        elif (index>1 and labels[index]==labels[index-1]):
+            positive_index=index-1
+        else:
+            positive_index=index
+        positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense()) 
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")).permute(
+            2, 0, 1)
+        positive_im = torch.div(im.float(), 255)
+        positive_patch_name = self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg"
+            
+        #Get negative
+        random_index = randint(0,len(self.labels)-1)
+        while (labels[index]==labels[random_index]):
+            random_index = randint(0,len(self.labels)-1)
+        negative_index=random_index
+        negative_word_indexed = torch.from_numpy(self.words_sparse[negative_index].todense()) 
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")).permute(
+            2, 0, 1)
+        negative_im = torch.div(im.float(), 255)
+        negative_patch_name = self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg"
+        
+        return anchor_word_indexed, anchor_im, anchor_patch_name, positive_word_indexed, positive_im, positive_patch_name, negative_word_indexed, negative_im, negative_patch_name 
+        
 
 class Triplet_loader(data.Dataset):
     def __init__(self, triplet, jpg_word_dict, lib_ids, lib_embeds, path, netvladids, rand):
