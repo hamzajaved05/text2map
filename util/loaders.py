@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import pandas as pd
 import pickle
 from collections import Counter
-from Levenshtein import levenshteinDistance
+from util.Levenshtein import levenshteinDistance
 
 def im_triplet(jpg, image_lib, labels):
     dumm = jpg
@@ -48,7 +48,7 @@ class image_word_training_loader(data.Dataset):
             2, 0, 1)
         return torch.div(im.float(), 255), word_indexed.float(), y.float()
     
-    def __gettriplet__(self, index):
+    def __gettriplet__(self, index,levenshtein_mining):
         #Get anchor
         anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
@@ -58,11 +58,11 @@ class image_word_training_loader(data.Dataset):
         
         #Get positive
         random_index = (index+randint(0,10)) 
-        if (labels[index]==labels[positive_index]):
+        if (self.labels[index]==self.labels[random_index]):
             positive_index=random_index
-        elif (labels[index]==labels[index+1] and index<(len(self.labels)-1)):
+        elif (self.labels[index]==self.labels[index+1] and index<(len(self.labels)-1)):
             positive_index=index+1
-        elif (index>1 and labels[index]==labels[index-1]):
+        elif (index>1 and self.labels[index]==self.labels[index-1]):
             positive_index=index-1
         else:
             positive_index=index
@@ -75,12 +75,12 @@ class image_word_training_loader(data.Dataset):
         #Get negative
         if (levenshtein_mining):
             random_index = randint(0,len(self.labels)-1)
-            while (labels[index]==labels[random_index] and levenshteinDistance(words[index],words[random_index])>5 ):
+            while (self.labels[index]==self.labels[random_index] and levenshteinDistance(words[index],words[random_index])>5 ):
                 random_index = randint(0,len(self.labels)-1)
             negative_index=random_index
         else:
             random_index = randint(0,len(self.labels)-1)
-            while (labels[index]==labels[random_index]):
+            while (self.labels[index]==self.labels[random_index]):
                 random_index = randint(0,len(self.labels)-1)
             negative_index=random_index
         
