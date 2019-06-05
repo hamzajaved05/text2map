@@ -7,6 +7,23 @@ import torch.nn.functional as F
 import pandas as pd
 import pickle
 from collections import Counter
+import random
+import os
+
+def levenshteinDistance(s1, s2):
+    if len(s1) > len(s2):
+        s1, s2 = s2, s1
+
+    distances = range(len(s1) + 1)
+    for i2, c2 in enumerate(s2):
+        distances_ = [i2 + 1]
+        for i1, c1 in enumerate(s1):
+            if c1 == c2:
+                distances_.append(distances[i1])
+            else:
+                distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
+        distances = distances_
+    return distances[-1]
 
 
 def im_triplet(jpg, image_lib, labels):
@@ -102,10 +119,59 @@ class Triplet_loader(data.Dataset):
             patch_out.append(v.t().reshape(-1))
             # print(i)
             if i in self.netvladids:
-                loc = np.argwhere(i == self.netvladids).item()-1
-                x = pd.read_csv(self.path, header=None, skiprows=loc, nrows=1).to_numpy()
+                x = np.loadtxt(self.path + i, delimiter=", ")
                 vlad_out.append(x.reshape(-1))
             else:
                 return None
 
-        return patch_out[0], patch_out[1], patch_out[2], vlad_out[0], vlad_out[1], vlad_out[2]
+        return patch_out[0], patch_out[1], patch_out[2], vlad_out[0], vlad_out[1], vlad_out[2], our_triplet
+
+
+class image_word_triplet_loader(data.Dataset):
+    def __init__(self, jpeg, words, words_sparse, labels, path, ld):
+        self.labels = np.array(labels)
+
+        self.words = words
+        self.im_path = path
+        self.jpeg = np.array(jpeg)
+        self.words_sparse = words_sparse
+        self.ld = ld
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __getitem__(self, index):
+        #Get anchor
+        anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
+        print(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
+            2, 0, 1)
+        anchor_im = torch.div(im.float(), 255)
+        anchor_patch_name = self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg"
+
+        #Get positive
+        a_label = self.labels[index]
+        high = np.max(np.argwhere(self.labels == a_label))
+        low = np.min(np.argwhere(self.labels == a_label))
+        positive_index = random.randint(low, high)
+        positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
+        print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
+
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")).permute(
+            2, 0, 1)
+        positive_im = torch.div(im.float(), 255)
+        positive_patch_name = self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg"
+
+        #Get negative
+        random_index = random.randint(0,len(self.labels)-1)
+        while (self.labels[index]==self.labels[random_index] or levenshteinDistance(self.words[index],self.words[random_index])>self.ld ):
+            random_index = random.randint(0,len(self.labels)-1)
+        negative_index=random_index
+
+        negative_word_indexed = torch.from_numpy(self.words_sparse[negative_index].todense())
+        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")).permute(
+            2, 0, 1)
+        negative_im = torch.div(im.float(), 255)
+        negative_patch_name = self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg"
+
+        return anchor_im, anchor_word_indexed, anchor_patch_name, positive_im, positive_word_indexed, positive_patch_name, negative_im, negative_word_indexed, negative_patch_name

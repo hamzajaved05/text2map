@@ -4,7 +4,6 @@ Dated: 20.04.2019
 Project: texttomap
 
 """
-
 import argparse
 import pickle
 import torch.optim as optim
@@ -14,6 +13,7 @@ from torch.utils.data import DataLoader
 from util.early_stopping import EarlyStopping
 from util.loaders import *
 from util.models import *
+import os
 
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
 parser.add_argument("--impath", type=str, help="Path for Image patches")
@@ -26,11 +26,14 @@ parser.add_argument("--write", default=True, type=bool, help="Write on tensorboa
 parser.add_argument("--limit", default=-1, type=int, help="Limit dataset")
 parser.add_argument("--ratio", default=0.8, type=float, help="Ratio of train to complete dataset")
 parser.add_argument("--earlystopping", default=True, type=bool, help="Enable or disable early stopping")
-parser.add_argument("--decay_freq", default=None, type=int, help="Decay by half after number of epochs")
+parser.add_argument("--decay_freq", default=None, type=int, help="Decay freq")
 parser.add_argument("--embed_size", default=256, type=int, help="Size of embedding")
 parser.add_argument("--model", default="ti", type=str, help="Model type")
-parser.add_argument("--embed_dropout", default=0.1, type=float, help="Dropout on embedding")
 parser.add_argument("--dropout", default=0.4, type=float, help="Dropout before")
+parser.add_argument("--ld", default = 3, type = int, help = "lev distance for negative mining")
+parser.add_argument("--decay_value", default = 0.95, type = float, help = "decay by value")
+parser.add_argument("--margin", default = 0.1, type = float, help = "decay by value")
+
 
 args = parser.parse_args()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -47,9 +50,27 @@ def preprocess_klass(klass):
             arr.append(i)
         klass2.append(x)
     return klass2
+
+def filter_klass(klas, word, word_sparse, jpg):
+    klas = np.array(klas)
+    klass2 = []
+    word2 = []
+    word_sparse2 = []
+    jpgs2 = []
+    for itera, i in enumerate(klas):
+        if np.sum(i == klas) < 5:
+            pass
+        else:
+            klass2.append(i)
+            word2.append(word[itera])
+            word_sparse2.append(word_sparse[itera])
+            jpgs2.append(jpg[itera])
+
+    return klass2, word2, word_sparse2, jpg
+print("Processing inputs")
+# klass, words, words_sparse, jpgs = filter_klass(klass, words, words_sparse, jpgs)
 klass = preprocess_klass(klass)
-
-
+print("Processed inputs")
 if not args.limit == -1:
     klass = klass[:args.limit]
     words_sparse = words_sparse[:args.limit]
@@ -61,124 +82,113 @@ train_size = args.ratio
 no_classes = klass[-1] + 1
 data_size = len(klass)
 
-
-activation = {}
-
-def get_activation(name):
-    def hook(model, input, output):
-        activation[name] = output.detach()
-
-    return hook
-
-criterion = nn.CrossEntropyLoss()
-
-
 if args.model == 'ti':
-    Model = ModelC
+    Model = p_embed_net
 elif args.model == 't':
     Model = ModelT
 elif args.model == 'i':
     Model = ModelI
 else:
     raise ("UnIdentified Model specified")
-Network = Model(no_classes, embedding=args.embed_size, do=args.dropout, em_do=args.embed_dropout)
-complete_dataset = image_word_training_loader(jpgs, words, words_sparse, klass, args.impath)
+
+
+Inter = Model(embedding= args.embed_size, do = args.dropout)
+Network = TripletNet(Inter)
+
+criterion = TripletLoss(margin= args.margin).to(device)
+
+complete_dataset = image_word_triplet_loader(jpgs, words, words_sparse, klass, args.impath, args.ld)
 train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size * (train_size)),
                                                                   data_size - int(data_size * (train_size))])
 train_loader = DataLoader(train_dataset, batch_size=args.batch, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
 
-
+print("Dataloaders done")
 if args.write:
-    Writer = SummaryWriter("tbx/" + args.logid + args.model)
-    Writer.add_scalars("Metadata_" + args.model, {"Batch_size": args.batch,
+    Writer = SummaryWriter("ti/tbx/" + args.logid + args.model)
+    Writer.add_scalars("Metadata" + args.model, {"Batch_size": args.batch,
                                                   "learning_rate": args.lr,
                                                   "logid": int(args.logid),
                                                   "training_size": train_dataset.__len__(),
                                                   "Validation_size": val_dataset.__len__(),
                                                   "No_of_classes": no_classes,
-                                                  "embed_dropout": args.embed_dropout,
+                                                  "lev_distance": args.ld,
                                                   "dropout": args.dropout,
-                                                  "embed_size": args.embed_size})
+                                                  "embed_size": args.embed_size,
+                                                  })
 
-Network.to(device)
+
+Network.float().to(device)
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
-Network.c_dropout3.register_forward_hook(get_activation('embedding'))
 train_accuracy = []
 train_loss = []
 validation_accuracy = []
 validation_loss = []
 
-early_stop = EarlyStopping(patience=100, verbose=False, name=args.logid, path='logs/')
+# early_stop = EarlyStopping(patience=100, verbose=False, name=args.logid, path='model_saves')
 
 batches = ceil(len(klass) / args.batch)
 
 epoch_metric = {"Training_loss": [], "Training_acc": [], "Validation_loss": [], "Validation_acc": []}
 
-
-def log_metric(dict, ta, tl, va, vl):
-    dict["Training_loss"].append(tl)
-    dict["Training_acc"].append(ta)
-    dict["Validation_loss"].append(vl)
-    dict["Validation_acc"].append(va)
-    return dict
-
-
+logs = {}
+logs["training_batch_pdis"] = []
+logs["training_batch_ndis"] = []
+logs["training_batch_loss"] = []
+logs["validation_batch_pdis"] = []
+logs["validation_batch_loss"] = []
+logs["validation_batch_ndis"] = []
+trainingcounter = 0
+validationcounter = 0
 for epoch in range(1, epochs + 1):
-
-    training_batch_acc = []
-    training_batch_loss = []
-    validation_batch_acc = []
-    validation_batch_loss = []
-
+    print("epoch {}".format(epoch))
     Network.train()
     for batch_idx, data in enumerate(train_loader):
-        im, inputs, labels = data
+        print("batch {}".format(batch_idx))
+        ai, ap, aw, pi, pp, pw, ni, np, nw = data
         optimizer.zero_grad()
-        outputs = Network(im.to(device), inputs.to(device))
-        loss = criterion(outputs, labels.long().to(device))
+        ao, po, no = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni.to(device), np.to(device)])
+        print('e')
+        loss, p, n = criterion(ao.to(device), po.to(device), no.to(device))
+        print("q")
         loss.backward()
         optimizer.step()
-        pred = outputs.argmax(dim=1, keepdim=True)
-        correct = pred.eq(labels.to(device).long().view_as(pred)).sum().item()
-        training_batch_acc.append(correct)
-        training_batch_loss.append(loss.item())
+        logs["training_batch_pdis"].append(p.item())
+        logs["training_batch_ndis"].append(n.item())
+        logs["training_batch_loss"].append(loss.item())
+        Writer.add_scalars("Training_data",{"batch_loss": loss.item(),
+                                            "batch_pdis": p.item(),
+                                            "batch_ndis": n.item()
+                                            },
+                           trainingcounter)
+        trainingcounter+=1
+
 
     Network.eval()
     for batch_idx, data in enumerate(val_loader):
-        im, inputs, labels = data
-        outputs = Network(im.to(device), inputs.to(device))
-        loss = criterion(outputs, labels.long().to(device))
-        pred = outputs.argmax(dim=1, keepdim=True)
-        correct = pred.eq(labels.to(device).long().view_as(pred)).sum().item()
-        validation_batch_acc.append(correct)
-        validation_batch_loss.append(loss.item())
-
-    Writer.add_scalars("Training_log", {"Epoch_acc": sum(training_batch_acc)*100 / train_dataset.__len__(),
-                                        "Epoch_loss": sum(training_batch_loss) / train_dataset.__len__(),
-                                        "Epoch_val_acc": sum(validation_batch_acc)*100 / val_dataset.__len__(),
-                                        "Epoch_val_loss": sum(validation_batch_loss) / val_dataset.__len__(),
-                                        "lr": optimizer.param_groups[0]["lr"]},
-                       epoch)
-    epoch_metric = log_metric(epoch_metric,
-                              sum(training_batch_acc)/ train_dataset.__len__(),
-                              sum(training_batch_loss)/ train_dataset.__len__(),
-                              sum(validation_batch_acc)/ val_dataset.__len__(),
-                              sum(validation_batch_loss)/val_dataset.__len__())
+        print("batch {}".format(batch_idx))
+        ai, ap, aw, pi, pp, pw, ni, np, nw = data
+        ao, po, no = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni.to(device), np.to(device)])
+        loss, p, n = criterion(ao.to(device), po.to(device), no.to(device))
+        logs["validation_batch_pdis"].append(p.item())
+        logs["validation_batch_loss"].append(loss.item())
+        logs["validation_batch_ndis"].append(n.item())
+        Writer.add_scalars("Validation_data",{"batch_loss": loss.item(),
+                                            "batch_pdis": p.item(),
+                                            "batch_ndis": n.item()
+                                            },
+                           validationcounter)
+        validationcounter+=1
 
     with open('logs/' + args.logid + 'logfile.pickle', 'wb') as q:
-        pickle.dump([epoch_metric, args], q)
+        pickle.dump([logs, args], q)
 
-    if args.earlystopping:
-        early_stop(sum(validation_batch_loss), Network)
+    torch.save(Network.state_dict(), "models/"+args.logid+"timodeldict.pt")
+    torch.save(Network, "models/"+args.logid+"timodelcom.pt")
 
     if args.decay_freq is not None:
         if epoch % args.decay_freq == 0:
             for g in optimizer.param_groups:
-                g['lr'] = args.lr / 2 ** (epoch // args.decay_freq)
+                g['lr'] = g["lr"] * args.decay_value
 
-
-Writer.close()
-torch.save(Network.state_dict(), "logs/" + args.logid + "_dict.pt")
-torch.save(Network, "logs/" + args.logid + "_dict_c.pt")
