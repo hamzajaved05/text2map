@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import pandas as pd
 import pickle
 from collections import Counter
-
+from Levenshtein import levenshteinDistance
 
 def im_triplet(jpg, image_lib, labels):
     dumm = jpg
@@ -73,10 +73,17 @@ class image_word_training_loader(data.Dataset):
         positive_patch_name = self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg"
             
         #Get negative
-        random_index = randint(0,len(self.labels)-1)
-        while (labels[index]==labels[random_index]):
+        if (levenshtein_mining):
             random_index = randint(0,len(self.labels)-1)
-        negative_index=random_index
+            while (labels[index]==labels[random_index] and levenshteinDistance(words[index],words[random_index])>5 ):
+                random_index = randint(0,len(self.labels)-1)
+            negative_index=random_index
+        else:
+            random_index = randint(0,len(self.labels)-1)
+            while (labels[index]==labels[random_index]):
+                random_index = randint(0,len(self.labels)-1)
+            negative_index=random_index
+        
         negative_word_indexed = torch.from_numpy(self.words_sparse[negative_index].todense()) 
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")).permute(
             2, 0, 1)
