@@ -165,8 +165,8 @@ class TripletNet(nn.Module):
         output3 = self.embedding_net(array[4], array[5])
         return output1, output2, output3
 
-    def get_embedding(self, x):
-        return self.embedding_net(x)
+    def get_embedding(self, x, y):
+        return self.embedding_net(x, y)
 
 class TripletLoss(nn.Module):
     def __init__(self, margin = 0.1):

@@ -21,8 +21,8 @@ from util.utilities import word2encodedword
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-with open('lib/39lib_processed' + str(1).zfill(3) + '.pickle', 'rb') as q:
-    [lib, jpgs, indice_dict] = pickle.load(q)
+with open('lib/final_lib_triplet_processed' + str(1).zfill(2) + '.pickle', 'rb') as q:
+    [lib, jpgs, indicators, indice_dict] = pickle.load(q)
 
 
 # jpgs_point = []
@@ -84,82 +84,10 @@ class image_word_dataset(data.Dataset):
             return [], [], [], bool(ind)
 
 
-class Model(nn.Module):
-    def __init__(self, classes):
-        super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
-        self.i_pool1 = nn.MaxPool2d(2)
-        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(4)
-        self.i_conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, padding=3)
-        self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(64 * 16 * 8, 512)
-
-        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
-        self.t_pool1 = nn.MaxPool1d(kernel_size=2)
-        self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(64 * 6, 16)
-
-        self.c_linear1 = nn.Linear(512 + 16, 512)
-        self.c_dropout1 = nn.Dropout(p=0.4)
-        self.c_linear2 = nn.Linear(512, 1024)
-        self.c_dropout2 = nn.Dropout(p=0.4)
-        self.c_linear3 = nn.Linear(1024, 128)
-        self.c_dropout3 = nn.Dropout(p=0.1)
-        self.c_linear4 = nn.Linear(128, classes)
-
-    def forward(self, im, tx):
-        im = self.i_conv1(im)
-        im = self.i_pool1(im)
-        im = F.relu(im)
-        im = self.i_conv2(im)
-        im = self.i_pool2(im)
-        im = F.relu(im)
-        im = self.i_conv3(im)
-        im = self.i_pool3(im)
-        im = F.relu(im)
-        im = im.view(-1, 64 * 16 * 8)
-        im = self.i_linear(im)
-
-        tx = self.t_conv1(tx)
-        tx = self.t_pool1(tx)
-        tx = F.relu(tx)
-        tx = self.t_conv2(tx)
-        tx = tx.view(-1, 64 * 6)
-        tx = self.t_linear(tx)
-
-        c = torch.cat((im, tx), 1)
-        c = self.c_linear1(c)
-        c = F.relu(c)
-        c = self.c_dropout1(c)
-
-        c = self.c_linear2(c)
-        c = F.relu(c)
-        c = self.c_dropout2(c)
-
-        c = self.c_linear3(c)
-        c = F.relu(c)
-        c = self.c_dropout3(c)
-        c = F.normalize(c, p=2, dim=1)
-
-        c = self.c_linear4(c)
-        return c
-
-
-model = Model(19408)
-model.load_state_dict(torch.load("logs/009checkdict.pt", map_location='cpu'))
-
-activation = {}
-
-
-def get_activation(name):
-    def hook(model, input, output):
-        activation[name] = output.detach()
-
-    return hook
-
-
-model.c_dropout3.register_forward_hook(get_activation('embedding'))
+torch.nn.Module.dump_patches = True
+model = torch.load("models/05timodelcompre.pt")
+model.eval()
+model.embedding_net.eval()
 
 jpg_dict_test = Reader(path='Dataset_processing/test03.txt')
 
@@ -186,7 +114,10 @@ def match(query, lib, rev_dict_indice):
         # normal_score = torch.tensor(normal_score)
         # normal_score = F.softmax(normal_score, dim = 0)
 
-        ind = np.argpartition(normal_score, 100)[:100]
+        # ind = np.argpartition(normal_score, 10)[:10]
+
+        ind = np.argwhere(normal_score<0.05)
+
         selected_normal_scores = normal_score[ind]
         soft_norms = softmax(selected_normal_scores)
         for it, norms in enumerate(soft_norms):
@@ -224,13 +155,13 @@ for batch_idx, data in enumerate(train_loader):
     # tx = word_batch.squeeze()[index].numpy()
     # enc.inverse_transform(csc_matrix(tx[:,:int(np.sum(tx))]).transpose())
 
-    model(im_batch.squeeze(0).to(device), word_batch.squeeze(0).to(device))
-    query = F.normalize(F.relu(activation['embedding']), p=2, dim=1).numpy()
+    res = model.get_embedding(im_batch.squeeze(0).to(device), word_batch.squeeze(0).to(device))
+    query = res.detach().numpy()
     best_match = match(query, lib, rev_dict_indice)
     results[query_jpg[0]] = best_match
     print(batch_idx, batch_idx / train_loader.__len__())
     if batch_idx == 3000:
         break
 
-with open('util/dl_logs/03_test_result_confidenceT.pickle', 'wb') as a:
+with open('util/dl_logs/03_test_result_confidenceTriplet.pickle', 'wb') as a:
     pickle.dump(results, a)

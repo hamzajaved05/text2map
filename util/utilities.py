@@ -8,7 +8,7 @@ import collections
 import pickle
 
 import numpy as np
-from py_stringmatching.similarity_measure.levenshtein import Levenshtein
+# from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 from scipy.sparse import csc_matrix
 from sklearn.preprocessing import OneHotEncoder
 

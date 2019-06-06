@@ -1,0 +1,13 @@
+--- /cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/dropout.py
++++ /cluster/apps/python/3.7.1/x86_64/lib64/python3.7/site-packages/torch/nn/modules/dropout.py
+@@ -18,8 +18,8 @@
+         inplace: If set to ``True``, will do this operation in-place. Default: ``False``
+ 
+     Shape:
+-        - Input: :math:`(*)`. Input can be of any shape
+-        - Output: :math:`(*)`. Output is of the same shape as input
++        - Input: `Any`. Input can be of any shape
++        - Output: `Same`. Output is of the same shape as input
+ 
+     Examples::
+ 

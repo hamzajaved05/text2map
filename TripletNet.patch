@@ -1,0 +1,11 @@
+--- /home/presage3/Stuff/text2map/util/models.py
++++ /home/presage3/Stuff/text2map/util/models.py
+@@ -9,6 +9,6 @@
+         output3 = self.embedding_net(array[4], array[5])
+         return output1, output2, output3
+ 
+-    def get_embedding(self, x, y):
+-        return self.embedding_net(x, y)
++    def get_embedding(self, x):
++        return self.embedding_net(x)
+ 

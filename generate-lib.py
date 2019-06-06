@@ -13,151 +13,47 @@ from torch.utils import data
 from torch.utils.data import DataLoader
 from util.models import *
 from util.updatelibrary import jpg_dict_lib as Reader
+from util.loaders import *
 
-# pca = PCA(n_components=32)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 jpg_dict_train = Reader(path='Dataset_processing/train03.txt')
-# jpg_dict_test = Reader(path = 'Dataset_processing/test03.txt')
 with open('training_data_pytorch04.pickle', "rb") as a:
     [klass, words_sparse, words_strings, jpgs, enc, modes] = pickle.load(a)
 
 
-class image_word_dataset(data.Dataset):
-    def __init__(self, jpeg, words, words_sparse, labels, path):
-        self.words = words
-        self.im_path = path
-        self.jpeg = jpeg
-        self.words_sparse = words_sparse
-        self.labels = labels
-
-    def __len__(self):
-        return len(self.labels)
-
-    def __getitem__(self, index):
-        word_indexed = torch.from_numpy(self.words_sparse[index].todense())
-        im_path = self.jpeg[index]
-        im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
-            2, 0, 1)
-        return torch.div(im.float(), 255), word_indexed.float(), im_path, self.words[index]
-
-
-class Model(nn.Module):
-    def __init__(self, classes):
-        super(Model, self).__init__()
-        self.i_conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3)
-        self.i_pool1 = nn.MaxPool2d(2)
-        self.i_conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3)
-        self.i_pool2 = nn.MaxPool2d(4)
-        self.i_conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, padding=3)
-        self.i_pool3 = nn.MaxPool2d(2)
-        self.i_linear = nn.Linear(64 * 16 * 8, 512)
-
-        self.t_conv1 = nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2)
-        self.t_pool1 = nn.MaxPool1d(kernel_size=2)
-        self.t_conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2)
-        self.t_linear = nn.Linear(64 * 6, 16)
-
-        self.c_linear1 = nn.Linear(512 + 16, 512)
-        self.c_dropout1 = nn.Dropout(p=0.4)
-        self.c_linear2 = nn.Linear(512, 1024)
-        self.c_dropout2 = nn.Dropout(p=0.4)
-        self.c_linear3 = nn.Linear(1024, 128)
-        self.c_dropout3 = nn.Dropout(p=0.1)
-        self.c_linear4 = nn.Linear(128, classes)
-
-    def forward(self, im, tx):
-        im = self.i_conv1(im)
-        im = self.i_pool1(im)
-        im = F.relu(im)
-        im = self.i_conv2(im)
-        im = self.i_pool2(im)
-        im = F.relu(im)
-        im = self.i_conv3(im)
-        im = self.i_pool3(im)
-        im = F.relu(im)
-        im = im.view(-1, 64 * 16 * 8)
-        im = self.i_linear(im)
-
-        tx = self.t_conv1(tx)
-        tx = self.t_pool1(tx)
-        tx = F.relu(tx)
-        tx = self.t_conv2(tx)
-        tx = tx.view(-1, 64 * 6)
-        tx = self.t_linear(tx)
-
-        c = torch.cat((im, tx), 1)
-        c = self.c_linear1(c)
-        c = F.relu(c)
-        c = self.c_dropout1(c)
-
-        c = self.c_linear2(c)
-        c = F.relu(c)
-        c = self.c_dropout2(c)
-
-        c = self.c_linear3(c)
-        c = F.relu(c)
-        c = self.c_dropout3(c)
-        c = F.normalize(c, p=2, dim=1)
-
-        c = self.c_linear4(c)
-        return c
-
-
-# dummy = list(set(flatten(jpg_dict_train.values())))
-
-# words_set = [x for x in dummy if len(list(x))<12]
-
-# enc_dict = word2encdict(enc= enc, wordsarray=words_set, length=12, lowercase=False)
-# del words_set
-# del dummy
-
-dataset = image_word_dataset(jpgs, words_strings, words_sparse, klass, 'Dataset_processing/jpeg_patch/')
+dataset = image_word_triplet_loader(jpgs, words_strings, words_sparse, klass,"Dataset_processing/jpeg_patch/" , ld= 30)
 train_loader = DataLoader(dataset, batch_size=512, shuffle=False)
 
+# embed = p_embed_net(128, 0.2)
+# model = TripletNet(embed)
+model = torch.load("gpu_models/02timodelcom.pt", map_location = 'cpu')
 lib = []
-
-model = Model(19408)
-model.load_state_dict(torch.load("logs/009checkdict.pt", map_location='cpu'))
-activation = {}
-
-
-def get_activation(name):
-    def hook(model, input, output):
-        activation[name] = output.detach()
-
-    return hook
-
-
-model.c_dropout3.register_forward_hook(get_activation('embedding'))
-
+model.eval()
+model.embedding_net.eval()
 for batch_idx, data in enumerate(train_loader):
-    im, word_sp, jpg, word = data
-    _ = model(im.to(device), word_sp.to(device))
-
-    # index = 91
-    # image = plt.imshow(im[index].permute(1,2,0).numpy())
-    # tx = word[index].numpy()
-    # enc.inverse_transform(csc_matrix(tx[:,:int(np.sum(tx))]).transpose())
+    im, word_sp, identifier, _, _, _, _, _, _ = data
+    output = model.get_embedding(im.to(device), word_sp.to(device))
 
     if len(lib) == 0:
-        lib = F.normalize(F.relu(activation['embedding']), p=2, dim=1).numpy()
-        filenames = np.array(jpg)
-        words = np.array(word)
-    lib = np.concatenate((lib, F.normalize(F.relu(activation['embedding']), p=2, dim=1).numpy()), axis=0)
-    filenames = np.append(filenames, np.array(jpg))
-    words = np.append(words, np.array(word))
-    print(batch_idx)
+        lib = output.detach().numpy()
+        filenames = np.array(identifier)
+    else:
+        lib = np.concatenate((lib, output.detach().numpy()), axis=0)
+        filenames = np.append(filenames, np.array(identifier))
+    print("{}/{}".format(batch_idx, train_loader.__len__()))
 
-with open('lib/final_load_lib' + str(1).zfill(3) + '.pickle', 'wb') as q:
-    pickle.dump([lib, filenames, words], q)
+with open('lib/final_lib_triplet' + str(2).zfill(2) + '.pickle', 'wb') as q:
+    pickle.dump([lib, filenames], q)
+
+# filenames2 =[]
+# for i in filenames:
+#     filenames2.append(i[30:61]+'.jpg')
+# filenames2 = np.array(filenames2)
 
 indice_dict = {}
-# for i in set(jpgs):
-#     indice_dict[i] = []
-
 for i in jpg_dict_train.keys():
-    indice_dict[i] = np.argwhere(filenames == i)
+    indice_dict[i] = np.argwhere(filenames2 == i)
 
-with open('lib/final_processed' + str(1).zfill(3) + '.pickle', 'wb') as q:
-    pickle.dump([lib, filenames, indice_dict, words], q)
+with open('lib/final_lib_triplet_processed' + str(1).zfill(2) + '.pickle', 'wb') as q:
+    pickle.dump([lib, filenames2, filenames, indice_dict], q)

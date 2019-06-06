@@ -3,3 +3,8 @@
 /logs/
 /lib/
 /util/dl_logs/
+/final/
+/gpu_models/
+/logsold/
+/models/
+/ti/
