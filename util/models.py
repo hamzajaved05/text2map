@@ -10,7 +10,7 @@ class p_embed_net(nn.Module):
                                    nn.MaxPool2d(2),
                                    nn.ReLU(),
                                    nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3),
-                                   nn.MaxPool2d(2),
+                                   nn.MaxPool2d(4),
                                    nn.ReLU(),
                                    nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, padding=3),
                                    nn.MaxPool2d(2),
@@ -157,12 +157,12 @@ class Embedding_net(nn.Module):
 class TripletNet(nn.Module):
     def __init__(self, embedding_net):
         super(TripletNet, self).__init__()
-        self.embedding_net = embedding_net
+        self.embedding_net = embedding_net.float()
 
     def forward(self, array):
-        output1 = self.embedding_net(array[0], array[3])
-        output2 = self.embedding_net(array[1], array[4])
-        output3 = self.embedding_net(array[2], array[5])
+        output1 = self.embedding_net(array[0], array[1])
+        output2 = self.embedding_net(array[2], array[3])
+        output3 = self.embedding_net(array[4], array[5])
         return output1, output2, output3
 
     def get_embedding(self, x):

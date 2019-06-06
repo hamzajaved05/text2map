@@ -92,8 +92,8 @@ else:
     raise ("UnIdentified Model specified")
 
 
-Inter = Model(embedding= args.embed_size, do = args.dropout)
-Network = TripletNet(Inter)
+Inter = Model(embedding= args.embed_size, do = args.dropout).float().to(device)
+Network = TripletNet(Inter).float().to(device)
 
 criterion = TripletLoss(margin= args.margin).to(device)
 
@@ -118,7 +118,6 @@ if args.write:
                                                   })
 
 
-Network.float().to(device)
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
 train_accuracy = []
@@ -147,12 +146,14 @@ for epoch in range(1, epochs + 1):
     for batch_idx, data in enumerate(train_loader):
         print("batch {}".format(batch_idx))
         ai, ap, aw, pi, pp, pw, ni, np, nw = data
+
         optimizer.zero_grad()
         ao, po, no = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni.to(device), np.to(device)])
-        print('e')
+        # print('e')
         loss, p, n = criterion(ao.to(device), po.to(device), no.to(device))
-        print("q")
+        print(p, n)
         loss.backward()
+        print(loss)
         optimizer.step()
         logs["training_batch_pdis"].append(p.item())
         logs["training_batch_ndis"].append(n.item())

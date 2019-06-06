@@ -143,7 +143,7 @@ class image_word_triplet_loader(data.Dataset):
     def __getitem__(self, index):
         #Get anchor
         anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
-        print(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")
+        # print(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
         anchor_im = torch.div(im.float(), 255)
@@ -155,7 +155,7 @@ class image_word_triplet_loader(data.Dataset):
         low = np.min(np.argwhere(self.labels == a_label))
         positive_index = random.randint(low, high)
         positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
-        print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
+        # print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
 
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")).permute(
             2, 0, 1)
@@ -174,4 +174,6 @@ class image_word_triplet_loader(data.Dataset):
         negative_im = torch.div(im.float(), 255)
         negative_patch_name = self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg"
 
-        return anchor_im, anchor_word_indexed, anchor_patch_name, positive_im, positive_word_indexed, positive_patch_name, negative_im, negative_word_indexed, negative_patch_name
+        return anchor_im, anchor_word_indexed.float(), anchor_patch_name,\
+               positive_im, positive_word_indexed.float(), positive_patch_name,\
+               negative_im, negative_word_indexed.float(), negative_patch_name
