@@ -62,7 +62,8 @@ class image_word_training_loader(data.Dataset):
         y = torch.tensor(self.labels[index])
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
-        return torch.div(im.float(), 255), word_indexed.float(), y.float()
+        return torch.div(im.float(), 255), word_indexed.float(), self.jpeg[index], self.words[index]
+
 
 class Triplet_loader(data.Dataset):
     def __init__(self, triplet, jpg_word_dict, lib_ids, lib_embeds, path, netvladids, rand):

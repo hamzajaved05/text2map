@@ -22,17 +22,17 @@ with open('training_data_pytorch04.pickle', "rb") as a:
     [klass, words_sparse, words_strings, jpgs, enc, modes] = pickle.load(a)
 
 
-dataset = image_word_triplet_loader(jpgs, words_strings, words_sparse, klass,"Dataset_processing/jpeg_patch/" , ld= 30)
+dataset = image_word_training_loader(jpgs, words_strings, words_sparse, klass,"Dataset_processing/jpeg_patch/")
 train_loader = DataLoader(dataset, batch_size=512, shuffle=False)
 
 # embed = p_embed_net(128, 0.2)
 # model = TripletNet(embed)
-model = torch.load("gpu_models/02timodelcom.pt", map_location = 'cpu')
+model = torch.load("models/11timodelcom.pt", map_location = 'cpu')
 lib = []
 model.eval()
 model.embedding_net.eval()
 for batch_idx, data in enumerate(train_loader):
-    im, word_sp, identifier, _, _, _, _, _, _ = data
+    im, word_sp, identifier, _ = data
     output = model.get_embedding(im.to(device), word_sp.to(device))
 
     if len(lib) == 0:
@@ -43,7 +43,7 @@ for batch_idx, data in enumerate(train_loader):
         filenames = np.append(filenames, np.array(identifier))
     print("{}/{}".format(batch_idx, train_loader.__len__()))
 
-with open('lib/final_lib_triplet' + str(2).zfill(2) + '.pickle', 'wb') as q:
+with open('lib/final_lib_triplet_mined' + str(11).zfill(2) + '.pickle', 'wb') as q:
     pickle.dump([lib, filenames], q)
 
 # filenames2 =[]
@@ -53,7 +53,7 @@ with open('lib/final_lib_triplet' + str(2).zfill(2) + '.pickle', 'wb') as q:
 
 indice_dict = {}
 for i in jpg_dict_train.keys():
-    indice_dict[i] = np.argwhere(filenames2 == i)
+    indice_dict[i] = np.argwhere(filenames == i)
 
-with open('lib/final_lib_triplet_processed' + str(1).zfill(2) + '.pickle', 'wb') as q:
-    pickle.dump([lib, filenames2, filenames, indice_dict], q)
+with open('lib/final_lib_triplet_mined_processed' + str(11).zfill(2) + '.pickle', 'wb') as q:
+    pickle.dump([lib, filenames, indice_dict], q)

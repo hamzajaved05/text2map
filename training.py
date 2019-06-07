@@ -66,11 +66,42 @@ def filter_klass(klas, word, word_sparse, jpg):
             word_sparse2.append(word_sparse[itera])
             jpgs2.append(jpg[itera])
 
-    return klass2, word2, word_sparse2, jpg
+    return klass2, word2, word_sparse2, jpgs2
 print("Processing inputs")
 # klass, words, words_sparse, jpgs = filter_klass(klass, words, words_sparse, jpgs)
+
+def limitklass(klas, word, word_sparse, jpg):
+    klas = np.array(klas)
+    klass2 = []
+    word2 = []
+    word_sparse2 = []
+    jpgs2 = []
+    latestklass = []
+    skipper =False
+    for itera, i in enumerate(klas):
+        if i not in latestklass:
+            latestklass.append(i)
+            klass2.append(i)
+            word2.append(word[itera])
+            word_sparse2.append(word_sparse[itera])
+            jpgs2.append(jpg[itera])
+            skipper = False
+        elif i in latestklass:
+            if not skipper:
+                klass2.append(i)
+                word2.append(word[itera])
+                word_sparse2.append(word_sparse[itera])
+                jpgs2.append(jpg[itera])
+                skipper = True
+    return klass2, word2, word_sparse2, jpgs2
+
+
+
 klass = preprocess_klass(klass)
+klass, words, words_sparse, jpgs = limitklass(klass, words, words_sparse, jpgs)
 print("Processed inputs")
+print(len(klass))
+
 if not args.limit == -1:
     klass = klass[:args.limit]
     words_sparse = words_sparse[:args.limit]

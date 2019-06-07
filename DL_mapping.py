@@ -21,8 +21,8 @@ from util.utilities import word2encodedword
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-with open('lib/final_lib_triplet_processed' + str(1).zfill(2) + '.pickle', 'rb') as q:
-    [lib, jpgs, indicators, indice_dict] = pickle.load(q)
+with open('lib/final_lib_triplet_mined_processed' + str(11).zfill(2) + '.pickle', 'rb') as q:
+    [lib, jpgs, indice_dict] = pickle.load(q)
 
 
 # jpgs_point = []
@@ -85,7 +85,7 @@ class image_word_dataset(data.Dataset):
 
 
 torch.nn.Module.dump_patches = True
-model = torch.load("models/05timodelcompre.pt")
+model = torch.load("models/11timodelcom.pt", map_location = 'cpu')
 model.eval()
 model.embedding_net.eval()
 
@@ -114,11 +114,12 @@ def match(query, lib, rev_dict_indice):
         # normal_score = torch.tensor(normal_score)
         # normal_score = F.softmax(normal_score, dim = 0)
 
-        # ind = np.argpartition(normal_score, 10)[:10]
+        ind = np.argpartition(normal_score, 10)[:10]
 
-        ind = np.argwhere(normal_score<0.05)
+        # ind = np.argwhere(normal_score<0.05)
 
         selected_normal_scores = normal_score[ind]
+        # print(selected_normal_scores.shape)
         soft_norms = softmax(selected_normal_scores)
         for it, norms in enumerate(soft_norms):
             try:
@@ -163,5 +164,5 @@ for batch_idx, data in enumerate(train_loader):
     if batch_idx == 3000:
         break
 
-with open('util/dl_logs/03_test_result_confidenceTriplet.pickle', 'wb') as a:
+with open('util/dl_logs/03_test_result_confidenceTriplet_mined.pickle', 'wb') as a:
     pickle.dump(results, a)

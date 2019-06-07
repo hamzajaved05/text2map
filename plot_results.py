@@ -14,6 +14,10 @@ import cv2
 with open('util/dl_logs/03_test_result_confidenceTriplet.pickle', 'rb') as e:
     results = pickle.load(e)
 
+with open('util/dl_logs/03_test_result_confidenceTriplet_mined.pickle', 'rb') as a:
+    results = pickle.load(a)
+
+
 with open("util/hc_logs/log01.pickle", "rb") as f:
     [testjpg1, libjpg1, confidence1, displacement1] = pickle.load(f)
 
@@ -39,12 +43,12 @@ jpg_dict_test = Reader(path='Dataset_processing/test03.txt')
 displacement = []
 RAD = 0.000008998719243599958;
 for i in keys:
-    # if results[i][0][1] - results[i][1][1] > 0.01:
-    testfile = open("Dataset_processing/raw_image_folder/" + i[:-3] + "txt").read().split()[11:14]
-    libfile = open("Dataset_processing/raw_image_folder/" + results[i][0][0][:-3] + "txt").read().split()[11:14]
-    hor = math.sqrt(math.pow(float(testfile[0]) - float(libfile[0]), 2)
-                    + math.pow(float(testfile[1]) - float(libfile[1]), 2)) / RAD;
-    displacement.append(math.sqrt(math.pow(hor, 2) + math.pow(float(testfile[2]) - float(libfile[2]), 2)))
+    if results[i][0][1] - results[i][1][1] > 0.01:
+        testfile = open("Dataset_processing/raw_image_folder/" + i[:-3] + "txt").read().split()[11:14]
+        libfile = open("Dataset_processing/raw_image_folder/" + results[i][0][0][:-3] + "txt").read().split()[11:14]
+        hor = math.sqrt(math.pow(float(testfile[0]) - float(libfile[0]), 2)
+                        + math.pow(float(testfile[1]) - float(libfile[1]), 2)) / RAD;
+        displacement.append(math.sqrt(math.pow(hor, 2) + math.pow(float(testfile[2]) - float(libfile[2]), 2)))
 
 print(len(displacement))
 plt.figure(0)
