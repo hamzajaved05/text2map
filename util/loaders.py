@@ -271,7 +271,7 @@ class image_word_triplet_loader(data.Dataset):
             a_label = self.labels[index]
             # dists = self.labels==a_label
             a_lib = self.values[index]
-            dists = np.linalg.norm(a_lib - self.labels, axis=1) * self.labels == a_label
+            dists = np.linalg.norm(a_lib - self.labels, axis=1) * (self.labels == a_label)
             positive_index = np.argwhere(dists == np.max(dists)).item()
 
         positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
