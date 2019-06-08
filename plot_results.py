@@ -14,7 +14,7 @@ import cv2
 with open('util/dl_logs/03_test_result_confidenceTriplet.pickle', 'rb') as e:
     results = pickle.load(e)
 
-with open('util/dl_logs/03_test_result_confidenceTriplet_mined.pickle', 'rb') as a:
+with open('util/dl_logs/03_test_result_confidenceTriplet_mined_sparse.pickle', 'rb') as a:
     results = pickle.load(a)
 
 

@@ -6,7 +6,6 @@
       <change beforePath="$PROJECT_DIR$/DL_mapping.py" beforeDir="false" afterPath="$PROJECT_DIR$/DL_mapping.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generate-lib.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate-lib.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/plot_results.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_results.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing_embeddings.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing_embeddings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/loaders.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/loaders.py" afterDir="false" />
     </list>
@@ -18,13 +17,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="101" selection-start-line="101" selection-end-line="101" />
+            <state relative-caret-position="147">
+              <caret line="80" column="15" selection-start-line="80" selection-start-column="15" selection-end-line="80" selection-end-column="15" />
               <folding>
-                <element signature="e#2024#2190#0" />
+                <element signature="e#60#75#0" expanded="true" />
+                <element signature="e#2218#2612#0" />
               </folding>
             </state>
           </provider>
@@ -33,8 +33,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/generate-lib.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="507">
-              <caret line="57" column="45" selection-start-line="57" selection-start-column="11" selection-end-line="57" selection-end-column="79" />
+            <state relative-caret-position="252">
+              <caret line="43" column="49" selection-end-line="119" selection-end-column="42" />
               <folding>
                 <element signature="e#60#73#0" expanded="true" />
               </folding>
@@ -43,22 +43,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DL_mapping.py">
+        <entry file="file://$PROJECT_DIR$/verifyingsameclassimgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="86" selection-start-line="86" selection-end-line="89" selection-end-column="26" />
-              <folding>
-                <element signature="e#61#74#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plot_results.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="29" column="50" lean-forward="true" selection-start-line="29" selection-start-column="50" selection-end-line="29" selection-end-column="50" />
+            <state relative-caret-position="-873">
+              <caret line="5" column="31" selection-end-line="5" selection-end-column="31" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -67,23 +55,69 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/testing_embeddings.py">
+        <entry file="file://$PROJECT_DIR$/DL_mapping.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="105" column="11" lean-forward="true" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+            <state relative-caret-position="357">
+              <caret line="178" selection-start-line="178" selection-end-line="178" />
+              <folding>
+                <element signature="e#61#74#0" expanded="true" />
+                <element signature="e#3614#5057#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plot_results.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="585">
+              <caret line="39" selection-start-line="39" selection-end-line="39" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/writetofile.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testing_embeddings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-93">
+              <caret line="105" column="11" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/train.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="282">
+              <caret line="50" column="21" selection-start-line="50" selection-start-column="21" selection-end-line="50" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/util/loaders.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="64" column="83" selection-start-line="64" selection-start-column="83" selection-end-line="64" selection-end-column="83" />
+            <state relative-caret-position="417">
+              <caret line="283" lean-forward="true" selection-start-line="283" selection-end-line="283" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#2070#4479#0" />
-                <element signature="e#4533#9299#0" />
               </folding>
             </state>
           </provider>
@@ -113,7 +147,6 @@
       <find>enc_dict</find>
       <find>enc_</find>
       <find>csc</find>
-      <find>indice</find>
       <find>F</find>
       <find>dropout3</find>
       <find>drop</find>
@@ -121,7 +154,10 @@
       <find>dl_l</find>
       <find>dl_lo</find>
       <find>logid</find>
+      <find>indice</find>
+      <find>indice_dict</find>
       <find>lib</find>
+      <find>jpgs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -144,12 +180,12 @@
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/util/models.py" />
         <option value="$PROJECT_DIR$/util/utilities.py" />
-        <option value="$PROJECT_DIR$/util/loaders.py" />
-        <option value="$PROJECT_DIR$/generate-lib.py" />
-        <option value="$PROJECT_DIR$/DL_mapping.py" />
-        <option value="$PROJECT_DIR$/plot_results.py" />
         <option value="$PROJECT_DIR$/testing_embeddings.py" />
+        <option value="$PROJECT_DIR$/plot_results.py" />
+        <option value="$PROJECT_DIR$/DL_mapping.py" />
+        <option value="$PROJECT_DIR$/generate-lib.py" />
         <option value="$PROJECT_DIR$/training.py" />
+        <option value="$PROJECT_DIR$/util/loaders.py" />
       </list>
     </option>
   </component>
@@ -181,6 +217,11 @@
               <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
               <item name="text2map" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
+              <item name="text2map" type="462c0819:PsiDirectoryNode" />
+              <item name="sparse" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -241,7 +282,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/training.py" />
-      <option name="PARAMETERS" value="--impath Dataset_processing/jpeg_patch/ --inpickle training_data_pytorch04.pickle --epoch 1000 --batch 16 --lr 0.0001 --logid 4 --write True --ratio 0.8 --decay_freq 10 --embed_size 128 --model ti --dropout 0.2 --ld 10 --decay_value 0.95 --margin 0.1" />
+      <option name="PARAMETERS" value="--impath Dataset_processing/jpeg_patch/ --inpickle training_data_pytorch04.pickle --epoch 1000 --batch 64 --lr 0.0001 --logid 10 --write True --ratio 0.8 --decay_freq 10 --embed_size 128 --model ti --dropout 0.2 --ld 10 --decay_value 0.95 --margin 0.1" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -274,21 +315,22 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="70" y="27" width="1850" height="1053" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21510673" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32937366" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3293348" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3991276" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49972633" weight="0.23118865" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.33260632" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3293348" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3293348" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50053364" side_tool="true" weight="0.32937366" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4994664" weight="0.18429662" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50136834" side_tool="true" weight="0.18429662" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.49863163" visible="true" weight="0.35441658" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -298,13 +340,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/training.py</url>
-          <line>101</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -317,47 +352,47 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>scores</expression-string>
+        <expression-string>np.asarray(self.keys)[ordered_indices], self.labels[ordered_indices], a_label</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>import matplotlib</expression-string>
+        <expression-string>self.labels[np.asarray(self.keys)[ordered_indices]], self.labels[ordered_indices], a_label</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>plt.plot(scores)</expression-string>
+        <expression-string>np.asarray(self.keys)[ordered_indices], self.labels[ordered_indices]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>min(scores)</expression-string>
+        <expression-string>np.asarray(self.keys)[ordered_indices], self.labels</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>scores[i]</expression-string>
+        <expression-string>np.asarray(self.keys)[ordered_indices]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>scores[508]</expression-string>
+        <expression-string>np.asarray(self.keys)[ordered_indices], a_label</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>i</expression-string>
+        <expression-string>self.labels</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>scores.shape</expression-string>
+        <expression-string>self.labels[ordered_indices]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.libs</expression-string>
+        <expression-string>self.keys</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -472,30 +507,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/verifyingsameclassimgs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="31" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/util/early_stopping.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
           <caret line="33" column="58" lean-forward="true" selection-start-line="33" selection-end-line="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="37" column="18" lean-forward="true" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -561,42 +576,50 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generate-lib.py">
+    <entry file="file://$USER_HOME$/mlenv/mlenv/lib/python3.7/site-packages/torch/nn/functional.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="57" column="45" selection-start-line="57" selection-start-column="11" selection-end-line="57" selection-end-column="79" />
-          <folding>
-            <element signature="e#60#73#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="194">
+          <caret line="416" selection-start-line="416" selection-end-line="416" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DL_mapping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="86" selection-start-line="86" selection-end-line="89" selection-end-column="26" />
+        <state relative-caret-position="357">
+          <caret line="178" selection-start-line="178" selection-end-line="178" />
           <folding>
             <element signature="e#61#74#0" expanded="true" />
+            <element signature="e#3614#5057#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/util/loaders.py">
+    <entry file="file://$PROJECT_DIR$/TripletNet.patch">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/writetofile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="64" column="83" selection-start-line="64" selection-start-column="83" selection-end-line="64" selection-end-column="83" />
+        <state>
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#2070#4479#0" />
-            <element signature="e#4533#9299#0" />
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/verifyingsameclassimgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-873">
+          <caret line="5" column="31" selection-end-line="5" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/plot_results.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="29" column="50" lean-forward="true" selection-start-line="29" selection-start-column="50" selection-end-line="29" selection-end-column="50" />
+        <state relative-caret-position="585">
+          <caret line="39" selection-start-line="39" selection-end-line="39" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -605,17 +628,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/testing_embeddings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="105" column="11" lean-forward="true" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+        <state relative-caret-position="-93">
+          <caret line="105" column="11" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="50" column="21" selection-start-line="50" selection-start-column="21" selection-end-line="50" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generate-lib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="43" column="49" selection-end-line="119" selection-end-column="42" />
+          <folding>
+            <element signature="e#60#73#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        <state relative-caret-position="147">
+          <caret line="80" column="15" selection-start-line="80" selection-start-column="15" selection-end-line="80" selection-end-column="15" />
           <folding>
-            <element signature="e#2024#2190#0" />
+            <element signature="e#60#75#0" expanded="true" />
+            <element signature="e#2218#2612#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/loaders.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="417">
+          <caret line="283" lean-forward="true" selection-start-line="283" selection-end-line="283" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -9,8 +9,8 @@ import pickle
 import torch.optim as optim
 from math import ceil
 from tensorboardX import SummaryWriter
+import pandas as pd
 from torch.utils.data import DataLoader
-from util.early_stopping import EarlyStopping
 from util.loaders import *
 from util.models import *
 import os
@@ -76,31 +76,42 @@ def limitklass(klas, word, word_sparse, jpg):
     word2 = []
     word_sparse2 = []
     jpgs2 = []
-    latestklass = []
-    skipper =False
     for itera, i in enumerate(klas):
-        if i not in latestklass:
+        x = np.sum(np.array(klass2) == i).item()
+        if x<=1:
+            klass2.append(i)
+            word2.append(word[itera])
+            word_sparse2.append(word_sparse[itera])
+            jpgs2.append(jpg[itera])
+    return klass2, word2, word_sparse2, jpgs2
+def limitklass2(klas, word, word_sparse, jpg, nplist):
+    klas = np.array(klas)
+    klass2 = []
+    word2 = []
+    word_sparse2 = []
+    jpgs2 = []
+    latestklass = []
+    for itera, i in enumerate(klas):
+        if jpg[itera] in nplist:
             latestklass.append(i)
             klass2.append(i)
             word2.append(word[itera])
             word_sparse2.append(word_sparse[itera])
             jpgs2.append(jpg[itera])
             skipper = False
-        elif i in latestklass:
-            if not skipper:
-                klass2.append(i)
-                word2.append(word[itera])
-                word_sparse2.append(word_sparse[itera])
-                jpgs2.append(jpg[itera])
-                skipper = True
     return klass2, word2, word_sparse2, jpgs2
 
 
 
-klass = preprocess_klass(klass)
+# klass = preprocess_klass(klass)
+# x = pd.read_csv("sparse/68_data_sparse_5.csv")["imagesouce"].to_numpy()
+# klass, words, words_sparse, jpgs = limitklass2(klass, words, words_sparse, jpgs, x)
 klass, words, words_sparse, jpgs = limitklass(klass, words, words_sparse, jpgs)
+klass = preprocess_klass(klass)
+
 print("Processed inputs")
 print(len(klass))
+
 
 if not args.limit == -1:
     klass = klass[:args.limit]
@@ -187,7 +198,7 @@ for epoch in range(1, epochs + 1):
         ni7, np7, nw7,\
         ni8, np8, nw8,\
         ni9, np9, nw9,\
-        ni10, np10, nw10 = data
+        ni10, np10, nw10, x = data
 
         optimizer.zero_grad()
         ao, po, no1 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni1.to(device), np1.to(device)])
@@ -228,11 +239,14 @@ for epoch in range(1, epochs + 1):
         logs["training_batch_loss"].append(loss.item())
         Writer.add_scalars("Training_data",{"batch_loss": loss.item(),
                                             "batch_pdis": p1.item(),
-                                            "batch_ndis": n
-                                            },
+                                            "batch_ndis": n,
+                                            "indices": sum(x)/len(x)},
                            trainingcounter)
         trainingcounter+=1
-    complete_dataset.update()
+        if not epoch == 1:
+            complete_dataset.update()
+    if epoch ==1:
+        complete_dataset.update()
 
 
 

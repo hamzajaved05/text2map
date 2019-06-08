@@ -18,12 +18,35 @@ from torch.utils.data import DataLoader
 
 from util.updatelibrary import jpg_dict_lib as Reader
 from util.utilities import word2encodedword
+import pandas as pd
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-with open('lib/final_lib_triplet_mined_processed' + str(11).zfill(2) + '.pickle', 'rb') as q:
-    [lib, jpgs, indice_dict] = pickle.load(q)
+# with open('lib/final_lib_triplet_mined_processed' + str(11).zfill(2) + '.pickle', 'rb') as q:
+#     [lib, jpgs1, indice_dict] = pickle.load(q)
 
+with open('lib/final_lib_triplet_mined_processed_libjpgdict' + str(25).zfill(2) + '.pickle', 'rb') as q:
+    [libdict, jpgdict] = pickle.load(q)
+
+
+# im = pd.read_csv("sparse/68_data_sparse.csv")["imagesouce"].to_numpy()
+
+# def dict_filter(ind_dic, im):
+#     dict2 = {}
+#     for i in indice_dict.keys():
+#         if i in im:
+#             dict2[i] = ind_dic[i]
+#     return dict2
+# def libjpg_filter(lib, jpg, im):
+#     lib2 = []
+#     jpg2 = []
+#     for itera, i in enumerate(jpg):
+#         if i in im:
+#             lib2.append(lib[itera])
+#             jpg2.append(i)
+#     return lib2, jpg2
+# indice_dict = dict_filter(indice_dict, im)
+# lib, jpgs = libjpg_filter(lib, jpgs, im)
 
 # jpgs_point = []
 # jpgs_pointer = []
@@ -32,17 +55,17 @@ with open('lib/final_lib_triplet_mined_processed' + str(11).zfill(2) + '.pickle'
 # 		jpgs_point.append(i)
 # 		jpgs_pointer.append(j)
 # del indice_dict
-
-def reverse_dict(dict):
-    new_dic = {}
-    for k, v in dict.items():
-        for x in v.reshape(-1).tolist():
-            new_dic.setdefault(x, []).append(k)
-    return new_dic
-
-
-rev_dict_indice = reverse_dict(indice_dict)
-del indice_dict
+#
+# def reverse_dict(dict):
+#     new_dic = {}
+#     for k, v in dict.items():
+#         for x in v.reshape(-1).tolist():
+#             new_dic.setdefault(x, []).append(k)
+#     return new_dic
+#
+#
+# rev_dict_indice = reverse_dict(indice_dict)
+# del indice_dict
 
 with open('training_data_pytorch04.pickle', "rb") as a:
     [_, _, _, _, enc, _] = pickle.load(a)
@@ -105,7 +128,7 @@ def softmax(x):
     return e_x / e_x.sum()
 
 
-def match(query, lib, rev_dict_indice):
+def matchold(query, lib, rev_dict_indice):
     dic = {}
     # count = 0
     # no_patches = query.shape[0]
@@ -143,6 +166,30 @@ def match(query, lib, rev_dict_indice):
     n = 10
     return list({key: dic[key] for key in sorted(dic, key=dic.get, reverse=True)[:n]}.items())
 
+def match(query, lib_dict, jpgdict):
+    dic = {}
+    jpg = {}
+    # count = 0
+    # no_patches = query.shape[0]
+    for iter in range(query.shape[0]):
+        for i in lib_dict.keys():
+            # print(len(lib_dict[i]))
+            normal_score = LA.norm(query[iter] - lib_dict[i], axis=1)
+            dic[i] = np.mean(normal_score)
+
+        dic[i][i][i]
+        minkey = min(dic, key=dic.get)
+        minvalue = dic[minkey]
+        print(minvalue)
+        confidence = np.max([(minvalue-0.101)/10, 0])
+        for i in jpgdict[minkey]:
+            try:
+                jpg[i] = prob_un(jpg[i], confidence)
+            except:
+                jpg[i] = confidence
+    n = 5
+    return list({key: jpg[key] for key in sorted(jpg, key=jpg.get, reverse=True)[:n]}.items())
+
 
 results = {}
 for batch_idx, data in enumerate(train_loader):
@@ -158,11 +205,11 @@ for batch_idx, data in enumerate(train_loader):
 
     res = model.get_embedding(im_batch.squeeze(0).to(device), word_batch.squeeze(0).to(device))
     query = res.detach().numpy()
-    best_match = match(query, lib, rev_dict_indice)
+    best_match = match(query, libdict, jpgdict)
     results[query_jpg[0]] = best_match
     print(batch_idx, batch_idx / train_loader.__len__())
     if batch_idx == 3000:
         break
 
-with open('util/dl_logs/03_test_result_confidenceTriplet_mined.pickle', 'wb') as a:
+with open('util/dl_logs/03_test_result_confidenceTriplet_mined_sparse_jpglibdict.pickle', 'wb') as a:
     pickle.dump(results, a)
