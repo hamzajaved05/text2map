@@ -1,4 +1,4 @@
-# texttomap
+# texttomap (Under testing)
 Text-based landmark localization and place recognition project for Perception and Learning for Robotics course
 
 Note: The files are not yet arranged and formatted and hence there will some issues with filenames and their paths.
@@ -44,6 +44,10 @@ As explained in the prior section, some of the data, although misrecognized was 
 ### Metric 
 As defined in the above section, the metric chosen was Levenshteins metric. The metric measure the amount of manipulations needed to convert one string to the other (symmetric metric). The issue with this is that these manipulations are too simple and without context for our case. For example, let our query text be *cat* and we have a set of strings *cot* and *cam*. From contextual viewpoint we can infer that the *cot* string should score higher than *cam* which is clearly a different word. But the metric scores both at the same distance from *car*. Another aspect to compare is the probability of misidentification of certain english letters (such as *o* vs *0* and *o* vs *a*). This knowledge can be incorporated in the system as a prevalent bias of our inputs and can be leveraged to improve the accuracy of models.
 
+# Learning Based Approach for Visual text 
+To be updated here.
+Training file training.py
 
-### Comparison 
-
+# Combining NetVlad with Visual text
+To be updated here
+Training file train.py
