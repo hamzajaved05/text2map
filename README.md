@@ -3,6 +3,7 @@ Text-based landmark localization and place recognition project for Perception an
 
 Note: The files are not yet arranged and formatted and hence there will some issues with filenames and their paths.
 Note: The final Triplet network to combine the embeddings of text based features (ParkhiNet) and the Net Vlad embeddings is yet to be added along with its results. The network is however available in code (see file details) for training. The only thing remaining is the mining of hard positives and hard negatives ofr the process. Right now it mines randomly and converges very slowly.
+Note: Link for the generated data to be added
 
 
 The goal of this project was to leverage local text based features to improve the accuracy of global descriptors using deep learning. The approach taken is explained as following:
