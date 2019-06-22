@@ -34,7 +34,7 @@ parser.add_argument("--ld", default = 3, type = int, help = "lev distance for ne
 parser.add_argument("--decay_value", default = 0.95, type = float, help = "decay by value")
 parser.add_argument("--margin", default = 0.1, type = float, help = "decay by value")
 parser.add_argument("--save_embeds", default = True, type = bool, help = "decay by value")
-parser.add_argument("--max_perklass", default = 30, type = int, help="maximum items per class")
+parser.add_argument("--maxperclass", default = 30, type = int, help="maximum items per class")
 
 
 args = parser.parse_args()
@@ -65,7 +65,7 @@ def limitklass(klas, word, word_sparse, jpg):
         x = np.sum(np.array(klass2) == i).item()
         if np.sum(klas == i)<10:
             continue
-        elif x<=5:
+        elif x<args.maxperclass:
             klass2.append(i)
             word2.append(word[itera])
             word_sparse2.append(word_sparse[itera])
@@ -172,7 +172,9 @@ for epoch in range(1, epochs + 1):
         ni7, np7, nw7,\
         ni8, np8, nw8,\
         ni9, np9, nw9,\
-        ni10, np10, nw10, x, pos_ind = data
+        ni10, np10, nw10, \
+        x,\
+        first_pos, last_pos, len_pos = data
 
         optimizer.zero_grad()
         ao, po, no1 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni1.to(device), np1.to(device)])
@@ -214,17 +216,13 @@ for epoch in range(1, epochs + 1):
         Writer.add_scalars("Training_data",{"batch_loss": loss.item(),
                                             "batch_pdis": p1.item(),
                                             "batch_ndis": n
-                                            },
-                           trainingcounter)
-        if len(pos_ind) == 1:
-            pos_ind = [0,0]
+                                            }, trainingcounter)
+
         Writer.add_scalars("Indices", {"n_indices": sum(x) / len(x),
-                                       "p_indices": sum(pos_ind) / len(pos_ind),
-                                       "max_p_index": pos_ind[-1],
-                                       "min_p_index": pos_ind[1],
-                                       "len_indices": len(pos_ind)-1
-                                       },
-                           trainingcounter)
+                                       "max_p_index": sum(last_pos)/len(last_pos),
+                                       "min_p_index": sum(first_pos)/len(first_pos),
+                                       "len_indices": sum(len_pos)/len(len_pos)
+                                       }, trainingcounter)
 
         trainingcounter+=1
         if not epoch == 1:

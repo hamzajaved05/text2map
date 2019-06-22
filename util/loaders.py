@@ -191,7 +191,9 @@ class image_word_triplet_loader(data.Dataset):
                     random_index = random.randint(0, len(self.labels) - 1)
                 neg_ind.append(random_index)
                 x = 0
-                pos_ind = [0]
+                first_pos = 0
+                last_pos = 0
+                len_pos = 0
 
         else:
             a_lib = self.values[index]
@@ -209,6 +211,9 @@ class image_word_triplet_loader(data.Dataset):
                 else:
                     pos_ind.append(it)
 
+            first_pos = pos_ind[1]
+            last_pos = pos_ind[-1]
+            len_pos = len(pos_ind)
 
         negative_word_indexed = []
         negative_im = []
@@ -232,7 +237,7 @@ class image_word_triplet_loader(data.Dataset):
                negative_im[7], negative_word_indexed[7].float(), negative_patch_name[7], \
                negative_im[8], negative_word_indexed[8].float(), negative_patch_name[8], \
                negative_im[9], negative_word_indexed[9].float(), negative_patch_name[9], \
-               x, pos_ind
+               x, first_pos, last_pos, len_pos
 
     def result_update(self, values, indices):
         assert isinstance(values, (np.ndarray))
