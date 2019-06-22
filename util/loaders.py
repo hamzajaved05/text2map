@@ -210,10 +210,15 @@ class image_word_triplet_loader(data.Dataset):
                         break
                 else:
                     pos_ind.append(it)
+            try:
+                first_pos = pos_ind[1]
+                last_pos = pos_ind[-1]
+                len_pos = len(pos_ind)
+            except:
+                first_pos = 50
+                last_pos = 50
+                len_pos = 0
 
-            first_pos = pos_ind[1]
-            last_pos = pos_ind[-1]
-            len_pos = len(pos_ind)
 
         negative_word_indexed = []
         negative_im = []
