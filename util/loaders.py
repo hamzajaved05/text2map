@@ -128,114 +128,10 @@ class Triplet_loader(data.Dataset):
         return patch_out[0], patch_out[1], patch_out[2], vlad_out[0], vlad_out[1], vlad_out[2], our_triplet
 
 
-# class image_word_triplet_loader(data.Dataset):
-#     def __init__(self, jpeg, words, words_sparse, labels, path, ld):
-#         self.labels = np.array(labels)
-#
-#         self.words = words
-#         self.im_path = path
-#         self.jpeg = np.array(jpeg)
-#         self.words_sparse = words_sparse
-#         self.ld = ld
-#         self.firsttime = True
-#         self.libs={}
-#         self.libclass = {}
-#         for itera, i in enumerate(jpeg):
-#             self.libs[itera] = []
-#         self.newklass = []
-#         self.newlib = []
-#
-#     def __len__(self):
-#         return len(self.labels)
-#
-#     def __getitem__(self, index):
-#         #Get anchor
-#         anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
-#         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
-#             2, 0, 1)
-#         anchor_im = torch.div(im.float(), 255)
-#         anchor_patch_name = self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg"
-#
-#         #Get positive
-#         a_label = self.labels[index]
-#         high = np.max(np.argwhere(self.labels == a_label))
-#         low = np.min(np.argwhere(self.labels == a_label))
-#
-#
-#         positive_index = random.randint(low, high)
-#         positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
-#         # print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
-#
-#         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")).permute(
-#             2, 0, 1)
-#         positive_im = torch.div(im.float(), 255)
-#         positive_patch_name = self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg"
-#
-#         #Get negative
-#         neg_ind = []
-#         if self.firsttime:
-#             random_index = random.randint(0, len(self.labels) - 1)
-#             while len(neg_ind) <10:
-#                 while (self.labels[index] == self.labels[random_index]) or (
-#                     levenshteinDistance(self.words[index], self.words[random_index]) > self.ld):
-#                 # print("searching")
-#                     random_index = random.randint(0, len(self.labels) - 1)
-#                 neg_ind.append(random_index)
-#                 x = 0
-#
-#         else:
-#             a_lib = self.values[index]
-#             scores = np.linalg.norm(a_lib - self.values, axis = 1)
-#             ind = np.argpartition(scores, 500)[:500]
-#             min_elements = scores[ind]
-#             min_elements_order = np.argsort(min_elements)
-#             ordered_indices = ind[min_elements_order]
-#             for it, i in enumerate(ordered_indices):
-#                 if not self.labels[i] == a_label:
-#                     neg_ind.append(i)
-#                     if len(neg_ind)==10:
-#                         x = it
-#                         break
-#
-#         negative_word_indexed = []
-#         negative_im = []
-#         negative_patch_name = []
-#         for negative_index in neg_ind:
-#             negative_word_indexed.append(torch.from_numpy(self.words_sparse[negative_index].todense()))
-#             im = torch.tensor(cv2.imread(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")).permute(
-#                 2, 0, 1)
-#             negative_im.append(torch.div(im.float(), 255))
-#             negative_patch_name.append(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")
-#
-#         return anchor_im, anchor_word_indexed.float(), anchor_patch_name, index, \
-#                positive_im, positive_word_indexed.float(), positive_patch_name, \
-#                negative_im[0], negative_word_indexed[0].float(), negative_patch_name[0], \
-#                negative_im[1], negative_word_indexed[1].float(), negative_patch_name[1], \
-#                negative_im[2], negative_word_indexed[2].float(), negative_patch_name[2], \
-#                negative_im[3], negative_word_indexed[3].float(), negative_patch_name[3], \
-#                negative_im[4], negative_word_indexed[4].float(), negative_patch_name[4], \
-#                negative_im[5], negative_word_indexed[5].float(), negative_patch_name[5], \
-#                negative_im[6], negative_word_indexed[6].float(), negative_patch_name[6], \
-#                negative_im[7], negative_word_indexed[7].float(), negative_patch_name[7], \
-#                negative_im[8], negative_word_indexed[8].float(), negative_patch_name[8], \
-#                negative_im[9], negative_word_indexed[9].float(), negative_patch_name[9], x
-#
-#     def result_update(self, values, indices):
-#         assert isinstance(values, (np.ndarray))
-#         for itera, i in enumerate(indices):
-#             self.libs[i] = values[itera]
-#
-#     def update(self):
-#         self.keys = list(self.libs.keys())
-#         self.values = list(self.libs.values())
-#         self.firsttime = False
-#         assert len(self.keys) == len(self.jpeg)
-
 
 class image_word_triplet_loader(data.Dataset):
     def __init__(self, jpeg, words, words_sparse, labels, path, ld):
         self.labels = np.array(labels)
-
         self.words = words
         self.im_path = path
         self.jpeg = np.array(jpeg)
@@ -255,6 +151,7 @@ class image_word_triplet_loader(data.Dataset):
     def __getitem__(self, index):
         #Get anchor
         anchor_word_indexed = torch.from_numpy(self.words_sparse[index].todense())
+        # print(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
         anchor_im = torch.div(im.float(), 255)
@@ -271,8 +168,8 @@ class image_word_triplet_loader(data.Dataset):
             a_label = self.labels[index]
             # dists = self.labels==a_label
             a_lib = self.values[index]
-            dists = np.linalg.norm(a_lib - self.labels, axis=1) * (self.labels == a_label)
-            positive_index = np.argwhere(dists == np.max(dists)).item()
+            dists = np.linalg.norm(a_lib - self.values, axis=1) * (self.labels == a_label)
+            positive_index = np.argwhere(dists == np.max(dists))[0].item()
 
         positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
         # print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
@@ -284,6 +181,7 @@ class image_word_triplet_loader(data.Dataset):
 
         #Get negative
         neg_ind = []
+        pos_ind = []
         if self.firsttime:
             random_index = random.randint(0, len(self.labels) - 1)
             while len(neg_ind) <10:
@@ -293,11 +191,12 @@ class image_word_triplet_loader(data.Dataset):
                     random_index = random.randint(0, len(self.labels) - 1)
                 neg_ind.append(random_index)
                 x = 0
+                pos_ind = [0]
 
         else:
             a_lib = self.values[index]
             scores = np.linalg.norm(a_lib - self.values, axis = 1)
-            ind = np.argpartition(scores, 500)[:500]
+            ind = np.argpartition(scores, 40)[:40]
             min_elements = scores[ind]
             min_elements_order = np.argsort(min_elements)
             ordered_indices = ind[min_elements_order]
@@ -307,6 +206,9 @@ class image_word_triplet_loader(data.Dataset):
                     if len(neg_ind)==10:
                         x = it
                         break
+                else:
+                    pos_ind.append(it)
+
 
         negative_word_indexed = []
         negative_im = []
@@ -329,7 +231,8 @@ class image_word_triplet_loader(data.Dataset):
                negative_im[6], negative_word_indexed[6].float(), negative_patch_name[6], \
                negative_im[7], negative_word_indexed[7].float(), negative_patch_name[7], \
                negative_im[8], negative_word_indexed[8].float(), negative_patch_name[8], \
-               negative_im[9], negative_word_indexed[9].float(), negative_patch_name[9], x
+               negative_im[9], negative_word_indexed[9].float(), negative_patch_name[9], \
+               x, pos_ind
 
     def result_update(self, values, indices):
         assert isinstance(values, (np.ndarray))
@@ -341,3 +244,6 @@ class image_word_triplet_loader(data.Dataset):
         self.values = list(self.libs.values())
         self.firsttime = False
         assert len(self.keys) == len(self.jpeg)
+
+    def summary_writer(self, writer):
+        self.writer = writer

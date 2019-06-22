@@ -33,6 +33,8 @@ parser.add_argument("--dropout", default=0.4, type=float, help="Dropout before")
 parser.add_argument("--ld", default = 3, type = int, help = "lev distance for negative mining")
 parser.add_argument("--decay_value", default = 0.95, type = float, help = "decay by value")
 parser.add_argument("--margin", default = 0.1, type = float, help = "decay by value")
+parser.add_argument("--save_embeds", default = True, type = bool, help = "decay by value")
+parser.add_argument("--max_perklass", default = 30, type = int, help="maximum items per class")
 
 
 args = parser.parse_args()
@@ -40,7 +42,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
 
-def preprocess_klass(klass):
+def seq_klass(klass):
     x = -1
     arr = []
     klass2 = []
@@ -51,24 +53,7 @@ def preprocess_klass(klass):
         klass2.append(x)
     return klass2
 
-def filter_klass(klas, word, word_sparse, jpg):
-    klas = np.array(klas)
-    klass2 = []
-    word2 = []
-    word_sparse2 = []
-    jpgs2 = []
-    for itera, i in enumerate(klas):
-        if np.sum(i == klas) < 5:
-            pass
-        else:
-            klass2.append(i)
-            word2.append(word[itera])
-            word_sparse2.append(word_sparse[itera])
-            jpgs2.append(jpg[itera])
-
-    return klass2, word2, word_sparse2, jpgs2
 print("Processing inputs")
-# klass, words, words_sparse, jpgs = filter_klass(klass, words, words_sparse, jpgs)
 
 def limitklass(klas, word, word_sparse, jpg):
     klas = np.array(klas)
@@ -78,39 +63,23 @@ def limitklass(klas, word, word_sparse, jpg):
     jpgs2 = []
     for itera, i in enumerate(klas):
         x = np.sum(np.array(klass2) == i).item()
-        if x<=1:
+        if np.sum(klas == i)<10:
+            continue
+        elif x<=5:
             klass2.append(i)
             word2.append(word[itera])
             word_sparse2.append(word_sparse[itera])
             jpgs2.append(jpg[itera])
     return klass2, word2, word_sparse2, jpgs2
-def limitklass2(klas, word, word_sparse, jpg, nplist):
-    klas = np.array(klas)
-    klass2 = []
-    word2 = []
-    word_sparse2 = []
-    jpgs2 = []
-    latestklass = []
-    for itera, i in enumerate(klas):
-        if jpg[itera] in nplist:
-            latestklass.append(i)
-            klass2.append(i)
-            word2.append(word[itera])
-            word_sparse2.append(word_sparse[itera])
-            jpgs2.append(jpg[itera])
-            skipper = False
-    return klass2, word2, word_sparse2, jpgs2
-
 
 
 # klass = preprocess_klass(klass)
 # x = pd.read_csv("sparse/68_data_sparse_5.csv")["imagesouce"].to_numpy()
 # klass, words, words_sparse, jpgs = limitklass2(klass, words, words_sparse, jpgs, x)
 klass, words, words_sparse, jpgs = limitklass(klass, words, words_sparse, jpgs)
-klass = preprocess_klass(klass)
+klass = seq_klass(klass)
 
-print("Processed inputs")
-print(len(klass))
+print("Processed inputs of length {}".format(len(klass)))
 
 
 if not args.limit == -1:
@@ -119,6 +88,9 @@ if not args.limit == -1:
     words = words[:args.limit]
     jpgs = jpgs[:args.limit]
     modes = modes[:args.limit]
+    print("Limited to {} length.".format(args.limit))
+else:
+    print("Using complete dataset of {}".format(len(klass)))
 
 train_size = args.ratio
 no_classes = klass[-1] + 1
@@ -144,12 +116,12 @@ complete_dataset = image_word_triplet_loader(jpgs, words, words_sparse, klass, a
                                                                   # data_size - int(data_size * (train_size))])
 
 
-train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
+train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=False)
 # val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
 
 print("Dataloaders done")
 if args.write:
-    Writer = SummaryWriter("ti/tbx/" + args.logid + args.model)
+    Writer = SummaryWriter("models/tbx/" + args.logid + args.model)
     Writer.add_scalars("Metadata" + args.model, {"Batch_size": args.batch,
                                                   "learning_rate": args.lr,
                                                   "logid": int(args.logid),
@@ -185,11 +157,13 @@ logs["validation_batch_ndis"] = []
 trainingcounter = 0
 validationcounter = 0
 for epoch in range(1, epochs + 1):
-    print("epoch {}".format(epoch))
+    # print("epoch {}".format(epoch))
     Network.train()
     for batch_idx, data in enumerate(train_loader):
-        print("batch {}/ {}".format(batch_idx, train_loader.__len__()))
-        ai, ap, aw, a_index, pi, pp, pw, ni1, np1, nw1,\
+        print("epoch {}, batch {}/ {}".format(epoch, batch_idx, train_loader.__len__()))
+        ai, ap, aw, a_index,\
+        pi, pp, pw, \
+        ni1, np1, nw1,\
         ni2, np2, nw2,\
         ni3, np3, nw3,\
         ni4, np4, nw4,\
@@ -198,7 +172,7 @@ for epoch in range(1, epochs + 1):
         ni7, np7, nw7,\
         ni8, np8, nw8,\
         ni9, np9, nw9,\
-        ni10, np10, nw10, x = data
+        ni10, np10, nw10, x, pos_ind = data
 
         optimizer.zero_grad()
         ao, po, no1 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni1.to(device), np1.to(device)])
@@ -232,22 +206,35 @@ for epoch in range(1, epochs + 1):
         # print(loss)
         optimizer.step()
 
-        complete_dataset.result_update(ao.detach().numpy(), a_index.detach().numpy())
+        complete_dataset.result_update(ao.cpu().detach().numpy(), a_index.cpu().detach().numpy())
 
         logs["training_batch_pdis"].append(p1.item())
         logs["training_batch_ndis"].append(n)
         logs["training_batch_loss"].append(loss.item())
         Writer.add_scalars("Training_data",{"batch_loss": loss.item(),
                                             "batch_pdis": p1.item(),
-                                            "batch_ndis": n,
-                                            "indices": sum(x)/len(x)},
+                                            "batch_ndis": n
+                                            },
                            trainingcounter)
+        if len(pos_ind) == 1:
+            pos_ind = [0,0]
+        Writer.add_scalars("Indices", {"n_indices": sum(x) / len(x),
+                                       "p_indices": sum(pos_ind) / len(pos_ind),
+                                       "max_p_index": pos_ind[-1],
+                                       "min_p_index": pos_ind[1],
+                                       "len_indices": len(pos_ind)-1
+                                       },
+                           trainingcounter)
+
         trainingcounter+=1
         if not epoch == 1:
             complete_dataset.update()
     if epoch ==1:
         complete_dataset.update()
 
+    if args.save_embeds:
+        with open("models/"+args.logid+"embeds.pickle", "wb") as q:
+            pickle.dump([complete_dataset.libs, complete_dataset.labels], q)
 
 
     # torch.save(Network.state_dict(), "models/"+args.logid+"timodeldictpre.pt")
@@ -272,7 +259,7 @@ for epoch in range(1, epochs + 1):
     #                        validationcounter)
     #     validationcounter+=1
 
-    with open('logs/' + args.logid + 'logfile.pickle', 'wb') as q:
+    with open('models/' + args.logid + 'logfile.pickle', 'wb') as q:
         pickle.dump([logs, args], q)
 
     torch.save(Network.state_dict(), "models/"+args.logid+"timodeldict.pt")
