@@ -203,29 +203,18 @@ class image_word_triplet_loader(data.Dataset):
         #Get negative
         neg_ind = []
         pos_ind = []
-        if self.firsttime:
-            random_index = random.randint(0, len(self.labels) - 1)
-            while len(neg_ind) <10:
-                while (self.labels[index] == self.labels[random_index]) or (
-                    levenshteinDistance(self.words[index], self.words[random_index]) > self.ld):
-                # print("searching")
-                    random_index = random.randint(0, len(self.labels) - 1)
-                neg_ind.append(random_index)
-                x = 0
-                first_pos = 0
-                last_pos = 0
-                len_pos = 0
 
-        else:
+
+        if not self.firsttime:
             a_lib = self.values[index]
             scores = np.linalg.norm(a_lib - self.values, axis = 1)
-            ind = np.argpartition(scores, 40)[:40]
+            ind = np.argpartition(scores, 100)[:100]
             min_elements = scores[ind]
             min_elements_order = np.argsort(min_elements)
             ordered_indices = ind[min_elements_order]
             for it, i in enumerate(ordered_indices):
                 if self.soft_positive:
-                    cond = self.labels[i] != a_label and scores[i] > pos_dist
+                    cond = (self.labels[i] != a_label) and (scores[i] > pos_dist)
                 else:
                     cond = self.labels[i] != a_label
                 if cond:
@@ -235,7 +224,6 @@ class image_word_triplet_loader(data.Dataset):
                         break
                 else:
                     pos_ind.append(it)
-
             try:
                 first_pos = pos_ind[1]
                 last_pos = pos_ind[-1]
@@ -245,6 +233,18 @@ class image_word_triplet_loader(data.Dataset):
                 last_pos = 50
                 len_pos = 0
 
+        if len(neg_ind) < 10:
+            random_index = random.randint(0, len(self.labels) - 1)
+            while len(neg_ind) < 10:
+                while (self.labels[index] == self.labels[random_index]) or (
+                        levenshteinDistance(self.words[index], self.words[random_index]) > self.ld):
+                    # print("searching")
+                    random_index = random.randint(0, len(self.labels) - 1)
+                neg_ind.append(random_index)
+                x = 0
+                first_pos = 0
+                last_pos = 0
+                len_pos = 0
 
         negative_word_indexed = []
         negative_im = []

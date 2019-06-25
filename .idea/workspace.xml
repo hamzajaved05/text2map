@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="78688f53-3e5c-4dfb-b792-c71e5ca6ea77" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/loaders.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/loaders.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,8 +16,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="146" column="119" selection-start-line="146" selection-start-column="119" selection-end-line="146" selection-end-column="119" />
+            <state relative-caret-position="340">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#60#75#0" expanded="true" />
               </folding>
@@ -31,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/util/loaders.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="235" column="21" selection-start-line="235" selection-start-column="21" selection-end-line="235" selection-end-column="21" />
+            <state relative-caret-position="474">
+              <caret line="247" selection-start-line="247" selection-end-line="247" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -43,7 +40,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/util/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
+            <state relative-caret-position="2941">
               <caret line="175" column="54" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -55,7 +52,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/util/valid_training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
+            <state relative-caret-position="918">
               <caret line="57" column="74" selection-start-line="57" selection-start-column="74" selection-end-line="57" selection-end-column="74" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -129,8 +126,8 @@
         <option value="$PROJECT_DIR$/ensemble.py" />
         <option value="$PROJECT_DIR$/util/models.py" />
         <option value="$PROJECT_DIR$/util/valid_training.py" />
-        <option value="$PROJECT_DIR$/util/loaders.py" />
         <option value="$PROJECT_DIR$/training.py" />
+        <option value="$PROJECT_DIR$/util/loaders.py" />
       </list>
     </option>
   </component>
@@ -146,6 +143,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -162,7 +160,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -265,7 +262,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3293348" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3293348" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5019157" side_tool="true" weight="0.2519084" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49808428" weight="0.2519084" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.49808428" visible="true" weight="0.2519084" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -590,7 +587,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/util/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
+        <state relative-caret-position="2941">
           <caret line="175" column="54" selection-start-line="175" selection-start-column="54" selection-end-line="175" selection-end-column="54" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
@@ -600,7 +597,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/util/valid_training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
+        <state relative-caret-position="918">
           <caret line="57" column="74" selection-start-line="57" selection-start-column="74" selection-end-line="57" selection-end-column="74" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
@@ -610,8 +607,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="146" column="119" selection-start-line="146" selection-start-column="119" selection-end-line="146" selection-end-column="119" />
+        <state relative-caret-position="340">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
             <element signature="e#60#75#0" expanded="true" />
           </folding>
@@ -620,8 +617,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/util/loaders.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="235" column="21" selection-start-line="235" selection-start-column="21" selection-end-line="235" selection-end-column="21" />
+        <state relative-caret-position="474">
+          <caret line="247" selection-start-line="247" selection-end-line="247" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

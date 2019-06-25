@@ -18,7 +18,6 @@ from sklearn.model_selection import train_test_split
 import logging
 from util.valid_training import validation
 import random
-import hypertools as hyp
 
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
 parser.add_argument("--impath", type=str, help="Path for Image patches")
@@ -70,7 +69,7 @@ def limitklass(klas, word, word_sparse, jpg):
 
     for j in list(set(klas)):
         x = np.sum(np.array(klas)==j)
-        if x > 30:
+        if x > args.maxperclass:
             indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.maxperclass)
         elif x>4:
             indices = np.argwhere(np.array(klas)==j).squeeze()
