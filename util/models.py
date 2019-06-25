@@ -6,35 +6,42 @@ import torch.nn.functional as F
 class p_embed_net(nn.Module):
     def __init__(self, embedding, do):
         super(p_embed_net, self).__init__()
-        self.i_seq = nn.Sequential(nn.Conv2d(in_channels=3, out_channels=16, kernel_size=7, padding=3),
+        self.i_seq = nn.Sequential(nn.Conv2d(in_channels=3, out_channels=8, kernel_size=3, padding=1),
                                    nn.MaxPool2d(2),
                                    nn.ReLU(),
-                                   nn.Conv2d(in_channels=16, out_channels=32, kernel_size=7, padding=3),
-                                   nn.MaxPool2d(4),
-                                   nn.ReLU(),
-                                   nn.Conv2d(in_channels=32, out_channels=64, kernel_size=7, padding=3),
+                                   nn.Conv2d(in_channels=8, out_channels=16, kernel_size=3, padding=1),
                                    nn.MaxPool2d(2),
-                                   nn.ReLU())
-        self.i_linear = nn.Linear(64 * 16 * 8, 512)
+                                   nn.ReLU(),
+                                   nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1),
+                                   nn.MaxPool2d(2),
+                                   nn.ReLU(),
+                                   nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
+                                   nn.MaxPool2d(2),
+                                   nn.ReLU(),
+                                   nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1),
+                                   nn.MaxPool2d(2),
+                                   nn.ReLU()
+        )
+        self.i_linear = nn.Linear(128 * 4 * 8, 512)
 
-        self.t_seq = nn.Sequential(nn.Conv1d(in_channels=62, out_channels=32, kernel_size=7, padding=3),
+        self.t_seq = nn.Sequential(nn.Conv1d(in_channels=62, out_channels=32, kernel_size=5, padding=2),
                                    nn.MaxPool1d(2),
                                    nn.ReLU(),
                                    nn.Conv1d(in_channels=32, out_channels=64, kernel_size=5, padding=2))
         self.t_linear = nn.Linear(64 * 6, 16)
 
 
-        self.c_seq = nn.Sequential(nn.Linear(512+16, 512),
+        self.c_seq = nn.Sequential(nn.Linear(512+16, 1024),
                                    nn.ReLU(),
                                    nn.Dropout(p = do),
-                                   nn.Linear(512, 1024),
+                                   nn.Linear(1024, 512),
                                    nn.ReLU(),
                                    nn.Dropout(p = do),
-                                   nn.Linear(1024, embedding))
+                                   nn.Linear(512, embedding))
 
     def forward(self, im, tx):
         im = self.i_seq(im)
-        im = im.view(-1, 64 * 16 * 8)
+        im = im.view(-1, 128 * 8  * 4)
         im = self.i_linear(im)
 
         tx = self.t_seq(tx)
@@ -166,7 +173,7 @@ class TripletNet(nn.Module):
         return output1, output2, output3
 
     def get_embedding(self, x, y):
-        return self.embedding_net(x, y)
+        return self.embedding_net(x.float(), y.float())
 
 class TripletLoss(nn.Module):
     def __init__(self, margin = 0.1):

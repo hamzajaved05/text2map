@@ -9,6 +9,7 @@ import pickle
 from collections import Counter
 import random
 import os
+import logging
 
 def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
@@ -75,6 +76,7 @@ class Triplet_loader(data.Dataset):
         self.netvladids= netvladids
         self.rand = rand
 
+
         if self.rand:
             with open("training_data_pytorch04.pickle", "rb") as a:
                 [klass, _, words, jpgs, _, _] = pickle.load(a)
@@ -86,6 +88,7 @@ class Triplet_loader(data.Dataset):
         return self.triplet.shape[0]
 
     def __getitem__(self, index):
+
         patch_out = []
         vlad_out = []
         if self.rand:
@@ -130,7 +133,7 @@ class Triplet_loader(data.Dataset):
 
 
 class image_word_triplet_loader(data.Dataset):
-    def __init__(self, jpeg, words, words_sparse, labels, path, ld):
+    def __init__(self, jpeg, words, words_sparse, labels, path, ld, soft_positive):
         self.labels = np.array(labels)
         self.words = words
         self.im_path = path
@@ -144,6 +147,23 @@ class image_word_triplet_loader(data.Dataset):
             self.libs[itera] = []
         self.newklass = []
         self.newlib = []
+        self.message = "Ep {}, Btch {},\n" \
+                       "A_I {}, A_W '{}', \n" \
+                       "P_I {}, P_W {}, s {:.5f}, \n" \
+                       "N_i1 {}, N_w1 {}, s1 {:.3f}, \n" \
+                       "N_i2 {}, N_w2 {}, s2 {:.3f}, \n" \
+                      "N_i3 {}, N_w3 {}, s3 {:.3f}, \n" \
+                      "N_i4 {}, N_w4 {}, s4 {:.3f}, \n" \
+                      "N_i5 {}, N_w5 {}, s5 {:.3f}, \n" \
+                      "N_i6 {}, N_w6 {}, s6 {:.3f}, \n" \
+                      "N_i7 {}, N_w7 {}, s7 {:.3f}, \n" \
+                      "N_i8 {}, N_w8 {}, s8 {:.3f}, \n" \
+                      "N_i9 {}, N_w9 {}, s9 {:.3f}, \n" \
+                      "N_i10 {}, N_w10 {}, s10 {:.3f} \n\n"
+        self.epoch = 0
+        self.logger = logging.getLogger('dummy')
+        self.soft_positive = soft_positive
+
 
     def __len__(self):
         return len(self.labels)
@@ -164,13 +184,14 @@ class image_word_triplet_loader(data.Dataset):
             high = np.max(np.argwhere(self.labels == a_label))
             low = np.min(np.argwhere(self.labels == a_label))
             positive_index = random.randint(low, high)
+            pos_dist = 0
         else:
             a_label = self.labels[index]
             # dists = self.labels==a_label
             a_lib = self.values[index]
             dists = np.linalg.norm(a_lib - self.values, axis=1) * (self.labels == a_label)
             positive_index = np.argwhere(dists == np.max(dists))[0].item()
-
+            pos_dist = np.max(dists)
         positive_word_indexed = torch.from_numpy(self.words_sparse[positive_index].todense())
         # print(self.im_path + self.jpeg[positive_index][:-4] + "_" + self.words[positive_index] + ".jpg")
 
@@ -203,13 +224,18 @@ class image_word_triplet_loader(data.Dataset):
             min_elements_order = np.argsort(min_elements)
             ordered_indices = ind[min_elements_order]
             for it, i in enumerate(ordered_indices):
-                if not self.labels[i] == a_label:
+                if self.soft_positive:
+                    cond = self.labels[i] != a_label and scores[i] > pos_dist
+                else:
+                    cond = self.labels[i] != a_label
+                if cond:
                     neg_ind.append(i)
                     if len(neg_ind)==10:
                         x = it
                         break
                 else:
                     pos_ind.append(it)
+
             try:
                 first_pos = pos_ind[1]
                 last_pos = pos_ind[-1]
@@ -229,6 +255,22 @@ class image_word_triplet_loader(data.Dataset):
                 2, 0, 1)
             negative_im.append(torch.div(im.float(), 255))
             negative_patch_name.append(self.im_path + self.jpeg[negative_index][:-4] + "_" + self.words[negative_index] + ".jpg")
+
+        if not self.firsttime:
+            self.logger.warning(self.message.format(self.epoch, self.batch, index, self.words[index],
+                                                positive_index, self.words[positive_index], pos_dist,
+                                                neg_ind[0], self.words[neg_ind[0]], scores[neg_ind[0]],
+                                                neg_ind[1], self.words[neg_ind[1]], scores[neg_ind[1]],
+                                                neg_ind[2], self.words[neg_ind[2]], scores[neg_ind[2]],
+                                                neg_ind[3], self.words[neg_ind[3]], scores[neg_ind[3]],
+                                                neg_ind[4], self.words[neg_ind[4]], scores[neg_ind[4]],
+                                                neg_ind[5], self.words[neg_ind[5]], scores[neg_ind[5]],
+                                                neg_ind[6], self.words[neg_ind[6]], scores[neg_ind[6]],
+                                                neg_ind[7], self.words[neg_ind[7]], scores[neg_ind[7]],
+                                                neg_ind[8], self.words[neg_ind[8]], scores[neg_ind[8]],
+                                                neg_ind[9], self.words[neg_ind[9]], scores[neg_ind[9]],
+                                                ))
+
 
         return anchor_im, anchor_word_indexed.float(), anchor_patch_name, index, \
                positive_im, positive_word_indexed.float(), positive_patch_name, \
@@ -257,3 +299,10 @@ class image_word_triplet_loader(data.Dataset):
 
     def summary_writer(self, writer):
         self.writer = writer
+
+    def increaseepoch(self):
+        self.epoch += 1
+        self.batch = 0
+
+    def increasebatch(self):
+        self.batch +=1

@@ -14,6 +14,11 @@ from torch.utils.data import DataLoader
 from util.loaders import *
 from util.models import *
 import os
+from sklearn.model_selection import train_test_split
+import logging
+from util.valid_training import validation
+import random
+import hypertools as hyp
 
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
 parser.add_argument("--impath", type=str, help="Path for Image patches")
@@ -35,6 +40,7 @@ parser.add_argument("--decay_value", default = 0.95, type = float, help = "decay
 parser.add_argument("--margin", default = 0.1, type = float, help = "decay by value")
 parser.add_argument("--save_embeds", default = True, type = bool, help = "decay by value")
 parser.add_argument("--maxperclass", default = 30, type = int, help="maximum items per class")
+parser.add_argument("--soft_positive", default = True, type = bool, help = "Soft positive mining")
 
 
 args = parser.parse_args()
@@ -57,26 +63,46 @@ print("Processing inputs")
 
 def limitklass(klas, word, word_sparse, jpg):
     klas = np.array(klas)
-    klass2 = []
-    word2 = []
-    word_sparse2 = []
-    jpgs2 = []
-    for itera, i in enumerate(klas):
-        x = np.sum(np.array(klass2) == i).item()
-        if np.sum(klas == i)<10:
+    klass2, klass2v = [], []
+    word2, word2v = [], []
+    word_sparse2, word_sparse2v = [] ,[]
+    jpgs2, jpgs2v = [], []
+
+    for j in list(set(klas)):
+        x = np.sum(np.array(klas)==j)
+        if x > 30:
+            indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.maxperclass)
+        elif x>4:
+            indices = np.argwhere(np.array(klas)==j).squeeze()
+        else:
             continue
-        elif x<args.maxperclass:
-            klass2.append(i)
-            word2.append(word[itera])
-            word_sparse2.append(word_sparse[itera])
-            jpgs2.append(jpg[itera])
+        for i in indices:
+            klass2.append(klas[i])
+            word2.append(word[i])
+            word_sparse2.append(word_sparse[i])
+            jpgs2.append(jpg[i])
     return klass2, word2, word_sparse2, jpgs2
+    # for itera, i in enumerate(klas):
+    #     x = np.sum(np.array(klass2) == i).item()
+    #     if np.sum(klas == i)<5:
+    #         continue
+    #     elif x<args.maxperclass:
+    #         klass2.append(i)
+    #         word2.append(word[itera])
+    #         word_sparse2.append(word_sparse[itera])
+    #         jpgs2.append(jpg[itera])
+    #     # elif x<args.maxperclass + 10:
+    #     #     klass2v.append(i)
+    #     #     word2v.append(word[itera])
+    #     #     word_sparse2v.append(word_sparse[itera])
+    #     #     jpgs2v.append(jpg[itera])
+    # return klass2, word2, word_sparse2, jpgs2#, klass2v, word2v, word_sparse2v, jpgs2v
 
 
 # klass = preprocess_klass(klass)
 # x = pd.read_csv("sparse/68_data_sparse_5.csv")["imagesouce"].to_numpy()
 # klass, words, words_sparse, jpgs = limitklass2(klass, words, words_sparse, jpgs, x)
-klass, words, words_sparse, jpgs = limitklass(klass, words, words_sparse, jpgs)
+klass, words, words_sparse, jpgs= limitklass(klass, words, words_sparse, jpgs)
 klass = seq_klass(klass)
 
 print("Processed inputs of length {}".format(len(klass)))
@@ -91,6 +117,9 @@ if not args.limit == -1:
     print("Limited to {} length.".format(args.limit))
 else:
     print("Using complete dataset of {}".format(len(klass)))
+
+klass, valid_klass, words, valid_words, words_sparse, valid_sparse, jpgs, valid_jpgs = train_test_split(klass, words, words_sparse, jpgs, test_size=0.025)
+print("length of train is {}, test is {}".format(len(klass), len(valid_klass)))
 
 train_size = args.ratio
 no_classes = klass[-1] + 1
@@ -111,12 +140,16 @@ Network = TripletNet(Inter).float().to(device)
 
 criterion = TripletLoss(margin= args.margin).to(device)
 
-complete_dataset = image_word_triplet_loader(jpgs, words, words_sparse, klass, args.impath, args.ld)
+logging.basicConfig(filename='models/tbx/' + args.logid + args.model + '.log', filemode='w', format='%(message)s')
+logger = logging.getLogger('dummy')
+logger.addHandler(logging.FileHandler("testing.log"))
+
+complete_dataset = image_word_triplet_loader(jpgs, words, words_sparse, klass, args.impath, args.ld, args.soft_positive)
 # train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size * (train_size)),
                                                                   # data_size - int(data_size * (train_size))])
 
 
-train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=False)
+train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
 # val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
 
 print("Dataloaders done")
@@ -133,6 +166,7 @@ if args.write:
                                                   "embed_size": args.embed_size,
                                                   })
 
+valid_class = validation(valid_klass, valid_words, valid_sparse,valid_jpgs, args.impath, Network, Writer)
 
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
@@ -227,8 +261,12 @@ for epoch in range(1, epochs + 1):
         trainingcounter+=1
         if not epoch == 1:
             complete_dataset.update()
+            complete_dataset.increasebatch()
+    complete_dataset.increaseepoch()
     if epoch ==1:
         complete_dataset.update()
+
+    ps, ns = valid_class.evaluate(np.asarray(complete_dataset.values),np.asarray(complete_dataset.labels))
 
     if args.save_embeds:
         with open("models/"+args.logid+"embeds.pickle", "wb") as q:
@@ -263,7 +301,27 @@ for epoch in range(1, epochs + 1):
     torch.save(Network.state_dict(), "models/"+args.logid+"timodeldict.pt")
     torch.save(Network, "models/"+args.logid+"timodelcom.pt")
 
+
+
     if args.decay_freq is not None:
         if epoch % args.decay_freq == 0:
             for g in optimizer.param_groups:
                 g['lr'] = g["lr"] * args.decay_value
+
+
+                # mode(words[np.argwhere(np.asarray(klass) == 0)].squeeze())
+
+
+# import pickle
+# import statistics
+# import numpy as np
+#
+# with open("training_data_pytorch04.pickle", "rb") as a:
+#     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
+#
+#
+# klass, words = np.array(klass), np.array(words)
+# mod = []
+# for i in list(set(klass)):
+#     dum = list(words[np.argwhere(np.asarray(klass) == i)].squeeze())
+#     mod.append(max(set(dum), key = dum.count))
