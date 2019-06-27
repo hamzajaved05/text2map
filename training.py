@@ -34,7 +34,6 @@ parser.add_argument("--decay_freq", default=None, type=int, help="Decay freq")
 parser.add_argument("--embed_size", default=256, type=int, help="Size of embedding")
 parser.add_argument("--model", default="ti", type=str, help="Model type")
 parser.add_argument("--dropout", default=0.4, type=float, help="Dropout before")
-parser.add_argument("--ld", default = 3, type = int, help = "lev distance for negative mining")
 parser.add_argument("--decay_value", default = 0.95, type = float, help = "decay by value")
 parser.add_argument("--margin", default = 0.1, type = float, help = "decay by value")
 parser.add_argument("--save_embeds", default = True, type = bool, help = "decay by value")
@@ -81,31 +80,11 @@ def limitklass(klas, word, word_sparse, jpg):
             word_sparse2.append(word_sparse[i])
             jpgs2.append(jpg[i])
     return klass2, word2, word_sparse2, jpgs2
-    # for itera, i in enumerate(klas):
-    #     x = np.sum(np.array(klass2) == i).item()
-    #     if np.sum(klas == i)<5:
-    #         continue
-    #     elif x<args.maxperclass:
-    #         klass2.append(i)
-    #         word2.append(word[itera])
-    #         word_sparse2.append(word_sparse[itera])
-    #         jpgs2.append(jpg[itera])
-    #     # elif x<args.maxperclass + 10:
-    #     #     klass2v.append(i)
-    #     #     word2v.append(word[itera])
-    #     #     word_sparse2v.append(word_sparse[itera])
-    #     #     jpgs2v.append(jpg[itera])
-    # return klass2, word2, word_sparse2, jpgs2#, klass2v, word2v, word_sparse2v, jpgs2v
 
-
-# klass = preprocess_klass(klass)
-# x = pd.read_csv("sparse/68_data_sparse_5.csv")["imagesouce"].to_numpy()
-# klass, words, words_sparse, jpgs = limitklass2(klass, words, words_sparse, jpgs, x)
 klass, words, words_sparse, jpgs= limitklass(klass, words, words_sparse, jpgs)
 klass = seq_klass(klass)
 
 print("Processed inputs of length {}".format(len(klass)))
-
 
 if not args.limit == -1:
     klass = klass[:args.limit]
@@ -117,7 +96,17 @@ if not args.limit == -1:
 else:
     print("Using complete dataset of {}".format(len(klass)))
 
-klass, valid_klass, words, valid_words, words_sparse, valid_sparse, jpgs, valid_jpgs = train_test_split(klass, words, words_sparse, jpgs, test_size=0.025)
+
+# x = random.sample(np.linspace(len(klass)), args.test_size)
+#
+# klass, valid_klass, words, valid_words, words_sparse, valid_sparse, jpgs, valid_jpgs = train_test_split(klass, words, words_sparse, jpgs, test_size=0.025, shuffle = False)
+
+ind = np.random.choice(len(klass), 25)
+valid_klass = np.asarray(klass)[ind]
+valid_words = np.asarray(words)[ind]
+valid_sparse = np.asarray(words_sparse)[ind]
+valid_jpgs = np.asarray(jpgs)[ind]
+
 print("length of train is {}, test is {}".format(len(klass), len(valid_klass)))
 
 train_size = args.ratio
@@ -139,11 +128,11 @@ Network = TripletNet(Inter).float().to(device)
 
 criterion = TripletLoss(margin= args.margin).to(device)
 
-logging.basicConfig(filename='models/tbx/' + args.logid + args.model + '.log', filemode='w', format='%(message)s')
+logging.basicConfig(filename='models/' + args.logid + args.model + '.log', filemode='w', format='%(message)s')
 logger = logging.getLogger('dummy')
 logger.addHandler(logging.FileHandler("testing.log"))
 
-complete_dataset = image_word_triplet_loader(jpgs, words, words_sparse, klass, args.impath, args.ld, args.soft_positive)
+complete_dataset = image_word_triplet_loader_allhard(jpgs, words, words_sparse, klass, args.impath, args.soft_positive)
 # train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size * (train_size)),
                                                                   # data_size - int(data_size * (train_size))])
 
@@ -160,8 +149,7 @@ if args.write:
                                                   # "training_size": train_dataset.__len__(),
                                                   # "Validation_size": val_dataset.__len__(),
                                                   "No_of_classes": no_classes,
-                                                  "lev_distance": args.ld,
-                                                  "dropout": args.dropout,
+                                                 "dropout": args.dropout,
                                                   "embed_size": args.embed_size,
                                                   })
 
@@ -193,7 +181,6 @@ for epoch in range(1, epochs + 1):
     # print("epoch {}".format(epoch))
     Network.train()
     for batch_idx, data in enumerate(train_loader):
-        print("epoch {}, batch {}/ {}".format(epoch, batch_idx, train_loader.__len__()))
         ai, ap, aw, a_index,\
         pi, pp, pw, \
         ni1, np1, nw1,\
@@ -215,11 +202,11 @@ for epoch in range(1, epochs + 1):
         _, _, no3 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni3.to(device), np3.to(device)])
         _, _, no4 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni4.to(device), np4.to(device)])
         _, _, no5 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni5.to(device), np5.to(device)])
-        _, _, no6 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni6.to(device), np6.to(device)])
-        _, _, no7 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni7.to(device), np7.to(device)])
-        _, _, no8 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni8.to(device), np8.to(device)])
-        _, _, no9 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni9.to(device), np9.to(device)])
-        _, _, no10 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni10.to(device), np10.to(device)])
+        # _, _, no6 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni6.to(device), np6.to(device)])
+        # _, _, no7 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni7.to(device), np7.to(device)])
+        # _, _, no8 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni8.to(device), np8.to(device)])
+        # _, _, no9 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni9.to(device), np9.to(device)])
+        # _, _, no10 = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni10.to(device), np10.to(device)])
 
         # print('e')
         loss1, p1, n1 = criterion(ao.to(device), po.to(device), no1.to(device))
@@ -227,20 +214,21 @@ for epoch in range(1, epochs + 1):
         loss3, _, n3 = criterion(ao.to(device), po.to(device), no3.to(device))
         loss4, _, n4 = criterion(ao.to(device), po.to(device), no4.to(device))
         loss5, _, n5 = criterion(ao.to(device), po.to(device), no5.to(device))
-        loss6, _, n6 = criterion(ao.to(device), po.to(device), no6.to(device))
-        loss7, _, n7 = criterion(ao.to(device), po.to(device), no7.to(device))
-        loss8, _, n8 = criterion(ao.to(device), po.to(device), no8.to(device))
-        loss9, _, n9 = criterion(ao.to(device), po.to(device), no9.to(device))
-        loss10, _, n10 = criterion(ao.to(device), po.to(device), no10.to(device))
+        # loss6, _, n6 = criterion(ao.to(device), po.to(device), no6.to(device))
+        # loss7, _, n7 = criterion(ao.to(device), po.to(device), no7.to(device))
+        # loss8, _, n8 = criterion(ao.to(device), po.to(device), no8.to(device))
+        # loss9, _, n9 = criterion(ao.to(device), po.to(device), no9.to(device))
+        # loss10, _, n10 = criterion(ao.to(device), po.to(device), no10.to(device))
 
         # print(p, n)
-        loss = loss1+loss2+loss3+loss4+loss5+loss6+loss7+loss8+loss9+loss10
-        n = (n1.item()+n2.item()+n3.item()+n4.item()+n5.item()
-             +n6.item()+n7.item()+n8.item()+n9.item()+n10.item())/10
+        loss = loss1+loss2+loss3+loss4+loss5
+               # loss6+loss7+loss8+loss9+loss10
+        n = (n1.item()+n2.item()+n3.item()+n4.item()+n5.item())/5
+             # +n6.item()+n7.item()+n8.item()+n9.item()+n10.item())/10
         loss.backward()
         # print(loss)
         optimizer.step()
-
+        print("epoch {}, batch {}/ {}, train_loss {:.5f}".format(epoch, batch_idx, train_loader.__len__(), loss.item()))
         complete_dataset.result_update(ao.cpu().detach().numpy(), a_index.cpu().detach().numpy())
 
         logs["training_batch_pdis"].append(p1.item())
@@ -270,29 +258,6 @@ for epoch in range(1, epochs + 1):
     if args.save_embeds:
         with open("models/"+args.logid+"embeds.pickle", "wb") as q:
             pickle.dump([complete_dataset.libs, complete_dataset.labels], q)
-
-
-    # torch.save(Network.state_dict(), "models/"+args.logid+"timodeldictpre.pt")
-    # torch.save(Network, "models/"+args.logid+"timodelcompre.pt")
-    #
-    # Network.eval()
-    # for batch_idx, data in enumerate(val_loader):
-    #     print("batch {}/ {}".format(batch_idx, val_loader.__len__()))
-    #     ai, ap, aw, a_index, pi, pp, pw, ni, np, nw  = data
-    #
-    #     complete_dataset.result_update(ao.detach().numpy(), a_index.detach().numpy())
-    #
-    #     ao, po, no = Network([ai.to(device), ap.to(device), pi.to(device), pp.to(device), ni.to(device), np.to(device)])
-    #     loss, p, n = criterion(ao.to(device), po.to(device), no.to(device))
-    #     logs["validation_batch_pdis"].append(p.item())
-    #     logs["validation_batch_loss"].append(loss.item())
-    #     logs["validation_batch_ndis"].append(n.item())
-    #     Writer.add_scalars("Validation_data",{"batch_loss": loss.item(),
-    #                                         "batch_pdis": p.item(),
-    #                                         "batch_ndis": n.item()
-    #                                         },
-    #                        validationcounter)
-    #     validationcounter+=1
 
     with open('models/' + args.logid + 'logfile.pickle', 'wb') as q:
         pickle.dump([logs, args], q)

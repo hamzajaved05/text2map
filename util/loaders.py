@@ -10,6 +10,7 @@ from collections import Counter
 import random
 import os
 import logging
+import random
 
 def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
@@ -306,3 +307,38 @@ class image_word_triplet_loader(data.Dataset):
 
     def increasebatch(self):
         self.batch +=1
+
+class image_word_triplet_loader_batchhard(data.Dataset):
+    def __init__(self, jpeg, words, words_sparse, labels, path, itemsperclass):
+        self.labels = np.array(labels)
+        self.words = words
+        self.im_path = path
+        self.jpeg = np.array(jpeg)
+        self.words_sparse = words_sparse
+        self.epoch = 0
+        self.logger = logging.getLogger('dummy')
+        self.itemsperclass = itemsperclass
+
+    def __len__(self):
+        return self.labels[-1]
+
+    def __getitem__(self, index):
+        indices = np.argwhere(self.labels == index).squeeze()
+        indices_per_batch = random.sample(list(indices), 10)
+        if len(indices_per_batch)<self.itemsperclass:
+            raise ValueError("items less than items per class")
+
+        for i in indices_per_batch:
+            patch_i = torch.from_numpy(self.words_sparse[i].todense()).unsqueeze(0)
+            im = torch.tensor(cv2.imread(self.im_path + self.jpeg[i][:-4] + "_" + self.words[i] + ".jpg")).permute(
+                2, 0, 1)
+            image_i = torch.div(im.float(), 255).unsqueeze(0)
+            try:
+                image = torch.cat([image, image_i], dim = 0)
+                text = torch.cat([text, patch_i], dim = 0)
+            except:
+                image = image_i
+                text = patch_i
+
+
+        return image.float(), text.float(), index

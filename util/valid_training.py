@@ -30,8 +30,7 @@ class validation:
         im = torch.tensor(cv2.imread(self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg")).permute(
             2, 0, 1)
         anchor_im = torch.div(im.float(), 255)
-        anchor_patch_name = self.im_path + self.jpeg[index][:-4] + "_" + self.words[index] + ".jpg"
-        return im.unsqueeze(0), wordi.unsqueeze(0)
+        return anchor_im.unsqueeze(0), wordi.unsqueeze(0)
 
     def evaluate(self, lib_embeds, klass_embeds, size = None):
         print("Running evaluations on size {} !!". format(size))
@@ -43,8 +42,8 @@ class validation:
         ns = []
         for i in indices:
             self.step += 1
-            p_indices = np.argwhere(klass_embeds == i).squeeze()
-            n_indices = np.argwhere(klass_embeds != i).squeeze()
+            p_indices = np.argwhere(klass_embeds == self.klass[i]).squeeze()
+            n_indices = np.argwhere(klass_embeds != self.klass[i]).squeeze()
             im, wor = self.getinputs(i)
             embedding = self.model.get_embedding(im, wor).squeeze().detach().cpu().numpy()
             if len(p_indices) == 0:
