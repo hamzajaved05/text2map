@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="78688f53-3e5c-4dfb-b792-c71e5ca6ea77" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/training.py" beforeDir="false" afterPath="$PROJECT_DIR$/training.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/loaders.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/loaders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trainingbh.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainingbh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/valid_training.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/valid_training.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,7 +18,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1241">
+            <state relative-caret-position="2414">
               <caret line="155" column="21" selection-start-line="155" selection-start-column="21" selection-end-line="155" selection-end-column="21" />
               <folding>
                 <element signature="e#60#75#0" expanded="true" />
@@ -30,8 +30,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trainingbh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-87">
-              <caret line="220" column="34" lean-forward="true" selection-start-line="220" selection-start-column="34" selection-end-line="220" selection-end-column="34" />
+            <state relative-caret-position="165">
+              <caret line="246" column="45" selection-start-line="246" selection-start-column="45" selection-end-line="246" selection-end-column="45" />
               <folding>
                 <element signature="e#60#75#0" expanded="true" />
               </folding>
@@ -40,21 +40,24 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python3.7/codecs.py">
+        <entry file="file://$PROJECT_DIR$/util/valid_training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="311" selection-start-line="311" selection-end-line="311" />
+            <state relative-caret-position="522">
+              <caret line="53" column="37" selection-start-line="53" selection-start-column="37" selection-end-line="53" selection-end-column="37" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/util/loaders.py">
+        <entry file="file://$PROJECT_DIR$/check_training_files.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2588">
-              <caret line="337" column="25" selection-start-line="337" selection-start-column="25" selection-end-line="337" selection-end-column="25" />
+            <state relative-caret-position="289">
+              <caret line="17" column="2" selection-start-line="17" selection-start-column="2" selection-end-line="17" selection-end-column="2" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,8 +66,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/util/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="726">
-              <caret line="184" column="28" selection-start-line="184" selection-start-column="28" selection-end-line="184" selection-end-column="28" />
+            <state relative-caret-position="564">
+              <caret line="196" selection-start-line="196" selection-end-line="196" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -83,7 +86,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>index</find>
       <find>out</find>
       <find>batch</find>
       <find>pickle</find>
@@ -113,6 +115,7 @@
       <find>embed</find>
       <find>embeds</find>
       <find>embedings_to</find>
+      <find>soft_posi</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -139,9 +142,10 @@
         <option value="$PROJECT_DIR$/DL_mapping.py" />
         <option value="$PROJECT_DIR$/generate-lib.py" />
         <option value="$PROJECT_DIR$/ensemble.py" />
-        <option value="$PROJECT_DIR$/util/models.py" />
         <option value="$PROJECT_DIR$/training.py" />
         <option value="$PROJECT_DIR$/util/loaders.py" />
+        <option value="$PROJECT_DIR$/util/models.py" />
+        <option value="$PROJECT_DIR$/check_training_files.py" />
         <option value="$PROJECT_DIR$/util/valid_training.py" />
         <option value="$PROJECT_DIR$/trainingbh.py" />
       </list>
@@ -159,7 +163,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -170,12 +173,23 @@
             <path>
               <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
               <item name="text2map" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
+              <item name="text2map" type="462c0819:PsiDirectoryNode" />
+              <item name="models_bh" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="text2map" type="b2602c69:ProjectViewProjectNode" />
+              <item name="text2map" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -251,7 +265,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/trainingbh.py" />
-      <option name="PARAMETERS" value="--impath /media/presage3/Windows-SSD/images/jpeg_patch/ --inpickle training_data_pytorch04.pickle --epoch 100 --batch 16 --lr 0.0001 --logid 03bh --write True --embed_size 128 --model ti --dropout 0.3 --margin 0.15 --limit 5000 --soft_positive False" />
+      <option name="PARAMETERS" value="--impath /media/presage3/Windows-SSD/images/jpeg_patch/ --inpickle training_data_pytorch04.pickle --epoch 200 --batch 8 --lr 0.00001 --logid 07bh --write True --embed_size 128 --model ti --dropout 0.4 --margin 0.2 --limit 30000 --soft_positive False --l2loss False --softplus True --load models_bh/05bhtimodelcom.pt" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -303,7 +317,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3293348" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3293348" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5019157" side_tool="true" weight="0.2519084" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49808428" weight="0.2519084" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49808428" weight="0.2508179" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -313,13 +327,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/util/valid_training.py</url>
-          <line>54</line>
-          <option name="timeStamp" value="42" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -332,52 +339,47 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>n_norms</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1), 8)[:8]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>p_norms</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1), 8)[:]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>n_indices</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1), 10)[:10]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>p_indices</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1), 10)[:10]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>i</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1), 10)[:10].</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>im.shape</expression-string>
+        <expression-string>np.partition(np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1), 10)[:10].shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>im</expression-string>
+        <expression-string>np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1).shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>indices</expression-string>
+        <expression-string>np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.klass.shape</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.klass</expression-string>
+        <expression-string>np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1).shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -633,36 +635,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1241">
-          <caret line="155" column="21" selection-start-line="155" selection-start-column="21" selection-end-line="155" selection-end-column="21" />
-          <folding>
-            <element signature="e#60#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util/valid_training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="54" selection-start-line="54" selection-end-line="54" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="184" column="28" selection-start-line="184" selection-start-column="28" selection-end-line="184" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/util/loaders.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2588">
@@ -673,10 +645,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2414">
+          <caret line="155" column="21" selection-start-line="155" selection-start-column="21" selection-end-line="155" selection-end-column="21" />
+          <folding>
+            <element signature="e#60#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="564">
+          <caret line="196" selection-start-line="196" selection-end-line="196" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/mlenv/mlenv/lib/python3.7/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="471">
+          <caret line="733" selection-start-line="733" selection-end-line="733" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/check_training_files.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="2" selection-start-line="17" selection-start-column="2" selection-end-line="17" selection-end-column="2" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/valid_training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="53" column="37" selection-start-line="53" selection-start-column="37" selection-end-line="53" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/trainingbh.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-87">
-          <caret line="220" column="34" lean-forward="true" selection-start-line="220" selection-start-column="34" selection-end-line="220" selection-end-column="34" />
+        <state relative-caret-position="165">
+          <caret line="246" column="45" selection-start-line="246" selection-start-column="45" selection-end-line="246" selection-end-column="45" />
           <folding>
             <element signature="e#60#75#0" expanded="true" />
           </folding>

@@ -32,29 +32,34 @@ class validation:
         anchor_im = torch.div(im.float(), 255)
         return anchor_im.unsqueeze(0), wordi.unsqueeze(0)
 
-    def evaluate(self, lib_embeds, klass_embeds, size = None):
+    def evaluate(self, lib_embeds, klass_embeds, device, size = None, margin = 0.1):
         print("Running evaluations on size {} !!". format(size))
         self.model.eval()
-        if size == None:
+        if size == None or size > len(self.klass):
             size = len(self.klass)
         indices = random.sample(list(range(len(self.klass))), size)
         ps = []
         ns = []
+        nslimit = []
         for i in indices:
             self.step += 1
             p_indices = np.argwhere(klass_embeds == self.klass[i]).squeeze()
             n_indices = np.argwhere(klass_embeds != self.klass[i]).squeeze()
             im, wor = self.getinputs(i)
-            embedding = self.model.get_embedding(im, wor).squeeze().detach().cpu().numpy()
-            if len(p_indices) == 0:
+            embedding = self.model.get_embedding(im.to(device), wor.to(device)).squeeze().detach().cpu().numpy()
+            if len(p_indices) == 0 or len(n_indices) == 0:
                 continue
-            p_norms = np.mean(np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1))
-            n_norms = np.mean(np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1))
+            p_norms = np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1)
+            n_norms = np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1)
             ps.append(p_norms.mean())
+            nslimit.append(np.partition(n_norms, 10)[:10].mean())
             ns.append(n_norms.mean())
             self.writer.add_scalars("Validation", {"P_distance_mean": ps[-1],
-                                                   "N_distance_mean": ns[-1],
-                                                   "loss": np.max([0, 0.1-ns[-1]+ps[-1]])},
+                                                   "N_distance_mean_all": ns[-1],
+                                                   "N_distance_mean_10": nslimit[-1],
+                                                   "loss": np.max([0, margin-ns[-1]+ps[-1]]),
+                                                   "loss_10": np.max([0, margin - nslimit[-1] + ps[-1]]),
+                                                   },
                                     self.step)
         print("Evaluations done !! mean_distance between positive {:.5f} and negative {:.5f}".format(sum(ps)/len(ps),
                                                                                                      sum(ns)/len(ns)))

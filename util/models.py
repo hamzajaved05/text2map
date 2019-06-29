@@ -176,12 +176,23 @@ class TripletNet(nn.Module):
         return self.embedding_net(x.float(), y.float())
 
 class TripletLoss(nn.Module):
-    def __init__(self, margin = 0.1):
+    def __init__(self, margin = 0.1, l2 = True, softplus = False):
         super(TripletLoss, self).__init__()
         self.margin = margin
+        self.l2 = l2
+        self.softplus = softplus
+        self.sp = nn.Softplus()
 
     def forward(self, anchor, positive, negative, size_average=True):
-        distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
-        distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
-        losses = F.relu(distance_positive - distance_negative + self.margin)
+        if self.l2:
+            distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
+            distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
+        else:
+            distance_positive = torch.dist(anchor, positive, p=1)
+            distance_negative = torch.dist(anchor, negative, p=1)
+        if self.softplus:
+            losses = self.sp(distance_positive - distance_negative + self.margin)
+        else:
+            losses = F.relu(distance_positive - distance_negative + self.margin)
+
         return losses.mean(), distance_positive.mean(), distance_negative.mean() if size_average else losses.sum()

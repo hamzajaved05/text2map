@@ -38,6 +38,10 @@ parser.add_argument("--save_embeds", default = True, type = bool, help = "decay 
 parser.add_argument("--maxperclass", default = 30, type = int, help="maximum items per class")
 parser.add_argument("--itemsperclass", default = 10, type = int, help="maximum items per class")
 parser.add_argument("--soft_positive", default = True, type = bool, help = "Soft positive mining")
+parser.add_argument("--l2loss", default = True, type = bool, help = "l2 distance between files")
+parser.add_argument("--softplus", default = False, type = bool, help = "softplus loss")
+parser.add_argument("--load", default = None, type = str, help = "load file")
+
 
 
 args = parser.parse_args()
@@ -129,11 +133,15 @@ elif args.model == 'i':
 else:
     raise ("UnIdentified Model specified")
 
+if args.load is None:
+    Inter = Model(embedding= args.embed_size, do = args.dropout).float().to(device)
+    Network = TripletNet(Inter).float().to(device)
+    print("Created model")
+else:
+    Network = torch.load(args.load)
+    print("Loading model")
 
-Inter = Model(embedding= args.embed_size, do = args.dropout).float().to(device)
-Network = TripletNet(Inter).float().to(device)
-
-criterion = TripletLoss(margin= args.margin).to(device)
+criterion = TripletLoss(margin= args.margin, l2= args.l2loss, softplus= args.softplus).to(device)
 
 logging.basicConfig(filename='models_bh/' + args.logid + args.model + '.log', filemode='w', format='%(message)s')
 logger = logging.getLogger('dummy')
@@ -147,13 +155,13 @@ print("Dataloaders done")
 if args.write:
     Writer = SummaryWriter("models_bh/tbx/" + args.logid + args.model)
     Writer.add_scalars("Metadata" + args.model, {"Batch_size": args.batch,
-                                                  "learning_rate": args.lr,
-                                                  # "training_size": train_dataset.__len__(),
-                                                  # "Validation_size": val_dataset.__len__(),
-                                                  "No_of_classes": klass[-1],
+                                                 "learning_rate": args.lr,
+                                                 "items per class": args.itemsperclass,
+                                                 "max per class": args.maxperclass,
+                                                 "No_of_classes": klass[-1],
                                                  "dropout": args.dropout,
-                                                  "embed_size": args.embed_size,
-                                                  })
+                                                 "embed_size": args.embed_size,
+                                                 })
 
 valid_class = validation(klass_v, words_v, words_sparse_v, jpgs_v, args.impath, Network, Writer)
 
@@ -245,10 +253,10 @@ for epoch in range(1, epochs + 1):
 
 
 
-    ps, ns = valid_class.evaluate(embedings_total,labels_total, size = 50)
+    ps, ns = valid_class.evaluate(embedings_total,labels_total, device, size = 1000, margin = args.margin)
 
     if args.save_embeds:
-        with open("models/"+args.logid+"embeds.pickle", "wb") as q:
+        with open("models_bh/"+args.logid+"embeds.pickle", "wb") as q:
             pickle.dump([embedings_total, labels_total], q)
 
     torch.save(Network.state_dict(), "models_bh/"+args.logid+"timodeldict.pt")
@@ -263,19 +271,3 @@ for epoch in range(1, epochs + 1):
 
     del embedings_total
     del labels_total
-                # mode(words[np.argwhere(np.asarray(klass) == 0)].squeeze())
-
-
-# import pickle
-# import statistics
-# import numpy as np
-#
-# with open("training_data_pytorch04.pickle", "rb") as a:
-#     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
-#
-#
-# klass, words = np.array(klass), np.array(words)
-# mod = []
-# for i in list(set(klass)):
-#     dum = list(words[np.argwhere(np.asarray(klass) == i)].squeeze())
-#     mod.append(max(set(dum), key = dum.count))
