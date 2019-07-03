@@ -84,6 +84,8 @@ if args.write:
                                      "learning_rate": args.lr,
                                      "items per class": args.itemsperclass,
                                      "Number of classes": len(jpgklass)})
+    with open("TVmodels_bh/"+ args.logid+'.pickle', "wb") as q:
+        pickle.dump([jpgklass, jpgklass_v, jpg2words], q)
 
 
 trainingcounter= 0
