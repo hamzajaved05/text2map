@@ -9,6 +9,8 @@ import logging
 from util.utilities import word2encodedword
 from util.utilities import wordskip
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
         s1, s2 = s2, s1
@@ -72,6 +74,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         self.pathpatch = path_patches
         self.enc = enc
         self.model.eval()
+        self.model.to(device)
 
     def __len__(self):
         return len(self.jpgklass.keys())
