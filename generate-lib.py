@@ -12,7 +12,7 @@ import torch.nn.functional as F
 from torch.utils import data
 from torch.utils.data import DataLoader
 from util.models import *
-from util.updatelibrary import jpg_dict_lib as Reader
+from util.utilities import readtext2jpgdict as Reader
 from util.loaders import *
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

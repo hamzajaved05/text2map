@@ -33,24 +33,35 @@ class validation:
         return anchor_im.unsqueeze(0), wordi.unsqueeze(0)
 
     def evaluate(self, lib_embeds, klass_embeds, device, size = None, margin = 0.1):
-        print("Running evaluations on size {} !!". format(size))
         self.model.eval()
         if size == None or size > len(self.klass):
             size = len(self.klass)
+        print("Running evaluations on size {} !!". format(size))
         indices = random.sample(list(range(len(self.klass))), size)
         ps = []
         ns = []
         nslimit = []
+        correct = 0
         for i in indices:
             self.step += 1
             p_indices = np.argwhere(klass_embeds == self.klass[i]).squeeze()
             n_indices = np.argwhere(klass_embeds != self.klass[i]).squeeze()
             im, wor = self.getinputs(i)
             embedding = self.model.get_embedding(im.to(device), wor.to(device)).squeeze().detach().cpu().numpy()
+
+            try:
+                embedings_total = np.concatenate((embedings_total, np.expand_dims(embedding, 0)), axis=0)
+                labels_total.append(self.klass[i])
+            except:
+                embedings_total = np.expand_dims(embedding, 0)
+                labels_total = [self.klass[i]]
+
             if len(p_indices) == 0 or len(n_indices) == 0:
                 continue
             p_norms = np.linalg.norm(lib_embeds[p_indices] - embedding, ord = 2, axis = 1)
             n_norms = np.linalg.norm(lib_embeds[n_indices] - embedding, ord = 2, axis = 1)
+            if np.min(p_norms)< np.min(n_norms):
+                correct +=1
             ps.append(p_norms.mean())
             nslimit.append(np.partition(n_norms, 10)[:10].mean())
             ns.append(n_norms.mean())
@@ -59,9 +70,16 @@ class validation:
                                                    "N_distance_mean_10": nslimit[-1],
                                                    "loss": np.max([0, margin-ns[-1]+ps[-1]]),
                                                    "loss_10": np.max([0, margin - nslimit[-1] + ps[-1]]),
+                                                   "Closest Positive": np.min(p_norms),
+                                                   "Closest Negative": np.min(n_norms)
                                                    },
                                     self.step)
-        print("Evaluations done !! mean_distance between positive {:.5f} and negative {:.5f}".format(sum(ps)/len(ps),
-                                                                                                     sum(ns)/len(ns)))
-        return ps, ns
+        print("Evaluations done on {}!! mean_distance between positive {:.5f} and negative {:.5f}, "
+              "best match positive in {}/ {} i.e. {:.2f}".format(len(indices),
+                                                                 sum(ps)/len(ps),
+                                                                 sum(ns)/len(ns),
+                                                                 correct,
+                                                                 len(indices),
+                                                                 100*correct/ len(indices)))
+        return ps, ns, embedings_total, labels_total
 

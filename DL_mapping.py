@@ -16,7 +16,7 @@ from numpy import linalg as LA
 from torch.utils import data
 from torch.utils.data import DataLoader
 
-from util.updatelibrary import jpg_dict_lib as Reader
+from util.utilities import readtext2jpgdict as Reader
 from util.utilities import word2encodedword
 import pandas as pd
 

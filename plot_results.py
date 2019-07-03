@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from util.updatelibrary import jpg_dict_lib as Reader
+from util.utilities import readtext2jpgdict as Reader
 
 # matplotlib.use("TkAgg")
 

@@ -13,11 +13,14 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from util.loaders import *
 from util.models import *
-import os
-from sklearn.model_selection import train_test_split
+from util.utilities import wordskip
 import logging
 from util.valid_training import validation
 import random
+from statistics import mode
+from collections import Counter
+from py_stringmatching import Levenshtein
+
 
 parser = argparse.ArgumentParser(description='Text to map - Training with image patches and text')
 parser.add_argument("--impath", type=str, help="Path for Image patches")
@@ -42,13 +45,10 @@ parser.add_argument("--l2loss", default = True, type = bool, help = "l2 distance
 parser.add_argument("--softplus", default = False, type = bool, help = "softplus loss")
 parser.add_argument("--load", default = None, type = str, help = "load file")
 
-
-
 args = parser.parse_args()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
-
 
 if not args.limit == -1:
     klass = klass[:args.limit]
@@ -56,10 +56,9 @@ if not args.limit == -1:
     words = words[:args.limit]
     jpgs = jpgs[:args.limit]
     modes = modes[:args.limit]
-    print("Limited inputs of length {} with total classes {}".format(len(klass), klass[-1]))
+    print("Limited inputs of length {} with tot".format(len(klass), klass[-1]))
 else:
     print("Original inputs of length {} with total classes {}".format(len(klass), klass[-1]))
-
 
 def seq_klass(klass):
     x = -1
@@ -74,54 +73,54 @@ def seq_klass(klass):
 
 print("Processing inputs")
 
-def limitklass(klas, word, word_sparse, jpg):
+def limitklass(klas, word, word_sparse, jpg, modes):
     klas = np.array(klas)
+    skipped = 0
     klass2, klass2v = [], []
     word2, word2v = [], []
     word_sparse2, word_sparse2v = [] ,[]
     jpgs2, jpgs2v = [], []
     label = -1
-    for j in list(set(klas)):
-        x = np.sum(np.array(klas)==j)
-        if x >= args.maxperclass:
-            label+=1
-            indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.maxperclass)
-            v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
-            if len(v_indices) >args.itemsperclass:
-                v_indices = random.sample(v_indices, args.itemsperclass)
-            for i in v_indices:
-                klass2v.append(label)
-                word2v.append(word[i])
-                word_sparse2v.append(word_sparse[i])
-                jpgs2v.append(jpg[i])
-        elif x >= args.itemsperclass:
-            label+=1
-            indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.itemsperclass)
-            v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
-            if len(v_indices) >args.itemsperclass:
-                v_indices = random.sample(v_indices, args.itemsperclass)
-            for i in v_indices:
-                klass2v.append(label)
-                word2v.append(word[i])
-                word_sparse2v.append(word_sparse[i])
-                jpgs2v.append(jpg[i])
-        else:
+    for itera, j in enumerate(list(set(klas))):
+        if wordskip(modes[itera], [3,3]):
+            skipped+=1
             continue
-        for i in indices:
-            klass2.append(label)
-            word2.append(word[i])
-            word_sparse2.append(word_sparse[i])
-            jpgs2.append(jpg[i])
+        else:
+            x = np.sum(np.array(klas)==j)
+            if x >= args.maxperclass:
+                label+=1
+                indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.maxperclass)
+                v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
+                if len(v_indices) >args.itemsperclass:
+                    v_indices = random.sample(v_indices, args.itemsperclass)
+                for i in v_indices:
+                    klass2v.append(label)
+                    word2v.append(word[i])
+                    word_sparse2v.append(word_sparse[i])
+                    jpgs2v.append(jpg[i])
+            elif x >= args.itemsperclass:
+                label+=1
+                indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.itemsperclass)
+                v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
+                if len(v_indices) >args.itemsperclass:
+                    v_indices = random.sample(v_indices, args.itemsperclass)
+                for i in v_indices:
+                    klass2v.append(label)
+                    word2v.append(word[i])
+                    word_sparse2v.append(word_sparse[i])
+                    jpgs2v.append(jpg[i])
+            else:
+                continue
+            for i in indices:
+                klass2.append(label)
+                word2.append(word[i])
+                word_sparse2.append(word_sparse[i])
+                jpgs2.append(jpg[i])
+    print("Skipped {} classes".format(skipped))
     return klass2, word2, word_sparse2, jpgs2, klass2v, word2v, word_sparse2v, jpgs2v
 
-klass, words, words_sparse, jpgs, klass_v, words_v, words_sparse_v, jpgs_v= limitklass(klass, words, words_sparse, jpgs)
-# klass = seq_klass(klass)
-
-
+klass, words, words_sparse, jpgs, klass_v, words_v, words_sparse_v, jpgs_v= limitklass(klass, words, words_sparse, jpgs, modes)
 print("Processed inputs of length {} with total classes {}".format(len(klass), klass[-1]))
-
-#
-# klass, valid_klass, words, valid_words, words_sparse, valid_sparse, jpgs, valid_jpgs = train_test_split(klass, words, words_sparse, jpgs, test_size=0.025)
 print("length of train is {}, test is {}".format(len(klass), len(klass_v)))
 
 if args.model == 'ti':
@@ -138,14 +137,20 @@ if args.load is None:
     Network = TripletNet(Inter).float().to(device)
     print("Created model")
 else:
-    Network = torch.load(args.load)
-    print("Loading model")
+    try:
+        Network = torch.load(args.load)
+        print("Loading model gpu")
+    except:
+        Network = torch.load(args.load, map_location='cpu')
+        print("Loading model cpu")
 
 criterion = TripletLoss(margin= args.margin, l2= args.l2loss, softplus= args.softplus).to(device)
 
 logging.basicConfig(filename='models_bh/' + args.logid + args.model + '.log', filemode='w', format='%(message)s')
 logger = logging.getLogger('dummy')
-logger.addHandler(logging.FileHandler("testing.log"))
+loggersparse = logging.getLogger("dummy2")
+logger.addHandler(logging.FileHandler('models_bh/' + args.logid + args.model + '.log'))
+loggersparse.addHandler(logging.FileHandler('models_bh/' + args.logid + args.model + 'sparse.log'))
 
 complete_dataset = image_word_triplet_loader_batchhard(jpgs, words, words_sparse, klass, args.impath, args.itemsperclass)
 
@@ -176,13 +181,14 @@ validation_loss = []
 
 batches = ceil(len(klass) / args.batch)
 trainingcounter = 0
+loggermessage = "E {}, B {}, {:.4f} vs {:.4f}, A {}, P {}, N {}"
 
 for epoch in range(1, epochs + 1):
+
     Network.train()
 
-
     for batch_idx, data in enumerate(train_loader):
-        im, patch, label = data
+        im, patch, label, words = data
         im = im.to(device)
         patch = patch.to(device)
         embeds = Network.get_embedding(im.reshape([-1,3,128,256]), patch.reshape([-1,62,12])).cpu().detach().numpy()
@@ -194,13 +200,13 @@ for epoch in range(1, epochs + 1):
         nind_all = []
         for i in range(im.shape[0]):
             for j in range(im.shape[1]):
-                positive = list(range(10*(i),10*(i)+10))
+                positive = list(range(args.itemsperclass*(i),args.itemsperclass*(i)+args.itemsperclass))
                 negative = list(range(embeds.shape[0]))
                 negative = list(set(negative).difference(set(positive)))
                 # positive = embeds[10*(i):10*(i)+10]
                 anchor_im = im[i,j,...]
                 anchor_patch = patch[i,j,...]
-                sorted_indices = np.argsort(np.linalg.norm(embeds[10*(i)+j] - embeds, ord = 2, axis=1))
+                sorted_indices = np.argsort(np.linalg.norm(embeds[args.itemsperclass*(i)+j] - embeds, ord = 2, axis=1))
                 for n_ind, q in enumerate(sorted_indices):
                     if q not in positive:
                         negative_indice = q
@@ -220,10 +226,25 @@ for epoch in range(1, epochs + 1):
                 loss += loss1
                 pdis_all.append(p1.item())
                 ndis_all.append(n1.item())
+                logger.warning(loggermessage.format(epoch,
+                                                    batch_idx,
+                                                    p1.item(),
+                                                    n1.item(),
+                                                    words[j][i],
+                                                    words[p_i[1]][p_i[0]],
+                                                    words[n_i[1]][n_i[0]]
+                                                    ))
+                if p1.item()> n1.item():
+                    loggersparse.warning(loggermessage.format(epoch,
+                                                        batch_idx,
+                                                        p1.item(),
+                                                        n1.item(),
+                                                        words[j][i],
+                                                        words[p_i[1]][p_i[0]],
+                                                        words[n_i[1]][n_i[0]]
+                                                        ))
 
-
-
-        loss = loss/(im.shape[0]*im.shape[1] )
+        loss = loss/(im.shape[0]*im.shape[1])
         loss.backward()
         optimizer.step()
         print("epoch {}, batch {}/{}, train_loss {:.5f}, p_dis_mean {:.5f}, n_dis_mean {:.5f}".format(epoch,
@@ -240,7 +261,6 @@ for epoch in range(1, epochs + 1):
              embedings_total = embeds
              labels_total = label
 
-
         Writer.add_scalars("Training_data_batch_hard",{"batch_loss": loss.item(),
                                             "batch_pdis": sum(pdis_all) / len(pdis_all),
                                             "batch_ndis": sum(ndis_all) / len(ndis_all)
@@ -251,21 +271,21 @@ for epoch in range(1, epochs + 1):
                            trainingcounter)
         trainingcounter+=1
 
-
-
-    ps, ns = valid_class.evaluate(embedings_total,labels_total, device, size = 1000, margin = args.margin)
+    _, _, embedings_v, klasses_v = valid_class.evaluate(embedings_total,labels_total, device, size = None, margin = args.margin)
 
     if args.save_embeds:
         with open("models_bh/"+args.logid+"embeds.pickle", "wb") as q:
             pickle.dump([embedings_total, labels_total], q)
 
+        with open("models_bh/"+args.logid+"embeds_v.pickle", "wb") as q:
+            pickle.dump([embedings_v, klasses_v], q)
+
     torch.save(Network.state_dict(), "models_bh/"+args.logid+"timodeldict.pt")
     torch.save(Network, "models_bh/"+args.logid+"timodelcom.pt")
 
-
-
     if args.decay_freq is not None:
         if epoch % args.decay_freq == 0:
+            print("Decaying learning rate by {}".format(args.decay_value))
             for g in optimizer.param_groups:
                 g['lr'] = g["lr"] * args.decay_value
 

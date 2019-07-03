@@ -28,7 +28,6 @@ parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
 parser.add_argument("--logid", type=str, help="logid")
 parser.add_argument("--write", default=True, type=bool, help="Write on tensorboard")
 parser.add_argument("--limit", default=-1, type=int, help="Limit dataset")
-parser.add_argument("--ratio", default=0.8, type=float, help="Ratio of train to complete dataset")
 parser.add_argument("--earlystopping", default=True, type=bool, help="Enable or disable early stopping")
 parser.add_argument("--decay_freq", default=None, type=int, help="Decay freq")
 parser.add_argument("--embed_size", default=256, type=int, help="Size of embedding")
@@ -45,6 +44,18 @@ args = parser.parse_args()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 with open(args.inpickle, "rb") as a:
     [klass, words_sparse, words, jpgs, enc, modes] = pickle.load(a)
+
+
+if not args.limit == -1:
+    klass = klass[:args.limit]
+    words_sparse = words_sparse[:args.limit]
+    words = words[:args.limit]
+    jpgs = jpgs[:args.limit]
+    modes = modes[:args.limit]
+    print("Limited inputs of length {} with total classes {}".format(len(klass), klass[-1]))
+else:
+    print("Original inputs of length {} with total classes {}".format(len(klass), klass[-1]))
+
 
 def seq_klass(klass):
     x = -1
@@ -65,51 +76,44 @@ def limitklass(klas, word, word_sparse, jpg):
     word2, word2v = [], []
     word_sparse2, word_sparse2v = [] ,[]
     jpgs2, jpgs2v = [], []
-
+    label = -1
     for j in list(set(klas)):
         x = np.sum(np.array(klas)==j)
-        if x > args.maxperclass:
+        if x >= args.maxperclass:
+            label+=1
             indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.maxperclass)
-        elif x>4:
-            indices = np.argwhere(np.array(klas)==j).squeeze()
+            v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
+            if len(v_indices) >args.itemsperclass:
+                v_indices = random.sample(v_indices, args.itemsperclass)
+            for i in v_indices:
+                klass2v.append(label)
+                word2v.append(word[i])
+                word_sparse2v.append(word_sparse[i])
+                jpgs2v.append(jpg[i])
+        elif x >= args.itemsperclass:
+            label+=1
+            indices = random.sample(list(np.argwhere(np.array(klas)==j).squeeze()), args.itemsperclass)
+            v_indices = list(set(np.argwhere(np.asarray(klass)==j).squeeze()).difference(set(indices)))
+            if len(v_indices) >args.itemsperclass:
+                v_indices = random.sample(v_indices, args.itemsperclass)
+            for i in v_indices:
+                klass2v.append(label)
+                word2v.append(word[i])
+                word_sparse2v.append(word_sparse[i])
+                jpgs2v.append(jpg[i])
         else:
             continue
         for i in indices:
-            klass2.append(klas[i])
+            klass2.append(label)
             word2.append(word[i])
             word_sparse2.append(word_sparse[i])
             jpgs2.append(jpg[i])
-    return klass2, word2, word_sparse2, jpgs2
+    return klass2, word2, word_sparse2, jpgs2, klass2v, word2v, word_sparse2v, jpgs2v
 
-klass, words, words_sparse, jpgs= limitklass(klass, words, words_sparse, jpgs)
-klass = seq_klass(klass)
+klass, words, words_sparse, jpgs, klass_v, words_v, words_sparse_v, jpgs_v= limitklass(klass, words, words_sparse, jpgs)
 
-print("Processed inputs of length {}".format(len(klass)))
+print("length of train is {}, test is {}".format(len(klass), len(klass_v)))
 
-if not args.limit == -1:
-    klass = klass[:args.limit]
-    words_sparse = words_sparse[:args.limit]
-    words = words[:args.limit]
-    jpgs = jpgs[:args.limit]
-    modes = modes[:args.limit]
-    print("Limited to {} length.".format(args.limit))
-else:
-    print("Using complete dataset of {}".format(len(klass)))
-
-
-# x = random.sample(np.linspace(len(klass)), args.test_size)
-#
-# klass, valid_klass, words, valid_words, words_sparse, valid_sparse, jpgs, valid_jpgs = train_test_split(klass, words, words_sparse, jpgs, test_size=0.025, shuffle = False)
-
-ind = np.random.choice(len(klass), 25)
-valid_klass = np.asarray(klass)[ind]
-valid_words = np.asarray(words)[ind]
-valid_sparse = np.asarray(words_sparse)[ind]
-valid_jpgs = np.asarray(jpgs)[ind]
-
-print("length of train is {}, test is {}".format(len(klass), len(valid_klass)))
-
-train_size = args.ratio
 no_classes = klass[-1] + 1
 data_size = len(klass)
 
@@ -133,12 +137,7 @@ logger = logging.getLogger('dummy')
 logger.addHandler(logging.FileHandler("testing.log"))
 
 complete_dataset = image_word_triplet_loader_allhard(jpgs, words, words_sparse, klass, args.impath, args.soft_positive)
-# train_dataset, val_dataset = data.random_split(complete_dataset, [int(data_size * (train_size)),
-                                                                  # data_size - int(data_size * (train_size))])
-
-
 train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
-# val_loader = DataLoader(val_dataset, batch_size=args.batch, shuffle=True)
 
 print("Dataloaders done")
 if args.write:
@@ -146,14 +145,12 @@ if args.write:
     Writer.add_scalars("Metadata" + args.model, {"Batch_size": args.batch,
                                                   "learning_rate": args.lr,
                                                   "logid": int(args.logid),
-                                                  # "training_size": train_dataset.__len__(),
-                                                  # "Validation_size": val_dataset.__len__(),
                                                   "No_of_classes": no_classes,
                                                  "dropout": args.dropout,
                                                   "embed_size": args.embed_size,
                                                   })
 
-valid_class = validation(valid_klass, valid_words, valid_sparse,valid_jpgs, args.impath, Network, Writer)
+valid_class = validation(klass_v, words_v, words_sparse_v,jpgs_v, args.impath, Network, Writer)
 
 optimizer = optim.Adam(Network.parameters(), lr=args.lr)
 epochs = args.epoch
@@ -161,10 +158,6 @@ train_accuracy = []
 train_loss = []
 validation_accuracy = []
 validation_loss = []
-
-# early_stop = EarlyStopping(patience=100, verbose=False, name=args.logid, path='model_saves')
-
-batches = ceil(len(klass) / args.batch)
 
 epoch_metric = {"Training_loss": [], "Training_acc": [], "Validation_loss": [], "Validation_acc": []}
 

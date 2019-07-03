@@ -4,13 +4,10 @@ import numpy as np
 from random import sample
 import torch
 import torch.nn.functional as F
-import pandas as pd
-import pickle
 from collections import Counter
-import random
-import os
 import logging
-import random
+from util.utilities import word2encodedword
+from util.utilities import wordskip
 
 def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
@@ -26,7 +23,6 @@ def levenshteinDistance(s1, s2):
                 distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
         distances = distances_
     return distances[-1]
-
 
 def im_triplet(jpg, image_lib, labels):
     dumm = jpg
@@ -66,74 +62,74 @@ class image_word_training_loader(data.Dataset):
             2, 0, 1)
         return torch.div(im.float(), 255), word_indexed.float(), self.jpeg[index], self.words[index]
 
-
-class Triplet_loader(data.Dataset):
-    def __init__(self, triplet, jpg_word_dict, lib_ids, lib_embeds, path, netvladids, rand):
-        self.triplet = np.array(triplet)
-        self.jpg_word_dict = jpg_word_dict
-        self.lib_ids = np.array(lib_ids)
-        self.lib_embeds = lib_embeds
-        self.path = path
-        self.netvladids= netvladids
-        self.rand = rand
-
-
-        if self.rand:
-            with open("training_data_pytorch04.pickle", "rb") as a:
-                [klass, _, words, jpgs, _, _] = pickle.load(a)
-            self.jpgs = np.array(jpgs)
-            self.klass = np.array(klass)
-
+class Triplet_loaderbh_Textvlad(data.Dataset):
+    def __init__(self, jpgklass, jpgdict, itemsperclass, pathnv, path_patches, model, enc):
+        self.jpgklass = jpgklass
+        self.jpgdict = jpgdict
+        self.itemsperclass = itemsperclass
+        self.path_netvlad = pathnv
+        self.model = model
+        self.pathpatch = path_patches
+        self.enc = enc
+        self.model.eval()
 
     def __len__(self):
-        return self.triplet.shape[0]
+        return len(self.jpgklass.keys())
 
     def __getitem__(self, index):
+        no_elements = len(self.jpgklass[index])
 
-        patch_out = []
-        vlad_out = []
-        if self.rand:
-            our_triplet = im_triplet(self.triplet[index, 1], image_lib=self.jpgs, labels=self.klass)
-            our_triplet = our_triplet[1:]
-            print(our_triplet)
-            if not check(our_triplet, self.netvladids):
-                print("check failed")
-                return None
+        indices = sample(list(np.arange(no_elements)), self.itemsperclass)
+        jpgnames = np.asarray(self.jpgklass[index])[indices]
+        for single_jpg in jpgnames:
+            netvlad = self.readnetvlad(single_jpg).unsqueeze(0)
+            embedding = self.get_latent_embedding(str(single_jpg)).unsqueeze(0)
+
+            try:
+                patch_embeds = torch.cat([patch_embeds, embedding], dim = 0)
+                netvlad_embeds = torch.cat([netvlad_embeds, netvlad], dim = 0)
+            except:
+                patch_embeds = embedding
+                netvlad_embeds = netvlad
+
+        return patch_embeds.float(), netvlad_embeds.float(), index
+
+    def readnetvlad(self, name):
+        return  torch.tensor(np.loadtxt(self.path_netvlad+name))
+
+    def get_latent_embedding(self, jpg):
+        count = 0
+        for i in self.jpgdict[jpg]:
+            if self.word_filter(i):
+                count+=1
+                encoded_word = word2encodedword(self.enc, i, 12)
+                text, image = self.convert2inputs(i, encoded_word, jpg)
+                assert self.model.training is False
+                embeds = self.model.get_embedding(image, text).reshape([1,-1])
+                try:
+                    embeddings = torch.cat([embeddings, embeds], dim = 0)
+                except:
+                    embeddings = embeds
+        if count ==0:
+            embeddings = torch.zeros(10, 128)
         else:
-            our_triplet = self.triplet[index, 1:]
+            embeddings = F.pad(embeddings, (0, 0, 0, 10 - embeddings.shape[0]))
+        return torch.svd(embeddings)[2].t().reshape(-1)
 
-        for itera, i in enumerate(our_triplet):
-            words = self.jpg_word_dict[i]
-            # array =[for instance in words]
-            image_embed =  np.array([])
-            for instance in words:
-                instance_c = i + instance
-                # print(instance_c)
-                if instance_c in self.lib_ids:
-                    # print("yes")
-                    # print(instance_c)
-                    indix = np.argwhere(self.lib_ids == instance_c)
-                    # if isinstance(indix[0],int):
-                    embedding_inst = self.lib_embeds[indix,:].reshape(1, -1)
-                    # print(embedding_inst.shape)
-                    image_embed=np.concatenate((image_embed, embedding_inst[0]), axis=0)
-            emb = torch.tensor(image_embed).view([-1, 128])
-            # print(emb.size())
-            x = F.pad(emb, (0, 0, 0, 10-emb.size()[0]), "constant", 0)
-            _,_, v = torch.svd(x)
-            patch_out.append(v.t().reshape(-1))
-            # print(i)
-            if i in self.netvladids:
-                x = np.loadtxt(self.path + i, delimiter=", ")
-                vlad_out.append(x.reshape(-1))
-            else:
-                return None
+    def word_filter(self, word):
+        if len(word) <= 12 and (not wordskip(word, 3, 3)):
+            return 1
+        else: return 0
 
-        return patch_out[0], patch_out[1], patch_out[2], vlad_out[0], vlad_out[1], vlad_out[2], our_triplet
+    def convert2inputs(self, word, encoded_word, jpg):
+        text_i = torch.from_numpy(encoded_word.todense()).unsqueeze(0)
+        im = torch.tensor(cv2.imread(self.pathpatch + jpg[:-4] + "_" + word + ".jpg")).permute(
+            2, 0, 1)
+        image_i = torch.div(im.float(), 255).unsqueeze(0)
+        return text_i, image_i
 
 
-
-class image_word_triplet_loader(data.Dataset):
+class image_word_triplet_loader_allhard(data.Dataset):
     def __init__(self, jpeg, words, words_sparse, labels, path, ld, soft_positive):
         self.labels = np.array(labels)
         self.words = words
@@ -324,7 +320,7 @@ class image_word_triplet_loader_batchhard(data.Dataset):
 
     def __getitem__(self, index):
         indices = np.argwhere(self.labels == index).squeeze()
-        indices_per_batch = random.sample(list(indices), 10)
+        indices_per_batch = sample(list(indices), self.itemsperclass)
         if len(indices_per_batch)<self.itemsperclass:
             raise ValueError("items less than items per class")
 
@@ -336,9 +332,11 @@ class image_word_triplet_loader_batchhard(data.Dataset):
             try:
                 image = torch.cat([image, image_i], dim = 0)
                 text = torch.cat([text, patch_i], dim = 0)
+                words.append(self.words[i])
             except:
                 image = image_i
                 text = patch_i
+                words = [self.words[i]]
 
 
-        return image.float(), text.float(), index
+        return image.float(), text.float(), index, words

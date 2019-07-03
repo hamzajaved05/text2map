@@ -12,13 +12,13 @@ import numpy as np
 from PIL import Image
 from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 
-from util.updatelibrary import jpg_dict_lib
+from util.utilities import readtext2jpgdict
 from util.utilities import getproximal, getproximalwords
-from util.wordlib import word_dict_lib
+from util.utilities import readtext2worddict
 
 inputfilename = "train03"
-jpg_dict = jpg_dict_lib(path="Dataset_processing/" + inputfilename + ".txt")
-word_dict = word_dict_lib(path="Dataset_processing/" + inputfilename + ".txt")
+jpg_dict = readtext2jpgdict(path="Dataset_processing/" + inputfilename + ".txt")
+word_dict = readtext2worddict(path="Dataset_processing/" + inputfilename + ".txt")
 
 loadproximaljpg = True
 loadproximalword = True

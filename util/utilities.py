@@ -11,6 +11,7 @@ import numpy as np
 # from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 from scipy.sparse import csc_matrix
 from sklearn.preprocessing import OneHotEncoder
+import pandas as pd
 
 
 def write_dict_to_txt(dict, path):
@@ -211,3 +212,61 @@ def word2encodedword(enc, word, length):
     x = np.concatenate((dummy.todense(), np.zeros((dummy.shape[0], length - dummy.shape[1]))), axis=1)
     x = csc_matrix(x)
     return x
+
+def readtext2worddict(path="../Dataset_processing/train.txt"):
+    print("Accessing file for word dictionary update >>" + path + " /")
+    lines = open(path).read().splitlines()
+    word_dict = {};
+    jpg_string = []
+    jpgcounter = 0
+    for somestr in lines:
+        if "jpg" in somestr:
+            # if jpgcounter == 500:
+            # 	break
+            jpg_string = somestr
+            jpgcounter += 1
+        elif somestr in word_dict.keys():
+            word_dict[somestr].append(jpg_string)
+        else:
+            word_dict[somestr] = [jpg_string]
+    print("Word dictionary Updated !!")
+    return word_dict
+
+def readtext2jpgdict(path, filt = None):
+    print("Accessing file for jpg dictionary update >>" + path + " /")
+    lines = open(path).read().splitlines()
+    jpg_dict = {};
+    jpg_string = []
+    for somestr in lines:
+        if "jpg" in somestr:
+            jpg_dict[somestr] = []
+            jpg_string = somestr
+        else:
+            if filter is not None:
+                if not wordskip(somestr, filt[0], filt[1]):
+                    jpg_dict[jpg_string].append(somestr)
+            else:
+                jpg_dict[jpg_string].append(somestr)
+
+    print("JPG dictionary Updated !!")
+    return jpg_dict
+
+def readcsv2jpgdict(path):
+    print("Accessing file for jpg dictionary update >>" + path + " /")
+    data = pd.read_csv(path, skipinitialspace=True, usecols=['imagesource', 'text']).to_numpy()
+    jpg_dict = {};
+    for comb in data:
+        if str(comb[0]) in jpg_dict.keys():
+            jpg_dict[str(comb[0])].append(str(comb[1]))
+        else:
+            jpg_dict[str(comb[0])] = [str(comb[1])]
+    print("JPG dictionary Updated !!")
+    return jpg_dict
+
+def wordskip(string, length = 3, setlength = 3):
+    if len(string)<length:
+        return True
+    elif len(set(string))<setlength:
+        return True
+    else:
+        return False

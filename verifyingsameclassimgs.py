@@ -37,7 +37,7 @@ klass = np.array(klass)
 
 # def same_class_jpgs()
 
-from util.updatelibrary import jpg_dict_lib as Reader
+from util.utilities import readtext2jpgdict as Reader
 jpg_dict_train = Reader(path='Dataset_processing/train03.txt')
 
 def im_triplet(jpg, image_lib, labels):
