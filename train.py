@@ -7,6 +7,7 @@ from util.models import *
 import pickle
 import logging
 from random import sample
+import numpy as np
 
 
 parser = argparse.ArgumentParser(description='Combined Runs')
