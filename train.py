@@ -11,7 +11,9 @@ from random import sample
 
 parser = argparse.ArgumentParser(description='Combined Runs')
 parser.add_argument("--epoch", type=int, default=500, help="no of epochs")
+parser.add_argument("--impath", type=str, help="Path for Image patches")
 parser.add_argument("--batch", type=int, default=32, help="batch_size")
+parser.add_argument("--inpickle", type=str, help="Path of pickle file")
 parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
 parser.add_argument("--logid", type=str, help="logid")
 parser.add_argument("--decay_freq", default=None, type=int, help="Decay by half after number of epochs")
@@ -26,7 +28,7 @@ args = parser.parse_args()
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-with open('training_data_pytorch06.pickle', "rb") as a:
+with open(args.inpickle, "rb") as a:
     [_, _, _, _, enc, _, jpgklassraw, jpg2words] = pickle.load(a)
 
 def filterklass(dict, maxim):
@@ -71,13 +73,13 @@ except:
     Network = torch.load(args.load, map_location='cpu')
     print("Loading model cpu")
 
-complete_dataset = Triplet_loaderbh_Textvlad(jpgklass, jpg2words, args.itemsperclass, "nv_txt/", '/media/presage3/Windows-SSD/images/jpeg_patch/', Network, enc)
-embed_net = Embedding_net(c_embed=5120).float().to(device)
+complete_dataset = Triplet_loaderbh_Textvlad(jpgklass, jpg2words, args.itemsperclass, args.nvtxt, args.impath, Network, enc)
+embed_net = Embedding_net(c_embed=args.embed).float().to(device)
 model = TripletNet(embed_net).float().to(device)
 criterion = TripletLoss().to(device)
 train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
-epochs = 10
+epochs = args.epoch
 if args.write:
     Writer = SummaryWriter("TVmodels_bh/tbx/" + args.logid)
     Writer.add_scalars("Metadata" , {"Batch_size": args.batch,

@@ -146,7 +146,7 @@ class ModelI(nn.Module):
 
 
 class Embedding_net(nn.Module):
-    def __init__(self, p_embed = 512, v_embed = 4096, c_embed = 5120):
+    def __init__(self, p_embed = 1024, v_embed = 4096, c_embed = 5120):
         super(Embedding_net, self).__init__()
         self.p1 = nn.Sequential(nn.Linear(1280, p_embed))
         self.v1 = nn.Sequential(nn.Linear(4096, v_embed))
