@@ -95,7 +95,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
                 patch_embeds = embedding
                 netvlad_embeds = netvlad
 
-        return patch_embeds.float(), netvlad_embeds.float(), index
+        return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
 
     def readnetvlad(self, name):
         return  torch.tensor(np.loadtxt(self.path_netvlad+name))
