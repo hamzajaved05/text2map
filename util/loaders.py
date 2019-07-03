@@ -108,7 +108,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
                 encoded_word = word2encodedword(self.enc, i, 12)
                 text, image = self.convert2inputs(i, encoded_word, jpg)
                 assert self.model.training is False
-                embeds = self.model.get_embedding(image, text).reshape([1,-1])
+                embeds = self.model.get_embedding(image.to(device), text.to(device)).reshape([1,-1])
                 try:
                     embeddings = torch.cat([embeddings, embeds], dim = 0)
                 except:
