@@ -24,6 +24,12 @@ parser.add_argument("--load", type = str, help = "load file")
 parser.add_argument("--embed", default = 4096, type = int, help = "embed size")
 parser.add_argument("--write", default = True, type = bool, help = "write")
 parser.add_argument("--nvtxt", default = 'nv_txt/', type = str, help = "nv text folder /")
+parser.add_argument("--l2loss", default = True, type = bool, help = "l2 distance between files")
+parser.add_argument("--softplus", default = False, type = bool, help = "softplus loss")
+parser.add_argument("--margin", default = 0.1, type = float, help = "margin")
+parser.add_argument("--posrand", default = True, type = bool, help = "posrand")
+parser.add_argument("--negrand", default = True, type = bool, help = "negrand")
+
 args = parser.parse_args()
 
 
@@ -77,7 +83,7 @@ except:
 complete_dataset = Triplet_loaderbh_Textvlad(jpgklass, jpg2words, args.itemsperclass, args.nvtxt, args.impath, Network, enc)
 embed_net = Embedding_net(c_embed=args.embed).float().to(device)
 model = TripletNet(embed_net).float().to(device)
-criterion = TripletLoss().to(device)
+criterion = TripletLoss(l2= args.l2loss, softplus= args.softplus, margin=args.margin).to(device)
 train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
 epochs = args.epoch
@@ -86,7 +92,12 @@ if args.write:
     Writer.add_scalars("Metadata" , {"Batch_size": args.batch,
                                      "learning_rate": args.lr,
                                      "items per class": args.itemsperclass,
-                                     "Number of classes": len(jpgklass)})
+                                     "Number of classes": len(jpgklass),
+                                     "negrand": args.negrand,
+                                     "posrand": args.posrand,
+                                     "softplus": int(args.softplus),
+                                     "l2loss": int(args.l2loss),
+                                     "margin": args.margin})
     with open("TVmodels_bh/"+ args.logid+'.pickle', "wb") as q:
         pickle.dump([jpgklass, jpgklass_v, jpg2words], q)
 
@@ -115,26 +126,48 @@ for epoch in range(1, epochs + 1):
                 positive = list(range(args.itemsperclass*(i),args.itemsperclass*(i)+args.itemsperclass))
                 negative = list(range(embeds.shape[0]))
                 negative = list(set(negative).difference(set(positive)))
+
+                norm = np.linalg.norm(embeds[args.itemsperclass*(i)+j] - embeds, ord = 2, axis=1)
+                sorted_indices = np.argsort(norm)
+
+                if args.posrand:
+                    while True:
+                        positive_indice = sample(positive, 1)
+                        if positive_indice != (args.itemsperclass*i + j): break
+                    p_ind = 0
+                    pind_all.append(p_ind)
+                    p_i = list(np.unravel_index(positive_indice[0], [args.batch, args.itemsperclass]))
+                    positive_distance = norm[positive_indice]
+                else:
+                    for p_ind, q in enumerate(sorted_indices[::-1]):
+                        if q in positive:
+                            positive_indice = q
+                            pind_all.append(p_ind)
+                            p_i = list(np.unravel_index(positive_indice, [args.batch, args.itemsperclass]))
+                            positive_distance = norm[positive_indice]
+                            break
+
+                if args.negrand:
+                    while True:
+                        negative_indice = sample(negative, 1)
+                        n_ind = 0
+                        nind_all.append(n_ind)
+                        n_i = list(np.unravel_index(negative_indice[0], [args.batch, args.itemsperclass]))
+                        if klass_batch[n_i[0]] in all_pos_diff_classes: continue
+                        break
+                else:
+                    for n_ind, q in enumerate(sorted_indices):
+                        if q not in positive:
+                            negative_indice = q
+                            nind_all.append(n_ind)
+                            n_i = list(np.unravel_index(negative_indice, [args.batch, args.itemsperclass]))
+                            if klass_batch[n_i[0]] in all_pos_diff_classes:
+                                continue
+                            break
+
+
                 anchor_textual = textual[i,j,...]
                 anchor_nv = nv[i,j,...]
-                sorted_indices = np.argsort(np.linalg.norm(embeds[args.itemsperclass*(i)+j] - embeds, ord = 2, axis=1))
-
-                for n_ind, q in enumerate(sorted_indices):
-                    if q not in positive:
-                        negative_indice = q
-                        nind_all.append(n_ind)
-                        n_i = list(np.unravel_index(negative_indice, [args.batch, args.itemsperclass]))
-                        if klass_batch[n_i[0]] in all_pos_diff_classes:
-                            continue
-                        break
-                for p_ind, q in enumerate(sorted_indices[::-1]):
-                    if q in positive:
-                        positive_indice = q
-                        pind_all.append(p_ind)
-                        p_i = list(np.unravel_index(positive_indice, [args.batch, args.itemsperclass]))
-                        break
-
-
                 a_embed, p_embed, n_embed = model([textual[i,j,...].unsqueeze(0), nv[i,j,...].unsqueeze(0),
                                                      textual[p_i[0],p_i[1],...].unsqueeze(0), nv[p_i[0], p_i[1],...].unsqueeze(0),
                                                      textual[n_i[0],n_i[1],...].unsqueeze(0), nv[n_i[0], n_i[1],...].unsqueeze(0)])

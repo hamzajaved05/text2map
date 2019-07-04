@@ -156,6 +156,7 @@ class Embedding_net(nn.Module):
         patch = pa
         patch = self.p1(patch)
         vlad = self.v1(vl)
+        # print(vlad.size(), patch.size())
         com = torch.cat([vlad, patch], dim = 1)
         com = self.c1(com)
         return F.normalize(com, p=2, dim =1)
@@ -167,6 +168,7 @@ class TripletNet(nn.Module):
         self.embedding_net = embedding_net.float()
 
     def forward(self, array):
+        # print(array[0].shape, array[1].shape, array[2].shape, array[3].shape, array[4].shape, array[5].shape)
         output1 = self.embedding_net(array[0], array[1])
         output2 = self.embedding_net(array[2], array[3])
         output3 = self.embedding_net(array[4], array[5])
@@ -182,6 +184,7 @@ class TripletLoss(nn.Module):
         self.l2 = l2
         self.softplus = softplus
         self.sp = nn.Softplus()
+        print("Triplet loss with margin {}, l2 {}, softplus {}".format(margin, l2, softplus))
 
     def forward(self, anchor, positive, negative, size_average=True):
         if self.l2:

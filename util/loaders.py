@@ -94,7 +94,8 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
             except:
                 patch_embeds = embedding
                 netvlad_embeds = netvlad
-
+        assert patch_embeds.shape[0] == self.itemsperclass, "Patch size issue"
+        assert netvlad_embeds.shape[0] == self.itemsperclass, "netvlad size issue"
         return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
 
     def readnetvlad(self, name):
@@ -114,7 +115,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
                 except:
                     embeddings = embeds
         if count ==0:
-            embeddings = torch.zeros(10, 128)
+            embeddings = torch.zeros(10, 128).to(device)
         else:
             embeddings = F.pad(embeddings, (0, 0, 0, 10 - embeddings.shape[0]))
         return torch.svd(embeddings)[2].t().reshape(-1)
@@ -343,3 +344,6 @@ class image_word_triplet_loader_batchhard(data.Dataset):
 
 
         return image.float(), text.float(), index, words
+
+def textvlad_mining(current_klass, all_positive, embeds, positive, negative, norms):
+     return None
