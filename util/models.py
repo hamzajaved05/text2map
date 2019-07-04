@@ -184,7 +184,7 @@ class TripletLoss(nn.Module):
         self.l2 = l2
         self.softplus = softplus
         self.sp = nn.Softplus()
-        print("Triplet loss with margin {}, l2 {}, softplus {}".format(margin, l2, softplus))
+        print("Triplet loss with margin {}, l2 {}, softplus {}".format(margin, l2, self.softplus))
 
     def forward(self, anchor, positive, negative, size_average=True):
         if self.l2:

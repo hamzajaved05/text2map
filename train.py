@@ -25,10 +25,12 @@ parser.add_argument("--embed", default = 4096, type = int, help = "embed size")
 parser.add_argument("--write", default = True, type = bool, help = "write")
 parser.add_argument("--nvtxt", default = 'nv_txt/', type = str, help = "nv text folder /")
 parser.add_argument("--l2loss", default = True, type = bool, help = "l2 distance between files")
-parser.add_argument("--softplus", default = False, type = bool, help = "softplus loss")
+parser.add_argument("--softpl", default = False, type = bool, help = "softplus loss")
 parser.add_argument("--margin", default = 0.1, type = float, help = "margin")
 parser.add_argument("--posrand", default = True, type = bool, help = "posrand")
 parser.add_argument("--negrand", default = True, type = bool, help = "negrand")
+parser.add_argument("--switch", default = 20, type = int, help = "switch between random")
+
 
 args = parser.parse_args()
 
@@ -83,7 +85,7 @@ except:
 complete_dataset = Triplet_loaderbh_Textvlad(jpgklass, jpg2words, args.itemsperclass, args.nvtxt, args.impath, Network, enc)
 embed_net = Embedding_net(c_embed=args.embed).float().to(device)
 model = TripletNet(embed_net).float().to(device)
-criterion = TripletLoss(l2= args.l2loss, softplus= args.softplus, margin=args.margin).to(device)
+criterion = TripletLoss(l2= args.l2loss, softplus= args.softpl, margin=args.margin).to(device)
 train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
 epochs = args.epoch
@@ -95,12 +97,14 @@ if args.write:
                                      "Number of classes": len(jpgklass),
                                      "negrand": args.negrand,
                                      "posrand": args.posrand,
-                                     "softplus": int(args.softplus),
+                                     "softplus": int(args.softpl),
                                      "l2loss": int(args.l2loss),
                                      "margin": args.margin})
     with open("TVmodels_bh/"+ args.logid+'.pickle', "wb") as q:
         pickle.dump([jpgklass, jpgklass_v, jpg2words], q)
 
+negrand = args.negrand
+posrand = args.posrand
 
 trainingcounter= 0
 for epoch in range(1, epochs + 1):
@@ -130,7 +134,7 @@ for epoch in range(1, epochs + 1):
                 norm = np.linalg.norm(embeds[args.itemsperclass*(i)+j] - embeds, ord = 2, axis=1)
                 sorted_indices = np.argsort(norm)
 
-                if args.posrand:
+                if posrand:
                     while True:
                         positive_indice = sample(positive, 1)
                         if positive_indice != (args.itemsperclass*i + j): break
@@ -147,7 +151,7 @@ for epoch in range(1, epochs + 1):
                             positive_distance = norm[positive_indice]
                             break
 
-                if args.negrand:
+                if negrand:
                     while True:
                         negative_indice = sample(negative, 1)
                         n_ind = 0
@@ -200,3 +204,8 @@ for epoch in range(1, epochs + 1):
         trainingcounter+= 1
         torch.save(model.state_dict(), "TVmodels_bh/" + args.logid + "timodeldict.pt")
         torch.save(model, "TVmodels_bh/" + args.logid + "timodelcom.pt")
+
+        if ((epoch+1) == args.switch):
+            print("Switching random behaviour")
+            posrand = False
+            negrand = False

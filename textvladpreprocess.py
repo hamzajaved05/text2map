@@ -30,7 +30,3 @@ jpg2worddict = readcsv2jpgdict('Dataset_processing/netvlad/68_data.csv')
 
 with open('training_data_pytorch06.pickle', "wb") as a:
     pickle.dump([klass, words_sparse, words, jpgs, enc, modes, jpgklass, jpg2worddict], a)
-
-
-def sim(dict):
-    []
