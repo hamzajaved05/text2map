@@ -236,7 +236,6 @@ for epoch in range(1, epochs + 1):
             print("Switching random behaviour")
             posrand = False
             negrand = False
-        break
 
     dist = []
     for test_idx, data in enumerate(test_loader):
@@ -258,12 +257,12 @@ for epoch in range(1, epochs + 1):
                                          "distance of zero": np.sum(np.argwhere(np.asarray(dist)<50))}, trainingcounter)
 
 
-        if (test_idx + 1) % 1 == 0:
-            print("Done {} / {} ".format(test_idx + 1, test_loader.__len__()))
+        # if (test_idx + 1) % 1 == 0:
+        print("Validation Done")
 
 
     with open("TVmodels_bh/"+ args.logid+'inputdata.pickle', "wb") as q:
         pickle.dump([jpgklass, jpg_valid, jpg2words, libtensors, names, dist], q)
 
-        
+
     del libtensors, names, dist
