@@ -6,7 +6,7 @@ Project: texttomap
 """
 import collections
 import pickle
-
+import math
 import numpy as np
 # from py_stringmatching.similarity_measure.levenshtein import Levenshtein
 from scipy.sparse import csc_matrix
@@ -270,3 +270,9 @@ def wordskip(string, length = 3, setlength = 3):
         return True
     else:
         return False
+
+def getdistance(a, b):
+    RAD = 0.000008998719243599958;
+    hor = math.sqrt(math.pow(float(a[0]) - float(b[0]), 2)
+                    + math.pow(float(a[1]) - float(b[1]), 2)) / RAD;
+    return hor

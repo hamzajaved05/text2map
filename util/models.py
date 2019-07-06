@@ -149,16 +149,17 @@ class Embedding_net(nn.Module):
     def __init__(self, p_embed = 1024, v_embed = 4096, c_embed = 5120):
         super(Embedding_net, self).__init__()
         self.p1 = nn.Sequential(nn.Linear(1280, p_embed))
+        self.do1 = nn.Dropout(p= 0.3)
         self.v1 = nn.Sequential(nn.Linear(4096, v_embed))
         self.c1 = nn.Sequential(nn.Linear(p_embed+v_embed, c_embed))
 
     def forward(self, pa, vl):
         patch = pa
-        patch = self.p1(patch)
-        vlad = self.v1(vl)
+        patch = self.do1(self.p1(patch))
+        vlad = self.do1(self.v1(vl))
         # print(vlad.size(), patch.size())
         com = torch.cat([vlad, patch], dim = 1)
-        com = self.c1(com)
+        com = self.do1(self.c1(com))
         return F.normalize(com, p=2, dim =1)
 
 

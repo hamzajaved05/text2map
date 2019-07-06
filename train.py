@@ -5,7 +5,8 @@ from torch.utils.data import DataLoader
 from util.loaders import *
 from util.models import *
 import pickle
-import logging
+import pandas as pd
+from util.utilities import getdistance
 from random import sample
 import numpy as np
 
@@ -30,6 +31,7 @@ parser.add_argument("--margin", default = 0.1, type = float, help = "margin")
 parser.add_argument("--posrand", default = True, type = bool, help = "posrand")
 parser.add_argument("--negrand", default = True, type = bool, help = "negrand")
 parser.add_argument("--switch", default = 20, type = int, help = "switch between random")
+parser.add_argument("--csvpath", default = "68_data.csv", type= str, help = "Path for csvfile")
 
 
 args = parser.parse_args()
@@ -40,23 +42,41 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 with open(args.inpickle, "rb") as a:
     [_, _, _, _, enc, _, jpgklassraw, jpg2words] = pickle.load(a)
 
+csvfile = pd.read_csv(args.csvpath,
+                      usecols= ['imagesource', 'lat', 'long'],
+                      skipinitialspace=True).drop_duplicates(['imagesource']).set_index('imagesource').to_dict()
+
 def filterklass(dict, maxim):
     dictnew = {}
     count = 0
-    valdict = {}
     for i in dict.keys():
         if len(dict[i]) == np.sum(np.array(['jpg' in string for string in dict[i]])):
             if len(dict[i]) > 2*maxim:
-                val = sample(list(dict[i]), int(maxim/2))
-                train = set(dict[i]).difference(set(val))
+                train = sample(list(dict[i]), maxim)
                 dictnew[count] = list(train)
-                valdict[count] = list(val)
                 count+=1
             elif len(dict[i]) >= maxim:
                 dictnew[count] = list(dict[i])
                 count += 1
-    return dictnew, valdict
-jpgklass, jpgklass_v = filterklass(jpgklassraw, args.itemsperclass)
+    for itera, i in enumerate(dict.keys()):
+        if itera != 0:
+            alljpgs = np.concatenate([alljpgs, dict[i].reshape(1, -1)], axis=1)
+        if itera == 0:
+            alljpgs = dict[i].reshape(1, -1)
+    alljpgs = alljpgs.reshape(-1).tolist()
+
+    for itera, i in enumerate(dictnew.keys()):
+        if itera != 0:
+            libjpgs = np.concatenate([libjpgs, np.asarray(dictnew[i]).reshape(1, -1)], axis=1)
+        if itera == 0:
+            libjpgs = np.asarray(dictnew[i]).reshape(1, -1)
+    libjpgs = libjpgs.reshape(-1).tolist()
+
+    validjpgs = list(set(alljpgs).difference(set(libjpgs)))
+    return dictnew, validjpgs
+
+
+jpgklass, jpg_valid = filterklass(jpgklassraw, args.itemsperclass)
 
 def reverse_dict(dict):
     new_dic = {}
@@ -66,11 +86,6 @@ def reverse_dict(dict):
     return new_dic
 
 revdict = reverse_dict(jpgklass)
-
-
-
-with open("TVmodels_bh/" + args.logid + "inputdata.pickle", "wb") as q:
-    pickle.dump([jpgklass, jpgklass_v], q)
 
 for iter, i in enumerate(list(jpgklass.values())):
     assert len(i) == np.sum(np.array(['jpg' in string for string in i]))
@@ -83,10 +98,16 @@ except:
     print("Loading model cpu")
 
 complete_dataset = Triplet_loaderbh_Textvlad(jpgklass, jpg2words, args.itemsperclass, args.nvtxt, args.impath, Network, enc)
+
+jpg_valid_subset = sample(jpg_valid, 1000)
+testing_dataset = Triplet_loaderbh_Textvlad_testing(jpg_valid_subset, jpg2words, 2, args.nvtxt, args.impath, Network, enc)
+
 embed_net = Embedding_net(c_embed=args.embed).float().to(device)
 model = TripletNet(embed_net).float().to(device)
 criterion = TripletLoss(l2= args.l2loss, softplus= args.softpl, margin=args.margin).to(device)
 train_loader = DataLoader(complete_dataset, batch_size=args.batch, shuffle=True)
+test_loader = DataLoader(testing_dataset, batch_size=1, shuffle=True)
+
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
 epochs = args.epoch
 if args.write:
@@ -100,16 +121,16 @@ if args.write:
                                      "softplus": int(args.softpl),
                                      "l2loss": int(args.l2loss),
                                      "margin": args.margin})
-    with open("TVmodels_bh/"+ args.logid+'.pickle', "wb") as q:
-        pickle.dump([jpgklass, jpgklass_v, jpg2words], q)
+
 
 negrand = args.negrand
 posrand = args.posrand
-
+names = []
 trainingcounter= 0
 for epoch in range(1, epochs + 1):
+    model.train()
     for batch_idx, data in enumerate(train_loader):
-        textual, nv, klass_batch = data
+        textual, nv, klass_batch, indices = data
         klass_batch = klass_batch.numpy()
         textual = textual.to(device)
         nv = nv.to(device)
@@ -179,6 +200,11 @@ for epoch in range(1, epochs + 1):
                 loss += loss1
                 pdis_all.append(p1.item())
                 ndis_all.append(n1.item())
+            names.append(jpgklass[klass_batch[i].item()][indices[i, 4].item()])
+            try:
+                libtensors = torch.cat([libtensors, a_embed] , dim = 0)
+            except:
+                libtensors = a_embed
 
         loss = loss / (textual.shape[0] * textual.shape[1])
         loss.backward()
@@ -204,8 +230,40 @@ for epoch in range(1, epochs + 1):
         trainingcounter+= 1
         torch.save(model.state_dict(), "TVmodels_bh/" + args.logid + "timodeldict.pt")
         torch.save(model, "TVmodels_bh/" + args.logid + "timodelcom.pt")
+        libtensors = libtensors.detach().cpu().numpy()
 
         if ((epoch+1) == args.switch):
             print("Switching random behaviour")
             posrand = False
             negrand = False
+        break
+
+    dist = []
+    for test_idx, data in enumerate(test_loader):
+        model.eval()
+        Network.eval()
+        textual, nv, index = data
+        embeds = model.get_embedding(textual.reshape([-1, 1280]), nv.reshape([-1, 4096])).cpu().detach().numpy()
+        norm = np.linalg.norm(embeds - libtensors, axis=1)
+        closest_image = names[np.argmin(norm)]
+
+        lat = csvfile['lat'][closest_image]
+        long = csvfile['long'][closest_image]
+        lat2 = csvfile['lat'][jpg_valid_subset[index.item()]]
+        long2 = csvfile['lat'][jpg_valid_subset[index.item()]]
+        dist.append(getdistance([long, lat], [long2, lat2]))
+
+        Writer.add_scalars("Validation",{"distance_mean": np.mean(dist),
+                                         "distance less than 50": np.sum(np.argwhere(np.asarray(dist)<50)),
+                                         "distance of zero": np.sum(np.argwhere(np.asarray(dist)<50))}, trainingcounter)
+
+
+        if (test_idx + 1) % 1 == 0:
+            print("Done {} / {} ".format(test_idx + 1, test_loader.__len__()))
+
+
+    with open("TVmodels_bh/"+ args.logid+'inputdata.pickle', "wb") as q:
+        pickle.dump([jpgklass, jpg_valid, jpg2words, libtensors, names, dist], q)
+
+        
+    del libtensors, names, dist

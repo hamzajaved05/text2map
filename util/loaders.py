@@ -97,10 +97,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         assert patch_embeds.shape[0] == self.itemsperclass, "Patch size issue"
         assert netvlad_embeds.shape[0] == self.itemsperclass, "netvlad size issue"
 
-        if self.testing:
-            return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index, indices[0], indices[1]
-        else:
-            return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
+        return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index, torch.tensor(indices)
 
     def readnetvlad(self, name):
         return  torch.tensor(np.loadtxt(self.path_netvlad+name))
@@ -135,6 +132,64 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
             2, 0, 1)
         image_i = torch.div(im.float(), 255).unsqueeze(0)
         return text_i, image_i
+
+class Triplet_loaderbh_Textvlad_testing(data.Dataset):
+    def __init__(self, jpgklass, jpgdict, itemsperclass, pathnv, path_patches, model, enc):
+        self.jpgklass = jpgklass
+        self.jpgdict = jpgdict
+        self.itemsperclass = itemsperclass
+        self.path_netvlad = pathnv
+        self.model = model
+        self.pathpatch = path_patches
+        self.enc = enc
+        self.model.eval()
+        self.model.to(device)
+
+    def __len__(self):
+        return len(self.jpgklass)
+
+    def __getitem__(self, index):
+        single_jpg = self.jpgklass[index]
+        netvlad = self.readnetvlad(single_jpg).unsqueeze(0)
+        embedding = self.get_latent_embedding(str(single_jpg)).unsqueeze(0)
+        patch_embeds = embedding
+        netvlad_embeds = netvlad
+        return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
+
+    def readnetvlad(self, name):
+        return  torch.tensor(np.loadtxt(self.path_netvlad+name))
+
+    def get_latent_embedding(self, jpg):
+        count = 0
+        for i in self.jpgdict[jpg]:
+            if self.word_filter(i):
+                count+=1
+                encoded_word = word2encodedword(self.enc, i, 12)
+                text, image = self.convert2inputs(i, encoded_word, jpg)
+                assert self.model.training is False
+                embeds = self.model.get_embedding(image.to(device), text.to(device)).reshape([1,-1])
+                try:
+                    embeddings = torch.cat([embeddings, embeds], dim = 0)
+                except:
+                    embeddings = embeds
+        if count ==0:
+            embeddings = torch.zeros(10, 128).to(device)
+        else:
+            embeddings = F.pad(embeddings, (0, 0, 0, 10 - embeddings.shape[0]))
+        return torch.svd(embeddings)[2].t().reshape(-1)
+
+    def word_filter(self, word):
+        if len(word) <= 12 and (not wordskip(word, 3, 3)):
+            return 1
+        else: return 0
+
+    def convert2inputs(self, word, encoded_word, jpg):
+        text_i = torch.from_numpy(encoded_word.todense()).unsqueeze(0)
+        im = torch.tensor(cv2.imread(self.pathpatch + jpg[:-4] + "_" + word + ".jpg")).permute(
+            2, 0, 1)
+        image_i = torch.div(im.float(), 255).unsqueeze(0)
+        return text_i, image_i
+
 
 
 class image_word_triplet_loader_allhard(data.Dataset):
