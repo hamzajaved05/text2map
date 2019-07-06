@@ -75,6 +75,7 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         self.enc = enc
         self.model.eval()
         self.model.to(device)
+        self.testing = False
 
     def __len__(self):
         return len(self.jpgklass.keys())
@@ -87,7 +88,6 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         for single_jpg in jpgnames:
             netvlad = self.readnetvlad(single_jpg).unsqueeze(0)
             embedding = self.get_latent_embedding(str(single_jpg)).unsqueeze(0)
-
             try:
                 patch_embeds = torch.cat([patch_embeds, embedding], dim = 0)
                 netvlad_embeds = torch.cat([netvlad_embeds, netvlad], dim = 0)
@@ -96,7 +96,11 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
                 netvlad_embeds = netvlad
         assert patch_embeds.shape[0] == self.itemsperclass, "Patch size issue"
         assert netvlad_embeds.shape[0] == self.itemsperclass, "netvlad size issue"
-        return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
+
+        if self.testing:
+            return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index, indices[0], indices[1]
+        else:
+            return patch_embeds.float().to(device), netvlad_embeds.float().to(device), index
 
     def readnetvlad(self, name):
         return  torch.tensor(np.loadtxt(self.path_netvlad+name))
