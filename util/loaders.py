@@ -1,7 +1,7 @@
 import cv2
 from torch.utils import data
 import numpy as np
-from random import sample
+from random import sample, shuffle
 import torch
 import torch.nn.functional as F
 from collections import Counter
@@ -65,7 +65,7 @@ class image_word_training_loader(data.Dataset):
         return torch.div(im.float(), 255), word_indexed.float(), self.jpeg[index], self.words[index]
 
 class Triplet_loaderbh_Textvlad(data.Dataset):
-    def __init__(self, jpgklass, jpgdict, itemsperclass, pathnv, path_patches, model, enc):
+    def __init__(self, jpgklass, jpgdict, itemsperclass, pathnv, path_patches, model, enc, svd = False):
         self.jpgklass = jpgklass
         self.jpgdict = jpgdict
         self.itemsperclass = itemsperclass
@@ -73,9 +73,13 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         self.model = model
         self.pathpatch = path_patches
         self.enc = enc
+        self.svd = svd
         self.model.eval()
         self.model.to(device)
-        self.testing = False
+        if svd == False:
+            print("Dataloader with randomized sequences")
+        else:
+            print("Dataloader with SVD decomposition")
 
     def __len__(self):
         return len(self.jpgklass.keys())
@@ -104,22 +108,36 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
 
     def get_latent_embedding(self, jpg):
         count = 0
+        valid_words = []
         for i in self.jpgdict[jpg]:
             if self.word_filter(i):
                 count+=1
+                valid_words.append(i)
+
+        if self.svd == False:
+            while len(valid_words) < 10:
+                valid_words.append("")
+            shuffle(valid_words)
+
+        for itera, i in enumerate(valid_words):
+            if len(i) == 0:
+                embeds = torch.zeros([1,128])
+            else:
                 encoded_word = word2encodedword(self.enc, i, 12)
                 text, image = self.convert2inputs(i, encoded_word, jpg)
                 assert self.model.training is False
                 embeds = self.model.get_embedding(image.to(device), text.to(device)).reshape([1,-1])
-                try:
-                    embeddings = torch.cat([embeddings, embeds], dim = 0)
-                except:
-                    embeddings = embeds
+            if itera == 0:
+                embeddings = embeds
+            else:
+                embeddings = torch.cat([embeddings, embeds], dim=0)
+
         if count ==0:
             embeddings = torch.zeros(10, 128).to(device)
         else:
             embeddings = F.pad(embeddings, (0, 0, 0, 10 - embeddings.shape[0]))
-        return torch.svd(embeddings)[2].t().reshape(-1)
+
+        return embeddings.reshape(-1) if self.svd == False else torch.svd(embeddings)[2].t().reshape(-1)
 
     def word_filter(self, word):
         if len(word) <= 12 and (not wordskip(word, 3, 3)):
@@ -134,10 +152,9 @@ class Triplet_loaderbh_Textvlad(data.Dataset):
         return text_i, image_i
 
 class Triplet_loaderbh_Textvlad_testing(data.Dataset):
-    def __init__(self, jpgklass, jpgdict, itemsperclass, pathnv, path_patches, model, enc):
+    def __init__(self, jpgklass, jpgdict, pathnv, path_patches, model, enc):
         self.jpgklass = jpgklass
         self.jpgdict = jpgdict
-        self.itemsperclass = itemsperclass
         self.path_netvlad = pathnv
         self.model = model
         self.pathpatch = path_patches

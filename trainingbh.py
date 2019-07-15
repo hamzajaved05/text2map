@@ -78,11 +78,11 @@ def limitklass(klas, word, word_sparse, jpg, modes):
     skipped = 0
     klass2, klass2v = [], []
     word2, word2v = [], []
-    word_sparse2, word_sparse2v = [] ,[]
+    word_sparse2, word_sparse2v = [], []
     jpgs2, jpgs2v = [], []
     label = -1
     for itera, j in enumerate(list(set(klas))):
-        if wordskip(modes[itera], [3,3]):
+        if wordskip(modes[itera], 3,3):
             skipped+=1
             continue
         else:

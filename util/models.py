@@ -155,11 +155,14 @@ class Embedding_net(nn.Module):
 
     def forward(self, pa, vl):
         patch = pa
-        patch = self.do1(self.p1(patch))
-        vlad = self.do1(self.v1(vl))
-        # print(vlad.size(), patch.size())
+        # patch = self.do1(self.p1(patch))
+        # vlad = self.do1(self.v1(vl))
+
+        patch = self.p1(patch)
+        vlad = self.v1(vl)
+
         com = torch.cat([vlad, patch], dim = 1)
-        com = self.do1(self.c1(com))
+        com = self.c1(com)
         return F.normalize(com, p=2, dim =1)
 
 
@@ -194,6 +197,7 @@ class TripletLoss(nn.Module):
         else:
             distance_positive = torch.dist(anchor, positive, p=1)
             distance_negative = torch.dist(anchor, negative, p=1)
+            
         if self.softplus:
             losses = self.sp(distance_positive - distance_negative + self.margin)
         else:

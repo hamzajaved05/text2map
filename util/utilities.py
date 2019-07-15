@@ -207,10 +207,14 @@ def getproximalwords(Proximaljpgs, jpg_dict, write, writenamed="00"):
 # 	return proximal_word_dict(proximal_word_dict,writenamed)
 
 def word2encodedword(enc, word, length):
-    temp = list(word)
-    dummy = enc.transform(np.array(temp).reshape(-1, 1)).transpose()
-    x = np.concatenate((dummy.todense(), np.zeros((dummy.shape[0], length - dummy.shape[1]))), axis=1)
-    x = csc_matrix(x)
+    if len(word)==0:
+        x = np.zeros([62,12])
+        x = csc_matrix(x)
+    else:
+        temp = list(word)
+        dummy = enc.transform(np.array(temp).reshape(-1, 1)).transpose()
+        x = np.concatenate((dummy.todense(), np.zeros((dummy.shape[0], length - dummy.shape[1]))), axis=1)
+        x = csc_matrix(x)
     return x
 
 def readtext2worddict(path="../Dataset_processing/train.txt"):
