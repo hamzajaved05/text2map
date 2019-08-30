@@ -12,6 +12,7 @@ import numpy as np
 from scipy.sparse import csc_matrix
 from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
+import os
 
 
 def write_dict_to_txt(dict, path):
@@ -95,7 +96,7 @@ def getwords(klasses):
 
 
 def scoring_words(dict, threshold, lower_value, higher_value):
-    dict = jpg2word(dict)
+    dict = convertjpg2word(dict)
     wordrarray = [y for y in dict.keys()]
     sd = np.empty((len(dict), 2))
     sdthreshold = 0.002
@@ -117,7 +118,7 @@ def scoring_words(dict, threshold, lower_value, higher_value):
     return dict2
 
 
-def jpg2word(jpgdict):
+def convertjpg2word(jpgdict):
     worddict = {}
     for jpgname in jpgdict.keys():
         for word in jpgdict[jpgname]:
@@ -140,13 +141,13 @@ def lev_proximal_strings(string, stringarray):
     return proximalarray
 
 
-def getproximal(jpg_dict, write, writenamed="00"):
+def getproximal(jpg_dict, write, writenamed, long_dict, lat_dict, index):
     sums = []
     Proximaljpgs = {}
     jpgarray = [y for y in jpg_dict.keys()]
     jpg_angle = np.empty((len(jpgarray), 2))
     for itera, jpgname in enumerate(jpgarray):
-        jpg_angle[itera] = np.array(open("Dataset_processing/jpegs/0068/" + jpgname[:-3] + "txt").read().split()[11:13])
+        jpg_angle[itera] = np.append(long_dict[jpgname], lat_dict[jpgname])
 
     for itera, jpgname in enumerate(jpgarray):
         dif = np.abs(jpg_angle - [jpg_angle[itera]])
@@ -160,7 +161,7 @@ def getproximal(jpg_dict, write, writenamed="00"):
             print("%d / %d Done for Proximal JPGS !" % (itera + 1, len(jpgarray)))
 
     if write:
-        with open("Dataset_processing/split/" + writenamed + ".pickle", "wb") as F:
+        with open(writenamed, "wb") as F:
             pickle.dump(Proximaljpgs, F)
     return Proximaljpgs
 
@@ -176,11 +177,11 @@ def getproximalwords(Proximaljpgs, jpg_dict, write, writenamed="00"):
                     continue
                 else:
                     proximal_word_dict[jpgname].append(word)
-
-        print("Done = " + str(itera) + " / " + str(len(jpgarray)))
+        if (itera+1)%1000==0:
+            print("Done >> words = " + str(itera) + " / " + str(len(jpgarray)))
 
     if write:
-        with open("Dataset_processing/split/" + writenamed + ".pickle", "wb") as F:
+        with open(writenamed, "wb") as F:
             pickle.dump(proximal_word_dict, F)
         write_dict_to_txt(proximal_word_dict, "Dataset_processing/split/" + writenamed + ".txt")
 
@@ -256,8 +257,7 @@ def readtext2jpgdict(path, filt = None):
     return jpg_dict
 
 def readcsv2jpgdict(path):
-    print("Accessing file for jpg dictionary update >>" + path + " /")
-    data = pd.read_csv(path, skipinitialspace=True, usecols=['imagesource', 'text']).to_numpy()
+    data = pd.read_csv(path, skipinitialspace=True, usecols=['imagesource', 'text', 'long', 'lat']).to_numpy()
     jpg_dict = {};
     for comb in data:
         if str(comb[0]) in jpg_dict.keys():
@@ -280,3 +280,14 @@ def getdistance(a, b):
     hor = math.sqrt(math.pow(float(a[0]) - float(b[0]), 2)
                     + math.pow(float(a[1]) - float(b[1]), 2)) / RAD;
     return hor
+
+def long_lat_dict(path):
+    data = pd.read_csv(path, skipinitialspace=True, usecols=['imagesource', 'text', 'long', 'lat']).to_numpy()
+    lat_dict = {}
+    long_dict = {}
+    for i in data:
+        if i[0] not in lat_dict.keys():
+            lat_dict[i[0]] = i[2]
+            long_dict[i[0]] = i[3]
+
+    return long_dict, lat_dict
